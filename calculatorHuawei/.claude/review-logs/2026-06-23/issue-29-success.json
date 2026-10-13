@@ -1,0 +1,13 @@
+{
+  "issue": 29,
+  "title": "中等模糊",
+  "verdict": "REQUEST_CHANGES",
+  "summary": "harmonyos-ui-test 未真实跑,缺三页截图/dump",
+  "branch": "feat/issue-29-中等模糊",
+  "wt_path": "D:\\huawei\\Demo\\worktrees\\issue-29",
+  "comment_ok": true,
+  "action": "assign-littleleafccccc(ok=True)",
+  "action_ok": true,
+  "reviewed_at": "2026-06-23T17:38:00.196921",
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\review-logs\\2026-06-23\\issue-29.md"
+}

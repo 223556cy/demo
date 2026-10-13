@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Code Layer Swim Lane</title>
+<style>
+    body{font-family:-apple-system,Segoe UI,sans-serif;margin:0;background:#fafafa;color:#222;padding:24px}
+    h1{margin:0 0 8px;font-size:22px}
+    .sub{color:#666;font-size:13px;margin-bottom:20px}
+    .swim{display:grid;grid-template-columns:160px repeat(7,1fr);gap:1px;background:#ddd;border:1px solid #ccc;border-radius:6px;overflow:hidden;font-size:13px}
+    .swim .h{background:#2a78d6;color:#fff;padding:10px;font-weight:600;text-align:center}
+    .swim .h.time{background:#1e5bb8}
+    .swim .lane{background:#fff;padding:10px;font-weight:600;background:#f5f5f5}
+    .swim .cell{background:#fff;padding:10px;text-align:center;font-family:monospace;font-size:12px;line-height:1.4}
+    .bug{background:#fee2e2!important;color:#7f1d1d;font-weight:bold;position:relative}
+    .bug::after{content:"★";position:absolute;top:2px;right:4px;color:#dc2626;font-size:14px}
+    .ok{background:#dcfce7;color:#14532d}
+    .warn{background:#fef3c7;color:#854d0e}
+    .info{background:#f0f9ff;color:#1e40af}
+    .legend{margin:20px 0;padding:14px;background:#fff;border-radius:6px;border:1px solid #e5e5e5;font-size:13px}
+    .legend span{display:inline-block;padding:3px 10px;margin:0 8px 0 0;border-radius:4px}
+    .finding{background:#fff;padding:14px;margin:8px 0;border-radius:6px;border-left:4px solid #dc2626}
+    .finding.severity-critical{border-left-color:#dc2626}
+    .finding.severity-major{border-left-color:#f59e0b}
+    .finding.severity-minor{border-left-color:#3b82f6}
+    .code{background:#1e1e1e;color:#d4d4d4;padding:10px;border-radius:4px;font-family:monospace;font-size:12px;margin:6px 0;overflow-x:auto}
+    </style>
+</head>
+<body>
+<h1>🏊 代码层泳道图 — sin(x)→直线 bug</h1>
+<div class="sub">264c5a16 Issue #26 · D:\huawei\Demo\worktrees\issue-26 · Layer-by-layer fault propagation</div>
+
+    <div class="legend">
+      <strong>图例:</strong>
+      <span class="ok">正常</span>
+      <span class="warn">可疑</span>
+      <span class="bug">★ Bug</span>
+      <span class="info">触发</span>
+    </div>
+    
+['<div class="swim">', '<div class="h time">Time</div>', '<div class="h">UI</div>', '<div class="h">ViewModel</div>', '<div class="h">Engine</div>', '<div class="h">Test</div>', '<div class="h">UITest</div>', '<div class="lane">T0<br><small style="font-weight:normal;color:#666">用户输入</small></div>', '<div class="cell info">text 控件</div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="lane">T1<br><small style="font-weight:normal;color:#666">TextInput.onChange</small></div>', '<div class="cell warn">onChange 回调</div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="lane">T2<br><small style="font-weight:normal;color:#666">vm.xMin 更新</small></div>', '<div class="cell bug">★ onChange 内<br>只更新 vm.xMin<br>没调 vm.compute()</div>', '<div class="cell warn">xMin=-2<br>(旧值未重算)</div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="lane">T3<br><small style="font-weight:normal;color:#666">用户点「绘制」</small></div>', '<div class="cell info">「绘制」按钮</div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="lane">T4<br><small style="font-weight:normal;color:#666">Button.onClick</small></div>', '<div class="cell info">onClick</div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="lane">T5<br><small style="font-weight:normal;color:#666">vm.compute()</small></div>', '<div class="cell "></div>', '<div class="cell bug">compute() 跑<br>但用了旧 xMin=-2π<br>(因为 T2 没触发)</div>', '<div class="cell info">evaluateAt<br>sin(...) 调用</div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="lane">T6<br><small style="font-weight:normal;color:#666">drawCanvas</small></div>', '<div class="cell bug">drawCanvas<br>用 STALE series</div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="lane">T7<br><small style="font-weight:normal;color:#666">Canvas 渲染</small></div>', '<div class="cell bug">Canvas 画的是<br>-2π 到 2π 的曲线<br>(用户输 -2 没生效)</div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="cell "></div>', '<div class="cell "></div>', '</div>']
+<h2 style="margin-top:30px">📍 代码层 Findings</h2><div class='finding severity-critical'>
+            <b>[CRITICAL] onChange 回调未触发 compute() 重算</b>
+            <div class='sub'>opencalc\entry\src\main\ets\pages\GraphPage.ets</div>
+            <pre class='code'>{
+  "found": true,
+  "issues": [
+    {
+      "line": 166,
+      "block": 1,
+      "body": "this.expressionInput = value\n            this.vm.expression = value",
+      "issue": "改 vm 字段但没调 vm.compute() 重算"
+    },
+    {
+      "line": 190,
+      "block": 2,
+      "body": "this.xMinInput = value\n              const v = PlotUtils.parseRange(value)\n              if (v !== null) this.vm.xMin = v",
+      "issue": "改 vm 字段但没调 vm.compute() 重算"
+    },
+    {
+      "line": 205,
+      "block": 3,
+      "bo</pre>
+        </div>
+</body></html>

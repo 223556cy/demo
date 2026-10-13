@@ -1,0 +1,66 @@
+{
+  "test_start": "2026-06-12T21:13:02.054314",
+  "test_end": "2026-06-12T21:13:36.401183",
+  "duration_seconds": 34.346869,
+  "total": 7,
+  "passed": 3,
+  "failed": 4,
+  "cases": [
+    {
+      "case_id": "TC-UI-01",
+      "action": "启动 App",
+      "expected": "App 启动成功",
+      "actual": "77 节点",
+      "result": "PASS",
+      "time": "2026-06-12 21:13:09"
+    },
+    {
+      "case_id": "TC-UI-02",
+      "action": "计算 1+2",
+      "expected": "display 显示 3",
+      "actual": "has 3=True",
+      "result": "PASS",
+      "time": "2026-06-12 21:13:15"
+    },
+    {
+      "case_id": "TC-UI-03",
+      "action": "计算 50+50",
+      "expected": "display 显示 100",
+      "actual": "has 100=True",
+      "result": "PASS",
+      "time": "2026-06-12 21:13:24"
+    },
+    {
+      "case_id": "TC-UI-04",
+      "action": "打开历史面板",
+      "expected": "多次点击未打开",
+      "actual": "click failed",
+      "result": "FAIL",
+      "time": "2026-06-12 21:13:36"
+    },
+    {
+      "case_id": "TC-UI-05",
+      "action": "搜索框存在",
+      "expected": "前置条件未满足",
+      "actual": "skipped",
+      "result": "FAIL",
+      "time": "2026-06-12 21:13:36"
+    },
+    {
+      "case_id": "TC-UI-06",
+      "action": "键入 '1'",
+      "expected": "前置条件未满足",
+      "actual": "skipped",
+      "result": "FAIL",
+      "time": "2026-06-12 21:13:36"
+    },
+    {
+      "case_id": "TC-UI-07",
+      "action": "键入 '99999'",
+      "expected": "前置条件未满足",
+      "actual": "skipped",
+      "result": "FAIL",
+      "time": "2026-06-12 21:13:36"
+    }
+  ]
+}

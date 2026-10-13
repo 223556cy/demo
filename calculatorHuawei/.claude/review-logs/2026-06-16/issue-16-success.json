@@ -1,0 +1,13 @@
+{
+  "issue": 16,
+  "title": "中等需求",
+  "verdict": "APPROVE",
+  "summary": "长按菜单功能完整, 端口+UI双重验证",
+  "branch": "feat/issue-16-中等需求",
+  "wt_path": "D:\\huawei\\Demo\\worktrees\\issue-16",
+  "comment_ok": true,
+  "action": "close(ok=True)",
+  "action_ok": true,
+  "reviewed_at": "2026-06-16T21:15:03.740977",
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\review-logs\\2026-06-16\\issue-16.md"
+}

@@ -1,0 +1,12 @@
+{
+  "issue": 24,
+  "title": "修改aid-planning",
+  "verdict": "APPROVE",
+  "priority": "MEDIUM",
+  "target_skill": "aid-applying",
+  "phenomenon": "Issue #24 首次 dispatch 时, dev-01 在 session 36f09a4f 调 aid-applying 完成 apply-report.md 后直接 git commit, 产出 ad404e3. rev-01 在 session 14e273da 立即驳回: 提交缺 Signed-off-by trailer (DCO). 触发 RE-DISPATCH 场景 (session 1ecb2329), dev-01 通过 git commit --amend --signoff 修复 (新 SHA 77335ab) 并补 efc2437 提交 revert 说明, 二次 rev-01 (session f483f9a4) 才 APPROVE. 整体多花了 1 轮完整 dev+rev 循环.",
+  "completed_at": "2026-06-18T17:42:46.440842",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-06-18\\issue-24.md"
+}

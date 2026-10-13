@@ -1,0 +1,13 @@
+{
+  "issue": 27,
+  "title": "进阶",
+  "verdict": "REQUEST_CHANGES",
+  "summary": "UI 测试缺截图 + commits 未 sign-off",
+  "branch": "feat/issue-27-进阶",
+  "wt_path": "D:\\huawei\\Demo\\worktrees\\issue-27",
+  "comment_ok": true,
+  "action": "assign-littleleafccccc(ok=True)",
+  "action_ok": true,
+  "reviewed_at": "2026-06-29T11:56:05.950221",
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\review-logs\\2026-06-29\\issue-27.md"
+}

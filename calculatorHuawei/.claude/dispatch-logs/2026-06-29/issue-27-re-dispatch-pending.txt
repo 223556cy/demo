@@ -1,0 +1,4 @@
+pid=29628
+re_dispatch=True
+expected_completion: claude self force-pushes after rebase/signoff
+created_at=2026-06-29T12:00:54.767307

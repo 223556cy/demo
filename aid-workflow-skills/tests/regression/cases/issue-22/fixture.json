@@ -1,0 +1,24 @@
+{
+  "id": "issue-22",
+  "issue": {
+    "number": 22,
+    "title": "#22 程序员模式",
+    "category": "程序员模式",
+    "requirement_id": 3,
+    "rev_01_rounds": 1
+  },
+  "paths": {
+    "baseline_worktree": "D:\\huawei\\Demo\\worktrees\\issue-22",
+    "opencalc_subpath": "opencalc"
+  },
+  "spec_dir": "D:\\huawei\\Demo\\aid-workflow-skills\\tests\\regression\\cases\\issue-22\\spec",
+  "expected": {
+    "diff_file": "D:\\huawei\\Demo\\aid-workflow-skills\\tests\\regression\\cases\\issue-22\\expected\\expected.diff",
+    "compile_exit": 0,
+    "test_pass": true
+  },
+  "ui_test": {
+    "required": true,
+    "fixture_path": null
+  }
+}

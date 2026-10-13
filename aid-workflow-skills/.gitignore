@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# 沙箱
+/tmp/skillopt_*
+/tmp/aidwf_*
+
+# 大文件（每个 worktree opencalc/ 有几百 MB）
+# fixtures 里只引用路径，不存实际代码
+worktrees/
+calculatorHuawei/
+
+# 报告里的二进制
+reports/**/*.log
+reports/**/*.hap
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+
+# 临时
+*.bak
+*.tmp

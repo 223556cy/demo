@@ -1,0 +1,24 @@
+{
+  "id": "issue-13",
+  "issue": {
+    "number": 13,
+    "title": "#13 二维码分享",
+    "category": "分享",
+    "requirement_id": 7,
+    "rev_01_rounds": 2
+  },
+  "paths": {
+    "baseline_worktree": "D:\\huawei\\Demo\\worktrees\\issue-13",
+    "opencalc_subpath": "opencalc"
+  },
+  "spec_dir": "D:\\huawei\\Demo\\aid-workflow-skills\\tests\\regression\\cases\\issue-13\\spec",
+  "expected": {
+    "diff_file": "D:\\huawei\\Demo\\aid-workflow-skills\\tests\\regression\\cases\\issue-13\\expected\\expected.diff",
+    "compile_exit": 0,
+    "test_pass": true
+  },
+  "ui_test": {
+    "required": true,
+    "fixture_path": null
+  }
+}

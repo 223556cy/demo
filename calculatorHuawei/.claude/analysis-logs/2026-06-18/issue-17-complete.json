@@ -1,0 +1,12 @@
+{
+  "issue": 17,
+  "title": "中等模糊",
+  "verdict": "APPROVE",
+  "priority": "MEDIUM",
+  "target_skill": "aid-applying",
+  "phenomenon": "v1 dispatch (session abfa9ad5, 2026-06-17 01:48-01:58 UTC, 75 tool_use 全程 0 次 Skill 调用) 用裸 Bash/Write 手工跑完 AID 三阶段, 把 proposal/delta-spec/info/design/todo/tasks 全写到 specs/changes/20260617-requirement-add-paste-calculate/(注意: paste-calculate, 拼写错), 但该目录从未进入 commit — 仓内可见的 v1 产物只有 feat commit 55ecfb5e(CalculatorPage.ets +61 行 + PasteAndCalculate.test.ets 49 行, 无任何 AID spec 落盘)。rev-01 在 d8fead92 给出 REQUEST CHANGES 3 项: (1) 缺 design.md, (2) pasteboard.getData() 在 HarmonyOS 4.0+ 是 async API, v1 写成同步 → ArkTS 编译错 `Type 'Promise<PasteData>' is missing`, (3) UI 自动化用 hdc input text 实际是模拟按键, 不触发 pasteboard, false negative。c54c7997 re-dispatch v2(f9932c1) 用 aid-applying 强制走 worktree build_hap.bat 实跑 hvigorw assembleHap(BUILD SUCCESSFUL 12.7s) + 用 harmonyos-ui-test skill 的 uitest uiInput 改写 UI 自动化(5/5 PASS, 11 张 MD5 唯一截图) + 在 20260617-requirement-add-paste-and-calculate(补 and) 重建全套 7 件 AID 产物(apply-report 9274B / design 23370B / design-review 1781B), 最终 APPROVE。",
+  "completed_at": "2026-06-18T17:42:00.501252",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-06-18\\issue-17.md"
+}

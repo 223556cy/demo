@@ -1,0 +1,12 @@
+{
+  "issue": 29,
+  "title": "中等模糊",
+  "verdict": "REQUEST_CHANGES",
+  "priority": "MEDIUM",
+  "target_skill": "aid-applying",
+  "phenomenon": "aid-applying 阶段 step3-2-2b 铁律 7 强制要求跑 harmonyos-ui-test,但本机 hdc list targets=Empty 触发降级路径;apply-report.md:58-83 仅'诚实标注'缺口,未执行降级路径的 3 个子步骤(用户书面同意/todo.md ⏳ + 责任人/capabilities.json emulator_status 更新),致 PR 缺三页截图与 dump。",
+  "completed_at": "2026-07-01T10:03:20.751808",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-07-01\\issue-29.md"
+}

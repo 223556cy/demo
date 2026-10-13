@@ -1,0 +1,32 @@
+{
+  "issue_ticket": {
+    "issue_number": 26,
+    "title": "apply-report.md 与 delta-spec.md AC 编号错位 (silent rename AC-2 描述 + AC-3 起整体下移 1 位 + 丢失 delta-spec AC-3'修改 x 范围')",
+    "verdict": "APPROVE",
+    "priority": "LOW",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "Issue #26 函数图像绘制 AID 三阶段跑通且 rev-01 APPROVE: 8 个 artifact 齐全 (proposal/delta-spec/info/delta-design/design-review/tasks/todo/apply-report), 单元测试 77/77 PASS (PlotUtils 41 + evaluateAt 13 + GraphViewModel 23), hvigorw assembleHap BUILD SUCCESSFUL, harmonyos-ui-test AC-1/2 PASS 含真实 screenshot/05_graph3.png + dump_graph3.json, 3 commit (b8eeb2ba/a4f8f9e/7066438) 均带 Signed-off-by. 但 apply-report.md L78-85 的 AC 表与 delta-spec.md L201-238 的 AC 清单存在 silent 错位: delta-spec AC-2='修改表达式' AC-3='修改 x 范围' 被 apply-report 偷换为 AC-2='默认 sin(x) 渲染曲线' AC-3='修改表达式', 整体 AC-3 起下移 1 位且 delta-spec AC-3 '修改 x 范围' 在 apply-report 中消失.",
+    "root_cause_analysis": "归类 B (漏掉步骤) — aid-applying SKILL 在 §3-2-5 (apply-report.md 生成 step) 末尾未追加 'AC 编号对齐校验' 硬 gate. 证据 1: jsonl#264c5a16 (主会话, 692 行, 含 PLANNING+IMPLEMENTING+APPLYING 全流程) L604 Write run_tests.py 后 L605 Bash 跑测试, 直接 L610 Write apply-report.md → L612 Edit todo.md → L621 git status → L624 git add -A, 中间未跑 grep '^### AC-' delta-spec.md 与 apply-report.md 做编号/描述比对, 导致 apply-report AC-2/AC-3 描述 silent 偷换与编号下移未被捕获. 证据 2: 实际差异 grep 对照: delta-spec.md L201-238 共 8 条 AC (AC-1 打开绘图页 / AC-2 修改表达式 / AC-3 修改 x 范围 / AC-4 语法错误 / AC-5 无 x 变量 / AC-6 定义域外断开 / AC-7 全部无效 / AC-8 xMax ≤ xMin); apply-report.md L78-85 共 8 条 AC (AC-1 打开绘图页 / AC-2 默认 sin(x) 渲染曲线 / AC-3 修改表达式 / AC-4 语法错误 / AC-5 无 x 变量 / AC-6 定义域外断开 / AC-7 全部无效 / AC-8 xMax ≤ xMin). 两者 AC-2 描述不同 (修改表达式 vs 默认 sin(x) 渲染曲线), AC-3~8 描述相同但 apply-report 整体下移 1 位, delta-spec 独有的 AC-3 '修改 x 范围' 在 apply-report 中丢失, 反之 apply-report 独有的 AC-2 '默认 sin(x) 渲染曲线' 在 delta-spec 中也不存在. 证据 3: review-logs/2026-06-18/issue-26-review.json rev-01 明确 'AID 三阶段 OK' 'AC-1/2 PASS' 但未做 AC 描述/编号 ↔ delta-spec 对齐校验, 直接 APPROVE. 同类问题已在 issue-13 diagnosis (issue-13-diagnosis.json, target_skill_filename=aid-applying, priority=LOW) 中标定, 体现 aid-applying 产物自一致性校验规则未被 skill 内化.",
+    "optimization_direction": "在 aid-applying SKILL.md §3-2-5 (apply-report.md 生成 step) 末尾追加 imperative 硬 gate: Write apply-report.md 前必须执行 (a) grep -oE '^### AC-[0-9]+' delta-spec.md 取声明 AC 编号与描述, (b) grep -oE '^\\| AC-[0-9]+' apply-report.md 取实测 AC 编号与描述, (c) 两者编号序列与描述不一致时禁止 commit 并要求修订 apply-report.md (回填 '修改 x 范围' 等缺失 AC 或同步回 delta-spec); 同时新增 §3-2-X 段要求 rev-01 review checklist 第 N 项 'AC 编号 ↔ delta-spec 对齐' (与 issue-13 同源优化合并).",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-26/2026-06-17/264c5a16-f4f1-48ff-9f40-d215e1cc2567.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-26/2026-06-17/b8ef88ba-d30d-46b3-8e04-e85c34883eab.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-26/2026-06-17/1481b555-2e82-4c94-a0a8-c879da177caf.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-26/2026-06-17/de996b9f-0b00-41d0-8282-f07d32ab0f2e.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-26/2026-06-18/7a4f27da-c5cf-479d-a441-a8e49e6601b2.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-26/2026-06-18/9d3a342c-19b5-4097-9770-ca1c62c2a7e2.jsonl"
+    ],
+    "evidence_anchors": [
+      "jsonl#264c5a16 L52 Write todo.md (PLANNING 初始化) | L610 Write apply-report.md (APPLYING 终极产物) | L612 Edit todo.md | L621 git status | L624 git add -A (apply-report → commit 之间无 AC 校验)",
+      "jsonl#264c5a16 grep '\"skill\":\"' 去重: aid-planning=1 aid-implementing=1 aid-applying=1 rq-parse=1 rq-codebase=1 rq-clarify=1 mod-design=1 (三阶段 + 子 skill 全调, 但 aid-applying 内部步骤未含 AC 校验)",
+      "delta-spec.md L201 '### AC-1: 打开绘图页' | L206 '### AC-2: 修改表达式' | L211 '### AC-3: 修改 x 范围' | L216 '### AC-4: 语法错误' | L221 '### AC-5: 无 x 变量' | L226 '### AC-6: 定义域外断开' | L231 '### AC-7: 全部无效' | L236 '### AC-8: xMax ≤ xMin' (8 条声明)",
+      "apply-report.md L78 'AC-1 打开绘图页' | L79 'AC-2 默认 sin(x) 渲染曲线' | L80 'AC-3 修改表达式' | L81 'AC-4 语法错误' | L82 'AC-5 无 x 变量' | L83 'AC-6 定义域外断开' | L84 'AC-7 全部无效' | L85 'AC-8 xMax ≤ xMin' (8 条实测, AC-2 描述 silent 偷换, AC-3 起整体下移 1 位)",
+      "delta-spec AC-2='修改表达式' vs apply-report AC-2='默认 sin(x) 渲染曲线' (描述不一致, 编号未被回填)",
+      "delta-spec AC-3='修改 x 范围' 在 apply-report 中消失; apply-report AC-2='默认 sin(x) 渲染曲线' 在 delta-spec 中也不存在 (双向丢失)",
+      "apply-report.md L89 'results.json: 3 个 AC 全 PASS (其中 AC-3~8 由单元测试覆盖)' — UI 实跑仅 AC-1/2 PASS, AC-3~8 用 ⏭️ 单测覆盖但仍计入 PASS 总数, 计数语义模糊",
+      "review-logs/2026-06-18/issue-26-review.json rev-01 verdict='APPROVED' 字段 'AID 三阶段 OK', 'harmonyos-ui-test OK', 'commit signoff OK', '分支规范 OK', '铁律 7 不伪造 OK' — 未做 'AC 编号 ↔ delta-spec 对齐' 校验, 直接 close",
+      "issue-13-diagnosis.json 已记录同类 aid-applying 产物自一致性缺失 (priority=LOW), 本 issue-26 复用同根因, 证明 aid-applying skill 未吸收 issue-13 优化建议"
+    ]
+  }
+}

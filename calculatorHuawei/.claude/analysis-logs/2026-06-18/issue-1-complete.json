@@ -1,0 +1,12 @@
+{
+  "issue": 1,
+  "title": "增加%按钮",
+  "verdict": "UNKNOWN",
+  "priority": "HIGH",
+  "target_skill": "aid-applying",
+  "phenomenon": "Issue #1 (%按钮) 在 GitHub 上被 CLOSED 但全程无 rev-01 审查。3 个 AID 会话 (PLANNING 93a649aa → IMPLEMENTING 8c153cf5 → APPLYING b092053c) 全部跑完后流程即终止, 从未触发 aid-reviewing / aid-archiving。apply-report.md「下一步」用『或者』措辞把『进入 REVIEWING 阶段: 执行 aid-reviewing』写成可绕过分支;「用户确认」段仅询问『是否需要处理问题』, 无任何 hard-gate 禁止无审查关闭 issue。结果: 6 项遗留问题 (L-01..L-06, 含 L-02/L-03 spec 字面量偏差、L-04 错误用例实现 gap、L-06 hvigorw 环境缺失) 未经评审直接归并到 main, 实现侧偏差与运行时风险被静默吞掉。",
+  "completed_at": "2026-06-18T17:29:14.856297",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-06-18\\issue-1.md"
+}

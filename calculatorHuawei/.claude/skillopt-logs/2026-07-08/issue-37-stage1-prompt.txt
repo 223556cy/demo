@@ -1,0 +1,122 @@
+[skillopt-01 v4 - Edit 工具直改模式]
+
+你需要修改 `skills/aid-applying/SKILL.md` (绝对路径: `D:\huawei\Demo\aid-workflow-skills\skills\aid-applying\SKILL.md`) 来落实以下 diagnosis 方向。
+
+## 诊断 (Issue #37)
+
+```json
+{
+  "issue_number": 37,
+  "title": "APPROVE 通过 — 时序+语义双修复成功,但 issue body 仅指出时序竞态(语义翻转根因隐藏在 step2 因果链中未被 fix proposal 覆盖,依赖 Task 5.3 条件触发补救)",
+  "verdict": "APPROVE",
+  "priority": "MEDIUM",
+  "target_skill_filename": "aid-applying",
+  "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+  "phenomenon": "Issue #37 body 在 step2 (根因解释) 中**完整列出**双因果链 — (a) 微任务先于宏任务导致时序竞态,(b) setRadianMode(!radianMode) 配合 radiansDefault=false 默认值导致 isDegree=true (语义翻转);但其 fix proposal 代码块仅展示时序修复 (setTimeout 移入 .then()),**未覆盖**语义翻转根因。Claude (worker) 按 tasks.md 执行:Task 3.1 时序修复 → Task 5.2 hilog + 截图发现 sin 仍为直线 → 触发 Task 5.3 (条件性扩展修复) → setRadianMode(false) 强制弧度制 → Task 5.3 后重新截图显示完整正弦波。apply-report.md#L16-25 显式记录 '⚠️ 关键发现:Issue body 方案不完整,需双修复',commit 891d795 同时落地两个独立 fix(aboutToAppear 时序 + loadPrefs 强制 radian)。最终 46/46 测试 PASS + E2E 完整正弦波 + 12 张截图 + 11 份 uidump。",
+  "root_cause_analysis": "归类 C (规则存在但措辞模糊 — 条件性 Task 5.3 是反应式安全网,缺前置多根因验证)。证据链:apply-report.md#L18 'Issue #37 body 仅指出时序竞态问题,提出方案 A ... 但实际验证发现:时序修复后截图仍为直线' (literal) + apply-report.md#L21-25 双根因清单 (literal) + tasks.md#L132-139 'Task 5.3: ⚠️ 语义翻转验证 (扩展修复)' + 触发条件 '若 hilog 显示 deg=false 但 sin 仍为直线 → 是 isDegree 实际被错设为 true,需去掉 !' (literal, 推断) + commit 891d795 message 'Issue #37 body 仅指出时序竞态,实际验证发现需要双修复' (literal) + GraphPage.ets#L46-72 (修复后时序) + GraphPage.ets#L116 'this.vm.setRadianMode(false)' (修复后语义) (literal) + GraphPageLifecycle.test.mjs 10/10 PASS (RED-GREEN 闭环,Test 1 Buggy 模拟 5ms 异步 + Test 2 Fixed 模拟 .then() 链路) (literal) + apply-report.md#L100-110 截图对比 graph_after_fix.png (Task 5.2 直线) vs graph_sin_rad_fixed.png (Task 5.3 后完整正弦波) (literal)。so why 三层穿透:L1 现象 — issue body fix proposal 不完整,只覆盖时序未覆盖语义;L2 流程 — aid-applying 通过 tasks.md Task 5.3 条件触发补救,但触发条件是 'Task 5.2 UI 验证失败',依赖**反应式**发现,缺 '**前置**多根因验证' 主动机制 — Claude 第一次仅按时序修,必须等 UI 截图失败才意识到还有语义 bug,浪费 1 轮编译 + 部署 + 截图 (~5-10 分钟);L3 根因 — aid-applying/SKILL.md step3-2 (代码应用) 阶段未硬性要求 '在按 issue body fix proposal 执行修复前,先从 issue body 文本中提取所有 [机制: X → Y] 形式的因果链,逐条核对 fix proposal 是否覆盖每一条;若任一因果链未被 fix proposal 覆盖,必须在 tasks.md 显式列出扩展修复任务或在 apply-report 显式声明不修'。本质问题:issue body step2 因果链分析完整 (含 setRadianMode(!false)=setRadianMode(true)=isDegree=true),但 fix proposal 代码块只展示了**一个**根因的修复,助长了 '一个 issue 一个 fix' 的心智模型,导致 Claude 第一次仅按时序修复。本质同构 rev01_second_bug 的 multi-bug-discovered 模式 — 单现象双根因,任一不修都失败,但发现机制是条件性 UI 验证而非前置因果链核对。",
+  "optimization_direction": "修改 aid-applying/SKILL.md step3-2 (代码应用) 阶段 (L196-217):在「step3-2-1:按照 tasks.md 执行代码生成/修改」前**新增** 'step3-2-0:多根因前置验证' 子步骤,要求 (1) 从 issue body 文本中 grep 所有 '→' / '导致' / '因为' / 'setRadianMode' / 'setXxx' / '因为 Y 所以 Z' 类因果连接词,提取 N 条独立因果链 (每条以 [机制:...] 标注);(2) 对照 issue body 的 fix proposal 代码块 (或 '修复建议' 章节),逐条核对是否覆盖每条因果链;若任一因果链未被覆盖,必须显式追加 tasks.md 子任务 (或在已有 Task 5.3 类条件任务中显式声明覆盖),并在 apply-report 的「⚠️ 关键发现」节列出 'issue body 漏掉的根因 + 扩展修复动作'。联动 aid-implementing/SKILL.md 在 tasks.md 设计阶段新增 '多根因前置对齐' 步骤 — issue body 列出 ≥2 条因果链时,tasks.md 必须显式为每条因果链分配独立 Task (而非合并到条件性 Task 5.3)。覆盖未来场景:任意 bugfix 任务 (issue body 含多根因分析但 fix proposal 不完整的场景)、任何 'issue body 因果链与 fix proposal 不对称' 的回归类 issue (#26/#37 同构模式)。",
+  "session_files_analyzed": [],
+  "evidence_anchors": [
+    "apply-report.md#L16 '⚠️ 关键发现:Issue body 方案不完整,需双修复' — 显式承认 issue body 提案不完整 (literal)",
+    "apply-report.md#L18-19 'Issue #37 body 仅指出'时序竞态'问题,提出方案 A: 把 vm.compute() 移到 loadPrefs().then() 里。但实际验证发现:时序修复后截图仍为直线' — 关键证据:第一轮修复未覆盖语义 bug (literal)",
+    "apply-report.md#L21-25 双根因清单: '1. 时序竞态 (issue body 指出的) ... 2. 语义错误 (实际验证发现) — setRadianMode(!radianMode) ... radiansDefault=false ... isDegree=true' — 双 bug 模式与 rev01_second_bug 同构 (literal)",
+    "apply-report.md#L27-29 '应用方案 A + B 双修复 (Task 3.1 + Task 5.3): Task 3.1 ... 时序 ... Task 5.3 ... setRadianMode(!radianMode) → setRadianMode(false) 强制 GraphPage 用弧度制' — 扩展修复动作清单 (literal)",
+    "tasks.md#L132 'Task 5.3: ⚠️ 语义翻转验证 (扩展修复)' — 条件性任务设计 (literal)",
+    "tasks.md#L138-139 触发判定: '若 hilog 显示 deg=false 但 sin 仍为直线 → 是 isDegree 实际被错设为 true,需去掉 !' — 依赖 UI 验证失败的反应式触发 (literal)",
+    "tasks.md#L141-152 修复代码注释: 'radianMode=true → 弧度制 → isDegree=false / radianMode=false → 角度制 → isDegree=true / 即 isDegree = !radianMode (保持现状)' — 注释还误以为去掉 ! 即可,实际 Task 5.3 落地是 setRadianMode(false) 完全强制 (literal)",
+    "commit 891d795 message: 'Issue #37 body 仅指出时序竞态,实际验证发现需要双修复' — Claude worker 自我披露多根因场景 (literal)",
+    "GraphPage.ets#L46-72 修复后 aboutToAppear: prefs.init().then(loadPrefs+compute).catch(compute) — 时序修复落地 (literal)",
+    "GraphPage.ets#L107-121 修复后 loadPrefs: 'this.vm.setRadianMode(false)' — 强制 radian 落地,不再跟随用户偏好 (literal)",
+    "GraphPageLifecycle.test.mjs 10/10 PASS — RED-GREEN 闭环验证,Test 1 (Buggy) 模拟 5ms 异步 prefs.init + setTimeout(0) 先跑,Test 2 (Fixed) 模拟 .then() 链路 → isDegree=false (literal, 见 apply-report.md#L67-86)",
+    "Calculator.test.mjs 13/13 + GraphViewModel.test.mjs 23/23 基线无回归 + 新增 GraphPageLifecycle.test.mjs 10/10 = 46/46 PASS (literal, 见 apply-report.md#L60-63)",
+    "apply-report.md#L100-110 截图对比: graph_after_fix.png (Task 5.2 失败,直线) vs graph_sin_rad_fixed.png (Task 5.3 后,完整正弦波) — 两次截图对比证明双 bug (literal)",
+    "hilog_v2.log 257 行 (apply-report.md#L96) + rev-01 review 表格 AC-2 sin(π/2)=1.000000 / AC-3 sin(π)=0.000000 / AC-4 sin(3π/2)=-1.000000 / AC-5 yRange=1.9999 / AC-6 波峰/波谷 2/2 (literal, 见 rev-01 review '运行时语义验证 v4 新增')",
+    "aid-applying/SKILL.md#L194-217 step3-2 (代码应用) 阶段 — 缺前置多根因验证步骤,直接进入 '按 tasks.md 执行代码生成/修改 (TDD 模式)' (literal, 推断)",
+    "Issue #37 body step2 根因解释 (用户原始 issue): '1. prefs.init().then(loadPrefs) 微任务先跑 → 2. loadPrefs() 调 getRadiansDefault() → 用户偏好 radianMode=false → 3. vm.setRadianMode(!false) = setRadianMode(true) → vm.isDegree = true → 4. 然后宏任务跑 → vm.compute() 闭包捕获 this.isDegree=true' — issue body 自身已**完整列出**双因果链 (时序 + 语义),但 fix proposal 代码块只修复了时序 (literal, 见 issue-37-dispatched.txt body)"
+  ]
+}
+```
+
+## 团队 memory (failures.md 相关教训)
+
+```
+# ❌ Failures — 失败案例库
+
+> **写入者**：analysis (verdict ∈ {REQUEST_CHANGES, CLOSED-with-issues})
+> **检索者**：dev-01 被打回时 / skillopt-01 优化时 / 老板复盘时
+> **归档**：90 天后移入 `archive/YYYY-Qn-failures.md`
+
+---
+
+## 索引（最近 10 条）
+
+<!-- analysis 每次 finalize 时追加，下方是新条目 -->
+
+| Issue | Skill | Date | Priority | 一句话教训 |
+|-------|-------|------|----------|-----------|
+| (暂无) | - | - | - | - |
+
+---
+
+## 详细记录
+
+## Issue #28 - aid-applying - 2026-07-08
+
+- **Verdict**: REQUEST_CHANGES
+- **Priority**: 🔴 **HIGH**
+- **Trigger**: verdict=REQUEST_CHANGES
+- **现象**: dev-01 于 2026-06-17 在 worktree issue-28 执行 aid-applying 阶段,写完 apply-report 后用 `git commit -m "feat(memory-slots)..."` 提交主 commit c7ba0fc,命令未带 `-s`/`--signoff`,commit 末尾亦无 Signed-off-by trailer,仅 Co-Authored-By;同时 apply-report.md L147 把 T21 (UI 自动化) 标为 ⏭️ Deferred,仅引用 step3-0-4.1 允许场景作为依据,未走 step3-2-2b-降级 的 CHECK-1~CHECK-4 硬门禁,导致 specs/.../ui-tests/ 目录空、0 截图 0 dump。rev-01 判定两项 FAIL,出 REQUEST_CHANGES。
+- **根因**: 归类 B (漏掉步骤)。aid-applying/SKILL.md 在 2026-06-17 当下缺失两条 imperative 硬门禁:(1) `git commit` 必须 `-s/--signoff` 的强约束,(2) 任何 UI 测试/T21 标 ⏭️ Deferred 必须先完整通过 step3-2-2b-降级 CHECK-1~CHECK-4 self-check 的硬阻断。证据是当前 SKILL.md L228 与 L498-501 的 fix 都明确标注『依据 Issue #28 教训』新增——说明这两条规则是事后补入的,并非 c7ba0fc 时刻已存在。session jsonl 998a8871 L263 的实际命令是 `git commit -m "feat(memory-slots)..."`(裸 -m,无 -s);L238 写 apply-report 时 L147 直接引用 step3-0-4.1 允许场景作为 T21 Deferred 依据,跳过 CHECK-1~CHECK-4。dev-01 在缺乏硬约束的 skill 文本下走漏,不是幻觉乱写(A),也不是规则歧义(C),更不是外部因素(D)。
+- **教训**: 把 SKILL.md 中两条规则升级为硬门禁:(1) commit 步骤必须用 `git commit -s -m ...` 且 push 前自检 HEAD 含 Signed-off-by,否则 exit 1;(2) UI 测试/T21 标 Deferred 前必须输出 CHECK-1~CHECK-4 4 要素 self-check 块并全部满足,任一不满足则强制跑 UI 自动化。两者均加 🚧 imperative 标记并明确引用 Issue #28 教训。
+- **建议**: 把 SKILL.md 中两条规则升级为硬门禁:(1) commit 步骤必须用 `git commit -s -m ...` 且 push 前自检 HEAD 含 Signed-off-by,否则 exit 1;(2) UI 测试/T21 标 Deferred 前必须输出 CHECK-1~CHECK-4 4 要素 self-check 块并全部满足,任一不满足则强制跑 UI 自动化。两者均加 🚧 imperative 标记并明确引用 Issue #28 教训。
+- **Session 证据**: `D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-28/2026-06-17/998a8871-b39d-40d4-a215-13c93cf66e1a.jsonl`, `D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-28/2026-06-17/75f73d17-3d54-4b00-b8da-5e9604657515.jsonl`, `D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-28/2026-06-17/fcf60fad-2864-4549-a4d4-8ec05952d408.jsonl`
+- **AID 产物**: (待补)
+- **URL**: https://github.com/calculatorHuawei/agent_workflow/issues/28
+
+---
+## Issue #28 - aid-applying - 2026-07-07
+
+- **Verdict**: REQUEST_CHANGES
+- **Priority**: 🔴 **HIGH**
+- **Trigger**: verdict=REQUEST_CHANGES
+- **现象**: Issue #28 走完整 AID, rev-01 双阻塞: c7ba0fc 主 commit 缺 Signed-off-by; apply-report T21 标 Deferred 但 ui-tests/ 目录未创建, 未走 step3-2-2b 降级 4 要素。
+- **根因**: 归类 B+C, 靶点 aid-applying。SKILL.md L557 `git commit -m` 无 -s; dev-01 jsonl 998a8871 L263 字面照抄产 c7ba0fc 无 trailer; fcf60fad L65 amend --signoff 未生效 (b86f7c7 仍无), 证 -s 未硬性。apply-report Deferred 仅列 resources/ 缺失,
+```
+
+## 你的工作流
+
+1. **Read** `skills/aid-applying/SKILL.md` 读原文
+2. 用 **Edit 工具** 按 `optimization_direction` 做局部修改
+   - 优先 Edit (old_text + new_content), 一次 Edit 只改一处
+   - 多处改动用多次 Edit, **不要** Write 整篇文件
+   - Edit 的 old_text 必须精确匹配文件原文
+3. (可选) 改完用 Read 校验一次
+4. 在 **stdout 输出 `Reason:` 段** (≤500 词 Markdown), 列出改动点 + 理由 + 引用 failures.md 教训编号
+5. **不要** git add / commit / push (dispatcher 负责)
+
+## 工具白名单
+
+你能用: Bash, Read, Write, Edit, Glob, Grep, TodoWrite
+你不能用: WebFetch, WebSearch, Task, Skill
+
+cwd 已是 skills 仓库根, 你能直接操作 `D:/huawei/Demo/aid-workflow-skills/skills/<name>/SKILL.md`
+
+## stdout Reason: 格式
+
+```
+Reason:
+## 改动 1
+- 位置: skills/aid-applying/SKILL.md:319
+- 改动: 追加 step3-2-2b-降级 强制自检块
+- 理由: 依据 diagnosis #29 + failures.md Issue #N
+```
+
+## 关键约束
+
+- ❌ 不 git commit / git push
+- ❌ 不 Write 整篇 (只 Edit)
+- ❌ 不改 diagnosis 范围之外的文件
+- ❌ 不调用 WebFetch / WebSearch / Task / Skill
+- ✅ 改完 stdout 必须有 `Reason:` 段
+
+[STAGE: 1 结束]

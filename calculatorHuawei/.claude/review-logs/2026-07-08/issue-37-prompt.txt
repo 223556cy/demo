@@ -1,0 +1,415 @@
+处理 GitHub Issue #37 的代码审查 (rev-01 v2 — 含 UI 测试)
+
+你是 rev-01 (代码审查员 + UI 测试执行员 v2), GitHub 账号 = littleleafbbbbb.
+**核心使命**: 用证据说话 — 任何 APPROVE 都要有截图 + 测试日志支撑。**不要只看 dev-01 的产物**, 必须自己跑测试。
+审查仓库: calculatorHuawei/agent_workflow
+
+## Issue 信息
+- Number: #37
+- Title: [bug] sin(x) 在 GraphPage 渲染成直线 — isDegree 时序竞态 (issue #26 回归)
+- URL: https://github.com/calculatorHuawei/agent_workflow/issues/37
+
+## Issue 正文
+## 🐛 Bug: sin(x) 在 GraphPage 上渲染成直线 (Plot-Graph 时序竞态)
+
+**类型**: bugfix (P1 - 用户首次进入绘图页就看到错误结果)
+**关联**: Issue #26 (plot-graph)
+
+### 复现步骤
+1. 安装 issue #26 的 HAP 到 DevEco 模拟器
+2. 启动 OpenCalc → 切到程序员模式
+3. 点击工具栏 📈 进入 GraphPage
+4. 默认 `sin(x)`, xMin=-6.28, xMax=6.28, samples=200
+5. **期望**: 完整正弦波 (3 个波峰/波谷)
+6. **实际**: 一条从左下到右上的**直线**
+
+### 根因 (rev-01 已定位)
+
+`opencalc/entry/src/main/ets/pages/GraphPage.ets` 第 46-62 行 `aboutToAppear()` 有**异步时序竞态**:
+
+```typescript
+aboutToAppear(): void {
+    this.prefs.init().then((): void => { this.loadPrefs() })   // 微任务
+    setTimeout((): void => { this.vm.compute() }, 0)           // 宏任务
+}
+```
+
+ArkTS 事件循环规则: **微任务先于宏任务** 执行。所以:
+
+1. `prefs.init().then(loadPrefs)` 微任务先跑
+2. `loadPrefs()` 调 `getRadiansDefault()` → 用户偏好 `radianMode=false` (默认角度)
+3. `vm.setRadianMode(!false)` = `setRadianMode(true)` → **`vm.isDegree = true`**
+4. 然后宏任务跑 → `vm.compute()` 闭包捕获 `this.isDegree=true`
+5. `engine.evaluateAt(e, x, true)` → 把 x 当成**角度**算 sin
+6. `Math.sin(x * π/180)`, 在 x∈[-6.28, 6.28] 范围内几乎全是小角度
+7. **小角近似** `sin(x°) ≈ x * π/180 ≈ 0.01745 * x` → 200 个采样点几乎线性
+8. 渲染出来是一条直线
+
+### 证据 (hilog 抓取)
+
+```
+evalAt_in  x=-6.28    deg=true
+fn_sin_out ret=-0.10938734658651553  ← sin(-6.28°) ≈ -0.109
+evalAt_in  x=+6.28    deg=true
+fn_sin_out ret=+0.10938734658651555  ← sin(+6.28°) ≈ +0.109
+```
+
+200 个采样点全部满足 `y ≈ x * π/180` (线性) → 画出来是直线。
+
+### 修复建议
+
+把 `vm.compute()` 移到 `loadPrefs` 的 `.then()` 里:
+
+```typescript
+aboutToAppear(): void {
+    // ...路由参数解析...
+    const ctx: common.UIAbilityContext = getContext(this) as common.UIAbilityContext
+    this.prefs = new PreferencesStore(ctx)
+    this.prefs.init().then((): void => {
+      this.loadPrefs()
+      this.vm.compute()  // ← 在这里调,等 loadPrefs 完成
+    })
+    // 删除原来的 setTimeout(() => vm.compute(), 0)
+}
+```
+
+### TDD 验收标准
+
+| 验证项 | 期望 |
+|--------|------|
+| hilog 显示 `deg=false` | 是 |
+| x=π/2 ≈ 1.57 时 y | ≈ 1.0 |
+| x=π ≈ 3.14 时 y | ≈ 0.0 |
+| x=3π/2 ≈ 4.71 时 y | ≈ -1.0 |
+| y_min < -0.9 且 y_max > 0.9 | 是 |
+| 截图: 曲线有 3 个波峰 + 3 个波谷 | 是 |
+| Calc
+
+## 审查上下文 (已为你收集好, 不要重新 fetch)
+- Worktree: `D:\huawei\Demo\worktrees\issue-37`
+- 分支: `fix/issue-37-tan-period-render`
+- 分支已 push 到 origin: True
+- 修改文件 stat:
+```
+.gitignore                                         |   4 +
+ .../src/main/ets/calculator/BaseConverter.ets      | 157 ++++
+ .../entry/src/main/ets/calculator/Calculator.ets   |  38 +
+ .../entry/src/main/ets/calculator/MemorySlots.ets  |  94 +++
+ .../entry/src/main/ets/common/FractionUtil.ets     | 105 +++
+ .../src/main/ets/common/NaturalLanguageParser.ets  |  61 +-
+ opencalc/entry/src/main/ets/common/PlotUtils.ets   | 325 ++++++++
+ .../entry/src/main/ets/common/UnitConverter.ets    |  65 +-
+ .../entry/src/main/ets/history/HistorySearch.ets   |  27 +
+ .../entry/src/main/ets/model/ModeController.ets    |  76 ++
+ opencalc/entry/src/main/ets/model/ModeModel.ets    |  50 ++
+ opencalc/entry/src/main/ets/model/Models.ets       |  15 +-
+ .../entry/src/main/ets/pages/CalculatorPage.ets    | 531 ++++++++++++-
+ opencalc/entry/src/main/ets/pages/GraphPage.ets    | 432 ++++++++++
+ .../entry/src/main/ets/pages/ProgrammerPanel.ets   | 125 +++
+ .../src/main/ets/preferences/PreferencesStore.ets  |  44 +-
+ .../src/main/ets/viewmodels/GraphViewModel.ets     | 132 ++++
+ .../src/main/resources/base/element/string.json    |  15 +-
+ .../main/resources/base/profile/main_pages.json    |   3 +-
+ opencalc/entry/src/test/List.test.ets              |  18 +-
+ .../src/test/ets/calculator/BaseConverter.test.ets | 178 +++++
+ .../src/test/ets/calculator/Calculator.test.ets    |  76 ++
+ .../src/test/ets/calculator/Expression.test.ets    |  68 ++
+ .../src/test/ets/calculator/MemorySlots.test.ets   |  88 +++
+ .../src/test/ets/common/FractionUtil.test.ets      | 103 +++
+ .../test/ets/common/NaturalLanguageParser.test.ets | 154 ++++
+ .../entry/src/test/ets/common/PlotUtils.test.ets   | 185 +++++
+ .../src/test/ets/common/UnitConverter.test.ets     | 153 +++-
+ .../src/test/ets/history/HistorySearch.test.ets    | 147 ++++
+ .../src/test/ets/keyboard/KeyboardSwipe.test.ets   | 151 ++++
+  ... (省略 130 行, 完整 diff 见 D:\huawei\Demo\worktrees\issue-37)
+```
+
+## 最近 29 个 commits
+```
+852a5ca fix(graph): tan/cot/sec/csc Y axis percentile + value-based null (Closes #37 followup)
+365e189 fix(graph): move vm.compute() into loadPrefs().then() + force radian (Closes #37)
+331bf62 fix: revert evaluateAt debug code (was forcing sin) - cos/tan now work
+a347814 debug: force evaluateAt to return sin(x) to test
+1c6ae56 debug: add console.log in evaluateAt to find sin(x) bug
+3b57d7a fix(graph): default x range to -2π~2π so sin/cos show full cycle
+d867054 fix(graph): auto-redraw on f(x) change with 300ms debounce + better error UI
+5457b43 fix: pass number to setProgrammerModeDefault
+c8509e6 fix(prefs): remove duplicate programmer-mode methods from Issue #22 (Issue #29 version is canonical)
+f270a7b merge: integrate Issue #29 keyboard-swipe into demo/integration-all
+3d2705f merge: integrate Issue #28 memory-slots into demo/integration-all
+306b344 merge: integrate Issue #27 result-display-toggle into demo/integration-all
+f4026aa merge: integrate Issue #26 plot-graph into demo/integration-all
+f0544f8 merge: integrate Issue #25 unit-conversion-extension into demo/integration-all
+2477553 merge: integrate Issue #24 history-search into demo/integration-all
+ea8993c Merge remote-tracking branch 'origin/feat/issue-22-简单需求' into demo/integration-all
+d88bb47 Merge remote-tracking branch 'origin/feat/issue-21-测试噪声-aid-planning' into demo/integration-all
+b86f7c7 fix(memory-slots): ArkTS strict-mode adjustments (Issue #28)
+491573c feat(keyboard-swipe): 竖屏左右滑动切换三种键盘模式 [Issue #29]
+8a7ea50 feat(factorial): add ! button to scientific mode (Issue #21)
+```
+
+## commit signoff 状态
+  ✅ 852a5ca6 2026-07-08 fix(graph): tan/cot/sec/csc Y axis percentile + value-based  signed=True
+  ✅ 365e1898 2026-07-08 fix(graph): move vm.compute() into loadPrefs().then() + forc signed=True
+  ❌ 331bf62e 2026-06-26 fix: revert evaluateAt debug code (was forcing sin) - cos/ta signed=False
+  ❌ a347814d 2026-06-26 debug: force evaluateAt to return sin(x) to test signed=False
+  ❌ 1c6ae566 2026-06-26 debug: add console.log in evaluateAt to find sin(x) bug signed=False
+  ❌ 3b57d7ae 2026-06-26 fix(graph): default x range to -2π~2π so sin/cos show full c signed=False
+  ❌ d867054c 2026-06-26 fix(graph): auto-redraw on f(x) change with 300ms debounce + signed=False
+  ❌ 5457b438 2026-06-26 fix: pass number to setProgrammerModeDefault signed=False
+  ❌ c8509e68 2026-06-26 fix(prefs): remove duplicate programmer-mode methods from Is signed=False
+  ❌ f270a7b6 2026-06-26 merge: integrate Issue #29 keyboard-swipe into demo/integrat signed=False
+  ❌ 3d2705f5 2026-06-26 merge: integrate Issue #28 memory-slots into demo/integratio signed=False
+  ❌ 306b3440 2026-06-26 merge: integrate Issue #27 result-display-toggle into demo/i signed=False
+  ❌ f4026aac 2026-06-26 merge: integrate Issue #26 plot-graph into demo/integration- signed=False
+  ❌ f0544f8e 2026-06-26 merge: integrate Issue #25 unit-conversion-extension into de signed=False
+  ❌ 24775534 2026-06-26 merge: integrate Issue #24 history-search into demo/integrat signed=False
+  ❌ ea8993c5 2026-06-26 Merge remote-tracking branch 'origin/feat/issue-22-简单需求' int signed=False
+  ❌ d88bb47f 2026-06-26 Merge remote-tracking branch 'origin/feat/issue-21-测试噪声-aid- signed=False
+  ❌ b86f7c7e 2026-06-18 fix(memory-slots): ArkTS strict-mode adjustments (Issue #28) signed=False
+  ✅ 491573cf 2026-06-18 feat(keyboard-swipe): 竖屏左右滑动切换三种键盘模式 [Issue #29] signed=True
+  ✅ 8a7ea50e 2026-06-17 feat(factorial): add ! button to scientific mode (Issue #21) signed=True
+  ❌ 19ff4e21 2026-06-17 feat(result-display): 分数/小数显示自由切换 [Issue #27] signed=False
+  ❌ c7ba0fc6 2026-06-17 feat(memory-slots): M1-M6 long-press store + MR recall picke signed=False
+  ✅ 70664388 2026-06-17 docs(todo): mark git commit + gh_helper.py comment as done f signed=True
+  ✅ b8eeb2ba 2026-06-17 feat(plot-graph): Issue #26 函数图像绘制 — 输入 sin(x) 显示曲线 signed=True
+  ✅ 8e6555cf 2026-06-17 feat(programmer-mode): BIN/OCT/DEC/HEX 实时转换 + 模式切换动画 [Issue  signed=True
+  ❌ eec5ecc1 2026-06-17 feat(issue-25): extend unit conversion with area/time/speed  signed=False
+  ✅ efc24373 2026-06-17 docs(issue-24): re-dispatch fix per rev-01 feedback signed=True
+  ✅ 77335abc 2026-06-17 feat(history-search): Issue #24 历史搜索框 signed=True
+  ✅ 7139e59b 2026-06-17 fix(merge): resolve CalculatorPage.ets conflicts from #13/#1 signed=True
+
+## AID 产物 (specs/changes/ 下)
+  - 20260708-bugfix-sin-straight-line: apply-report.md(9927B), delta-design.md(12641B), delta-spec.md(3462B), design-review.md(4222B), info.md(7928B), proposal.md(4349B), tasks.md(8642B), todo.md(3322B)
+  - 20260708-bug-tan-period-render: apply-report.md(7816B), todo.md(1549B)
+  - 20260617-requirement-change-modify-aid-planning: apply-report.md(9665B), delta-design.md(16880B), delta-spec.md(9153B), design-review.md(5797B), info.md(8908B), proposal.md(4229B), tasks.md(8466B), todo.md(2539B)
+  - 20260617-requirement-add-中等模糊: apply-report.md(9038B), delta-design.md(17160B), delta-spec.md(16094B), design-review.md(7776B), info.md(11051B), proposal.md(10268B), tasks.md(11354B), todo.md(2870B)
+  - 20260617-requirement-add-result-display-toggle: apply-report.md(12201B), delta-design.md(15757B), delta-spec.md(8400B), design-review.md(4757B), info.md(9600B), proposal.md(3485B), tasks.md(9843B), todo.md(3062B)
+  - 20260617-requirement-add-programmer-mode: apply-report.md(6494B), delta-design.md(22260B), delta-spec.md(16903B), design-review.md(7978B), info.md(13573B), proposal.md(5448B), tasks.md(13947B), todo.md(3357B)
+  - 20260617-requirement-add-plot-graph: apply-report.md(9544B), delta-design.md(27156B), delta-spec.md(10299B), design-review.md(6761B), info.md(13276B), proposal.md(5808B), tasks.md(12033B), todo.md(2053B)
+  - 20260617-requirement-add-memory-slots: apply-report.md(11340B), delta-design.md(19708B), delta-spec.md(18059B), design-review.md(8308B), info.md(14888B), proposal.md(4540B), tasks.md(27846B), todo.md(3464B)
+  - 20260617-requirement-add-keyboard-swipe: apply-report.md(7814B), delta-design.md(15163B), delta-spec.md(15753B), design-review.md(6245B), info.md(11296B), proposal.md(4957B), tasks.md(14312B), todo.md(4852B)
+  - 20260617-requirement-add-factorial-button: apply-report.md(9290B), delta-spec.md(2028B), design.md(5652B), info.md(3667B), proposal.md(4164B), tasks.md(4765B), todo.md(1741B)
+  - 20260612-requirement-add-realtime-preview: apply-report.md(19617B), delta-spec.md(9465B), design.md(14987B), info.md(9173B), proposal.md(4496B), tasks.md(9359B), todo.md(2223B)
+  - 20260611-requirement-add-percent-button: apply-report.md(8724B), delta-spec.md(4251B), design.md(6340B), info.md(6547B), proposal.md(3281B), tasks.md(5258B), todo.md(2936B)
+
+## dev-01 截图证据 (仅供参考, 必须自己重跑)
+  - 20260708-bugfix-sin-straight-line/graph_after_fix.png (176946 bytes)
+  - 20260708-bugfix-sin-straight-line/graph_home.jpeg (113575 bytes)
+  - 20260708-bugfix-sin-straight-line/graph_initial.jpeg (113648 bytes)
+  - 20260708-bugfix-sin-straight-line/graph_sin_rad_fixed.png (213905 bytes)
+
+## 你的工作 (rev-01 v2 — 5 个阶段)
+
+🤖 非交互模式 (claude -p), 全自动, 不允许问问题. 所有决策自己拍板.
+
+### 阶段 1: 读产物 (5 分钟)
+
+```bash
+cd D:\huawei\Demo\worktrees\issue-37
+Read specs/changes/<date>-*/proposal.md
+Read specs/changes/<date>-*/design.md
+Read specs/changes/<date->/tasks.md
+Read specs/changes/<date->/apply-report.md
+Bash: git show <commit-sha>
+Bash: git diff origin/main..HEAD --stat
+```
+
+### 阶段 2: 构造补充测试用例 (10 分钟) — **关键**
+
+**不要直接信 dev-01 的用例**。基于 proposal.md 的需求, 自己构造 ≥ 8 个用例, 涵盖:
+- **边界值**: 0, 负数, 极值, 空字符串, 超长字符串
+- **异常输入**: 非法字符, 数学错误 (÷0, √(-1), log(0))
+- **连续操作**: 快速点击, backspace 边界
+- **状态切换**: 横竖屏, 深色浅色, 前后台切换
+- **可访问性**: 字体放大 200%, TalkBack
+
+写到 `D:\huawei\Demo\worktrees\issue-37/review-test-cases.md`, 格式:
+```markdown
+## TC-01: <一句话>
+- 输入: <操作步骤>
+- 期望: <预期结果>
+```
+
+### 阶段 3: 亲手跑 UI 测试 (15-30 分钟) — **关键**
+
+调用 `harmonyos-ui-test` skill 在 DevEco 模拟器上**真跑**:
+
+```bash
+# 检查模拟器
+Bash: hdc list targets
+# 如果为空, attempt 3 次再标 skipped (铁律 7)
+# 如果有, 继续:
+# 1. build HAP
+Bash: build_hap.bat assembleHap
+# 2. install
+Bash: hdc install <hap>
+# 3. 启动应用
+Bash: hdc shell aa start -b <bundle>
+# 4. 逐个跑 review-test-cases.md 里的用例
+#    每步用 hdc shell screencap 截图, 命名 issue-37-step-<seq>-<state>-<timestamp>.png
+#    每步用 hdc shell uiautomator dump 抓页面状态
+# 5. 汇总 evidence 到 .claude/review-logs/2026-07-07/ui-evidence/issue-37/
+```
+
+**关键约束**:
+- ❌ 不准复用 dev-01 的截图
+- ❌ 不准跳过补充测试用例
+- ❌ 不准写"模拟器不可用"就算了 — attempt ≥ 3 次后才标 skipped
+- ❌ 不准伪造测试日志 (铁律 7)
+
+### 阶段 4: 对比 dev-01 产物 (5 分钟)
+
+构造对比表:
+| 检查项 | dev-01 报告 | rev-01 跑出来 | 一致? |
+|--------|-------------|---------------|-------|
+| happy path | PASS | re-run PASS | ✅ |
+| 边界值 ×5 | (没跑) | 4 PASS, 1 FAIL | ⚠️ |
+| 异常输入 ×3 | PASS | 2 PASS, 1 FAIL | ⚠️ |
+| 截图数 | 3 张 | 12 张 | - |
+
+### 阶段 5: 按检查表逐项判断
+
+### 阻塞项 (任一 FAIL = REQUEST_CHANGES)
+1. [ ] AID 三阶段完整 (proposal.md / delta-spec.md / info.md / design.md / tasks.md / apply-report.md)
+2. [ ] **rev-01 亲手跑了 harmonyos-ui-test** (非复用 dev-01 报告)
+3. [ ] **截图 ≥ 8 张** (happy path + 边界 + 异常 + 状态切换)
+4. [ ] **uiautomator dump ≥ 3 份** (不同页面状态)
+5. [ ] **补充测试用例 ≥ 8 个** (rev-01 自己构造的, 写到 review-test-cases.md)
+6. [ ] commit 全部 signed-off
+7. [ ] 无铁律 7 违规 (测试日志不能伪造 — 看到 dev-01 写"模拟器不可用"必须**自己验证一次**)
+8. [ ] 在 feat/* 分支, 没直接推 main
+9. [ ] AID 产物存在 (specs/changes/ 下至少有 proposal.md + apply-report.md)
+
+### 建议项 (不阻塞但要列出)
+- commits 符合 conventional commits 规范
+- TDD 节奏 (test 与 feat 分开 commit)
+- 代码可读性 (命名, 重复, 复杂度)
+- UI 测试用例覆盖度
+
+## 输出
+
+**严格**按下面格式写到一个 JSON 文件 (路径给你了, 不要 print 到 stdout):
+
+路径: `D:/huawei/Demo/calculatorHuawei/.claude/review-logs/2026-07-08/issue-37-review.json`
+
+格式:
+```json
+{
+  "verdict": "APPROVE" 或 "REQUEST_CHANGES",
+  "summary": "<一句话总结, 用中文, 25 字以内>",
+  "ui_test_evidence": {
+    "test_cases_authored": <int>,
+    "test_cases_passed": <int>,
+    "test_cases_failed": <int>,
+    "screenshots_count": <int>,
+    "uiautomator_dumps_count": <int>,
+    "evidence_dir": "<相对路径>",
+    "emu_status": "running | unavailable | skipped",
+    "emu_attempts": <int>
+  },
+  "blocking": [
+    {"item": "<检查项名>", "evidence": "<具体证据, 文件:行号 或 commit SHA 或 截图文件名>"},
+    ...
+  ],
+  "suggestions": [
+    "<commit SHA>: <建议>",
+    ...
+  ],
+  "highlights": [
+    "<commit SHA>: <做得好的点>",
+    ...
+  ],
+  "comment": "<完整 markdown 评论, 用下面模板之一>"
+}
+```
+
+### 评论模板 (APPROVE)
+```
+[rev-01] APPROVED — <summary>
+
+## 审查结果
+| 检查项 | 状态 |
+|--------|------|
+| AID 三阶段 | OK |
+| rev-01 亲手跑 UI 测试 | OK (<int> 个用例, <int> PASS, <int> FAIL) |
+| 截图 (<int> 张) | OK |
+| uiautomator dump (<int> 份) | OK |
+| commit signoff | OK |
+| 分支规范 | OK |
+| 铁律 7 不伪造 | OK |
+
+## UI 测试证据
+- 测试用例: .claude/review-logs/<date>/ui-evidence/issue-37/review-test-cases.md
+- 截图 (N 张): .claude/review-logs/<date>/ui-evidence/issue-37/screenshots/
+- uiautomator dump (M 份): .claude/review-logs/<date>/ui-evidence/issue-37/dumps/
+- 模拟器状态: <emu_status>
+
+## 主要亮点
+- <highlights 内容>
+
+## 决定
+已 close. 感谢 @littleleafccccc 的贡献.
+```
+
+### 评论模板 (REQUEST_CHANGES)
+```
+[rev-01] REQUEST CHANGES — <summary>
+
+## 审查结果
+| 检查项 | 状态 | 备注 |
+|--------|------|------|
+| AID 三阶段 | OK/FAIL | <备注> |
+| rev-01 亲手跑 UI 测试 | OK/FAIL | <备注> |
+| 截图 (N 张, 需 ≥8) | OK/FAIL | <备注> |
+| uiautomator dump (M 份, 需 ≥3) | OK/FAIL | <备注> |
+| 补充测试用例 (K 个, 需 ≥8) | OK/FAIL | <备注> |
+| commit signoff | OK/FAIL | <备注> |
+| 分支规范 | OK/FAIL | <备注> |
+| 铁律 7 不伪造 | OK/FAIL | <备注> |
+
+## 阻塞项 (必须修复)
+- `<文件路径>:<行号>` 或 `<commit SHA>` 或 `<截图>` — <问题描述>
+  修复建议: <具体怎么改>
+
+## 建议项 (建议修复)
+- <commit SHA>: <建议>
+
+## 接下来
+@littleleafccccc 请修复阻塞项后再 assign rev-01.
+issue 保持 open, 不要关闭.
+```
+
+## 工作流步骤
+
+1. cd 到 worktree: `D:\huawei\Demo\worktrees\issue-37`
+2. 用 Read 工具读关键文件 (apply-report.md, spec 产物, 关键代码 diff)
+3. 用 Bash 跑 `git show <sha>` 看每个 commit 的实际改动
+4. 用 Bash 跑 `git diff origin/main..HEAD -- <file>` 看具体行
+5. 按检查表逐项判断
+6. 用 Write 工具写 JSON 到 `D:/huawei/Demo/calculatorHuawei/.claude/review-logs/2026-07-08/issue-37-review.json`
+7. **不要**发 GitHub 评论 (review_issues.py 会负责发)
+8. **不要** close/assign issue (review_issues.py 会负责)
+9. **不要** commit 任何改动 (审查者只读)
+
+如果 worktree 不存在 (D:/huawei/Demo/worktrees/issue-37 缺失), 写:
+```json
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "worktree 缺失",
+  "blocking": [{"item": "worktree 缺失", "evidence": "D:/huawei/Demo/worktrees/issue-37 不存在"}],
+  "suggestions": [],
+  "highlights": [],
+  "comment": "[rev-01] REQUEST CHANGES — worktree 缺失, dev-01 还没创建..."
+}
+```
+
+如果分支没 push 到 origin, 写:
+```json
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "分支未推送",
+  "blocking": [{"item": "分支未推送", "evidence": "fix/issue-37-tan-period-render 不在 origin 上"}],
+  ...
+}
+```

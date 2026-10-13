@@ -1,0 +1,37 @@
+处理 GitHub Issue #12: 简单需求
+Issue 正文:
+**支持二进制、八进制、十六进制转换，加一个程序员模式切换** | 程序员模式 | ⭐⭐ | 模式切换动画+进制转换 |
+
+工作目录: D:\huawei\Demo\worktrees\issue-12
+类型: requirement-add
+名称: 简单需求
+
+请按 AID 工作流三阶段处理。Claude Code 会自动从 ~/.claude/skills/ 加载以下 skill:
+  - PLANNING 阶段:aid-planning skill → proposal.md / delta-spec.md / info.md / design.md
+  - IMPLEMENTING 阶段:aid-implementing skill → tasks.md
+  - APPLYING 阶段:aid-applying skill (+ tdd-enforcer) → apply-report.md + 真实代码改动 + 真实测试
+
+步骤:
+1. 读项目能力: read D:/huawei/Demo/calculatorHuawei/.claude/capabilities.json
+2. PLANNING 阶段 (自然语言匹配 aid-planning)
+3. IMPLEMENTING 阶段 (自然语言匹配 aid-implementing)
+4. APPLYING 阶段 (自然语言匹配 aid-applying + tdd-enforcer): RED-GREEN-REFACTOR,真实写代码 + 真实跑测试
+5. 每个阶段用 TodoWrite 跟踪进度,状态写到 specs/changes/<YYYYMMDD>-<type>-<name>/todo.md
+6. 完成后跑 git commit (不 push! dev-01 会帮你 push)
+7. 完成后跑 gh_helper.py comment <num> "@littleleafccccc claude -p 跑完,worktree 在 <wt_path> 等 push"
+
+⚠️ 你的工作范围 = AID 三阶段 + commit。**不**做:
+  - ❌ 不 push (dev-01 负责)
+  - ❌ 不 close issue (rev-01/用户负责)
+  - ❌ 不 reassign (dev-01 决定)
+  - ❌ 不发 issue 总结评论 (dev-01 负责)
+
+用户确认点处理 (方案 C,你自动答):
+  - 阶段间确认一律自动同意,理由记录 todo.md
+  - 编译环境检查真实跑 which hvigorw / hdc
+  - 高风险点必须暂停并 @littleleafccccc 等回复:
+    a) capabilities.json 缺失 (项目级)
+    b) hvigorw / hdc / DevEco SDK 不在 PATH
+    c) PLANNING 识别为 arch-refactor 或 platform-migration
+    d) delta-spec.md / design.md 涉及删除现有功能
+  - 暂停方式:gh_helper.py comment <num> @littleleafccccc,issue 标 awaiting-human-input,worktree 暂存不 commit/push

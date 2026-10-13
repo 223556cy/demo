@@ -1,0 +1,202 @@
+✔ TC-RP-01: 空表达式 → "" (0.5903ms)
+✔ TC-RP-02: 末位左括号 "(" → "" (不完整) (0.0745ms)
+✖ TC-RP-03: 简单加法 1+2 → "3" (0.5561ms)
+✖ TC-RP-04: 减法负数 5-10 → "-5" (0.128ms)
+✔ TC-RP-05: 不完整加法 1+ → "" (末位运算符) (0.0717ms)
+✔ TC-RP-06: 函数未闭合 sin(0 → "" (末位左括号) (0.0496ms)
+✔ TC-RP-07: 语法错误 1++2 → "" (0.0647ms)
+✖ TC-RP-08: 函数 sin(0) → "0" (0.1062ms)
+✖ TC-RP-09: 百分号 50+10% → "55" (0.1019ms)
+✔ TC-RP-10: 异常输入 1+( → "" (末位左括号) (0.1232ms)
+✖ TC-RP-11: 格式一致 1000+2000 → "3,000" (0.0985ms)
+✖ TC-RP-12: 嵌套括号 (1+2)*(3+4) → "21" (0.0777ms)
+✖ TC-RP-13: 长表达式 1+2*3/4-5 → "-2.5" (0.0659ms)
+✔ TC-RP-14: 除零 1÷0 → "" (division_by_0) (0.0474ms)
+✔ TC-RP-15: AC 等价（清空后） → "" (0.0388ms)
+✖ REG-RP-1: 错误状态不污染主流程（snapshot/restore） (0.0703ms)
+✔ SANITY: safeEval 在所有 TC 用例上都正确 (0.2972ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 9
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 72.417
+
+✖ failing tests:
+
+test at RealtimePreview.test.mjs:50:1
+✖ TC-RP-03: 简单加法 1+2 → "3" (0.5561ms)
+  AssertionError [ERR_ASSERTION]: [TC-RP-03] preview expected "3", got ""
+  
+  '' !== '3'
+  
+      at checkNumericPreview (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:25:10)
+      at TestContext.<anonymous> (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:51:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: '3',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at RealtimePreview.test.mjs:54:1
+✖ TC-RP-04: 减法负数 5-10 → "-5" (0.128ms)
+  AssertionError [ERR_ASSERTION]: [TC-RP-04] preview expected "-5", got ""
+  
+  '' !== '-5'
+  
+      at checkNumericPreview (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:25:10)
+      at TestContext.<anonymous> (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:55:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: '-5',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at RealtimePreview.test.mjs:74:1
+✖ TC-RP-08: 函数 sin(0) → "0" (0.1062ms)
+  AssertionError [ERR_ASSERTION]: [TC-RP-08] preview expected "0", got ""
+  
+  '' !== '0'
+  
+      at checkNumericPreview (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:25:10)
+      at TestContext.<anonymous> (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:76:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: '0',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at RealtimePreview.test.mjs:79:1
+✖ TC-RP-09: 百分号 50+10% → "55" (0.1019ms)
+  AssertionError [ERR_ASSERTION]: [TC-RP-09] preview expected "55", got ""
+  
+  '' !== '55'
+  
+      at checkNumericPreview (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:25:10)
+      at TestContext.<anonymous> (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:81:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: '55',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at RealtimePreview.test.mjs:89:1
+✖ TC-RP-11: 格式一致 1000+2000 → "3,000" (0.0985ms)
+  AssertionError [ERR_ASSERTION]: [TC-RP-11] preview expected "3,000", got ""
+  
+  '' !== '3,000'
+  
+      at checkNumericPreview (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:25:10)
+      at TestContext.<anonymous> (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:90:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: '3,000',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at RealtimePreview.test.mjs:93:1
+✖ TC-RP-12: 嵌套括号 (1+2)*(3+4) → "21" (0.0777ms)
+  AssertionError [ERR_ASSERTION]: [TC-RP-12] preview expected "21", got ""
+  
+  '' !== '21'
+  
+      at checkNumericPreview (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:25:10)
+      at TestContext.<anonymous> (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:94:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: '21',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at RealtimePreview.test.mjs:97:1
+✖ TC-RP-13: 长表达式 1+2*3/4-5 → "-2.5" (0.0659ms)
+  AssertionError [ERR_ASSERTION]: [TC-RP-13] preview expected "-2.5", got ""
+  
+  '' !== '-2.5'
+  
+      at checkNumericPreview (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:25:10)
+      at TestContext.<anonymous> (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:98:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: '-2.5',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at RealtimePreview.test.mjs:116:1
+✖ REG-RP-1: 错误状态不污染主流程（snapshot/restore） (0.0703ms)
+  AssertionError [ERR_ASSERTION]: After error, fresh preview should be 2, got ""
+  
+  '' !== '2'
+  
+      at TestContext.<anonymous> (file:///D:/huawei/Demo/worktrees/issue-11/specs/changes/20260612-requirement-add-realtime-preview/tests/RealtimePreview.test.mjs:122:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: '2',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

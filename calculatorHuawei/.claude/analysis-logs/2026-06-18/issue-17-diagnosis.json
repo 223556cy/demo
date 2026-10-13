@@ -1,0 +1,29 @@
+{
+  "issue_ticket": {
+    "issue_number": 17,
+    "title": "Issue #17 (粘贴即计算) 最终 APPROVE, 但 v1 一次性 dispatch 跳过 aid-applying 全部验证闸门, 触发 rev-01 REQUEST CHANGES 后才走通 re-dispatch v2",
+    "verdict": "APPROVE",
+    "priority": "MEDIUM",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "v1 dispatch (session abfa9ad5, 2026-06-17 01:48-01:58 UTC, 75 tool_use 全程 0 次 Skill 调用) 用裸 Bash/Write 手工跑完 AID 三阶段, 把 proposal/delta-spec/info/design/todo/tasks 全写到 specs/changes/20260617-requirement-add-paste-calculate/(注意: paste-calculate, 拼写错), 但该目录从未进入 commit — 仓内可见的 v1 产物只有 feat commit 55ecfb5e(CalculatorPage.ets +61 行 + PasteAndCalculate.test.ets 49 行, 无任何 AID spec 落盘)。rev-01 在 d8fead92 给出 REQUEST CHANGES 3 项: (1) 缺 design.md, (2) pasteboard.getData() 在 HarmonyOS 4.0+ 是 async API, v1 写成同步 → ArkTS 编译错 `Type 'Promise<PasteData>' is missing`, (3) UI 自动化用 hdc input text 实际是模拟按键, 不触发 pasteboard, false negative。c54c7997 re-dispatch v2(f9932c1) 用 aid-applying 强制走 worktree build_hap.bat 实跑 hvigorw assembleHap(BUILD SUCCESSFUL 12.7s) + 用 harmonyos-ui-test skill 的 uitest uiInput 改写 UI 自动化(5/5 PASS, 11 张 MD5 唯一截图) + 在 20260617-requirement-add-paste-and-calculate(补 and) 重建全套 7 件 AID 产物(apply-report 9274B / design 23370B / design-review 1781B), 最终 APPROVE。",
+    "root_cause_analysis": "归类 B(漏掉步骤) + C(理解偏差) 混合, 唯一指向 aid-applying。证据: (1) abfa9ad5.jsonl 75 个 tool_use 中 grep 'Skill' 命中数 = 0, 但 99e87331 同时间并发 dispatch 命中 3 次 Skill(aid-planning L56 / aid-implementing L173 / aid-applying L191), 说明 v1 调度 prompt 已有 '请按 AID 工作流三阶段处理' 但 abfa9ad5 这条会话的 dev-01 agent 选择不调 Skill 直接裸写 — aid-applying step1 (任务摘要) 末段无 '必须 Skill('aid-applying') 启动本阶段' 的 imperative gate, 是绕过的入口; (2) aid-applying SKILL.md L143 明确 'UI 测试必须使用 skill(harmonyos-ui-test)(铁律 7)'、L240 '不准以 CLI 不可用 / 没有 hvigorw 为由跳过 → 必须走 worktree 里的 opencalc/build_hap.bat', 但 v1 apply-report 把 T3.2 标 Deferred / T4.2 写 'worktree 缺 resources/' 直接放过, 没触发 SKILL.md L157 '提示用户编译/测试环境未就绪, 请先配置' 的强制中断 — 验证闸门是软提示而非 hard-gate; (3) v1 写到 specs/changes/20260617-requirement-add-paste-calculate/(无 and) 后从未 git add, 落到仓内的 feat commit 只含 .ets, 6 件 AID 文档凭空蒸发, aid-applying T9 VERIFY(git diff --stat + git status) 步骤完全被跳过 — SKILL.md 该步骤对 'AID 产物是否全部 git tracked' 无 assertion, 只有统计输出。唯一指责 aid-applying: v1 的 3 大阻塞项(compile 错 / UI false negative / 6 件 AID 产物丢失)全部命中该 skill 的 step3-0-3 / step4 铁律 7 / step3-4 VERIFY 三道闸门, 三道闸门都是软建议, 没有任何一道能阻断 'Skill 跳过 → 裸写 apply-report' 的旁路。",
+    "optimization_direction": "在 aid-applying SKILL.md step1 任务摘要表前加 imperative '启动本阶段必须先 Skill('aid-applying'); 否则视为流程未开始'; step3-0-3 真编译失败的退出码 1 必须 propagate 到 step3-4 VERIFY, 把 'BUILD SUCCESSFUL 12.7s' 改成 'must-pass gate, 失败即不得写 apply-report.md'; step4 铁律 7 末尾追加 'if hdc input text / hdc shell input, 该用例必须重写为 uitest uiInput 并落 PNG 截图, 否则 harmonyos-ui-test gate 视为 FAIL'; step3-4 VERIFY 列表新增第 4 项 'assert all AID 产物(proposal/delta-spec/info/design/tasks/apply-report/todo) git status --short 无 ??/M 标记, 否则 step3-4 FAIL 阻断 close'。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-17/2026-06-17/99e87331-a1c4-41ce-b013-9a390f7f2ec8.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-17/2026-06-17/abfa9ad5-c642-4894-9a56-b65147e13cd4.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-17/2026-06-17/c54c7997-53ce-4f39-abbe-722a1337d6f6.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-17/2026-06-17/d8fead92-f41c-4371-98e6-93623cb21c2a.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-17/2026-06-17/2554a40e-0729-46cc-ba7b-0b2928fc323a.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-17/2026-06-17/f927f462-93e3-45fc-a8cb-b558b393f250.jsonl"
+    ],
+    "evidence_anchors": [
+      "session abfa9ad5 (v1 dispatch): grep 'Skill' 命中数 = 0 / 75 tool_use 全程裸 Bash+Write, 写了 proposal/delta-spec/info/design/todo/tasks/PasteCalculator.{port,test}.mjs 等 9 个 Write, 但路径 specs/changes/20260617-requirement-add-paste-calculate/(无 and) 拼写错, 最终仓内 feat commit 55ecfb5e 只见 CalculatorPage.ets + PasteAndCalculate.test.ets — 6 件 AID 文档完全丢失, 是 aid-applying step3-4 VERIFY 漏跑的直接证据",
+      "session 99e87331 (并发 Skill-based dispatch): assistant L56 调 Skill aid-planning / L173 调 Skill aid-implementing / L191 调 Skill aid-applying, 三阶段齐全, 与 abfa9ad5 形成 'Skill 用 vs 不用' 的并列对照",
+      "session d8fead92 (rev-01 #1, 2026-06-17 03:05-03:08): rev-01 输出 'REQUEST CHANGES — 缺 design.md + 未签 DCO + UI 自动化未真跑' — 三大阻塞项全部命中 aid-applying 应把关的 step3-0-3 (compile) / step4 (UI 铁律 7) / step3-4 VERIFY (AID 产物齐全)",
+      "git show 55ecfb5e: commit 含 2 个文件改动 (CalculatorPage.ets +61 行, PasteAndCalculate.test.ets 49 行), 0 个 AID 文档文件 — v1 把 specs 写到非标准路径后未 git add, 静默丢失",
+      "git show f9932c1: re-dispatch v2 commit 含 17 个文件改动, 含 design.md (14987B 现 23370B, +362 行 组件图/状态机/数据契约/FMEA/D1-D7 决策) + apply-report.md v2 (9274B, T3.2/T4.2 改为 完成) + ui-tests/run_paste_tests.py v2 (改用 uitest uiInput) + 11 张 PNG 截图 (MD5 全部唯一, 187-193KB) — 三道闸门全部走通",
+      "aid-applying SKILL.md L143 'UI 测试必须使用 skill(harmonyos-ui-test)' / L240 '不准以 CLI 不可用为由跳过' / L157 '提示用户: 编译/测试环境未就绪, 请先配置' — 三处都是软提示, 没有 hard-gate exit-code 1 / 不写 apply-report.md 等强制性阻断, 是 v1 能一路绿灯到 REQUEST CHANGES 的根因"
+    ]
+  }
+}

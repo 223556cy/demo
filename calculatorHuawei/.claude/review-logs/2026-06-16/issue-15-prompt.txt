@@ -1,0 +1,216 @@
+处理 GitHub Issue #15 的代码审查
+
+你是 rev-01 (代码审查员), GitHub 账号 = littleleafbbbbb.
+审查仓库: calculatorHuawei/agent_workflow
+
+## Issue 信息
+- Number: #15
+- Title: 中等模糊
+- URL: https://github.com/calculatorHuawei/agent_workflow/issues/15
+
+## Issue 正文
+**历史列表支持按日期分组，显示"今天\"\"昨天\"\"更早\"** | 历史分组 | ⭐ | 时间分组，信息层级清晰 |
+
+## 审查上下文 (已为你收集好, 不要重新 fetch)
+- Worktree: `D:\huawei\Demo\worktrees\issue-15`
+- 分支: `feat/issue-15-中等模糊`
+- 分支已 push 到 origin: True
+- 修改文件 stat:
+```
+.claude/capabilities.json                          |  34 +-
+ .../entry/src/main/ets/history/HistoryGroup.ets    |  63 ++++
+ .../entry/src/main/ets/pages/CalculatorPage.ets    |  45 ++-
+ .../src/main/resources/base/element/color.json     |   8 +
+ .../src/main/resources/base/element/string.json    |   8 +
+ .../src/main/resources/base/media/app_icon.png     | Bin 0 -> 83 bytes
+ .../main/resources/base/profile/main_pages.json    |   6 +
+ .../src/test/ets/history/HistoryGroup.test.ets     | 205 ++++++++++++
+ .../apply-report.md"                               | 345 +++++++++++++++++++++
+ .../delta-design.md"                               | 293 +++++++++++++++++
+ .../delta-spec.md"                                 | 142 +++++++++
+ .../design-review.md"                              |  67 ++++
+ .../info.md"                                       | 176 +++++++++++
+ .../proposal.md"                                   |  92 ++++++
+ .../tasks.md"                                      | 164 ++++++++++
+ .../tests/HistoryGroup.port.mjs"                   |  41 +++
+ .../tests/HistoryGroup.test.mjs"                   | 180 +++++++++++
+ .../tests/test-output-green.txt"                   |  62 ++++
+ .../todo.md"                                       | 110 +++++++
+ .../ui-tests/screenshot/home-after-click.jpeg"     | Bin 0 -> 97976 bytes
+ .../ui-tests/screenshot/layout-3sections.json"     |   1 +
+ .../ui-tests/screenshot/layout-after-click.json"   |   1 +
+ .../ui-tests/screenshot/layout-home.json"          |   1 +
+ .../ui-tests/screenshot/opencalc-home.jpeg"        | Bin 0 -> 97855 bytes
+ .../ui-tests/screenshot/ss-after-3calcs.jpeg"      | Bin 0 -> 108532 bytes
+ .../ui-tests/screenshot/ss-after-calc.jpeg"        | Bin 0 -> 100959 bytes
+ .../ui-tests/screenshot/ss-history-3sections.jpeg" | Bin 0 -> 89871 bytes
+ .../ui-tests/screenshot/ss-history-today.jpeg"     | Bin 0 -> 99563 bytes
+ .../ui-tests/screenshot/ss-home-new.jpeg"          | Bin 0 -> 99964 bytes
+ 29 files changed, 2015 insertions(+), 29 deletions(-)
+```
+
+## 最近 6 个 commits
+```
+5fadde7 docs(issue-15): todo.md 记录 re-dispatch v2 全过程
+5009c07 fix(issue-15): re-dispatch v2 真实 UI 渲染截图 (UNBLOCK rev-01 #1)
+68982c3 fix(infra): 补 HarmonyOS 编译必需资源(让 hvigorw assembleHap 能跑)
+7dff45d fix(history): re-dispatch for rev-01 [issue #15]
+8083dfc feat(history): 按日期分组 (今天/昨天/更早) [issue #15]
+5215449 fix(aid-init): update capabilities.json to point to main repo
+fe169f2 Merge feat/issue-11-realtime-preview: 实时预览功能
+5990336 Merge branch 'main' of https://github.com/calculatorHuawei/agent_workflow
+66b0937 feat(realtime-preview): add real-time preview with bug fix for consecutive operators
+dee5118 Merge pull request #10 from calculatorHuawei/feat/issue-9-percent-button
+d8dfeec Merge feat/issue-9-percent-button: 百分号按钮增强
+644e0d1 feat(percent): add 3 edge case detections for percent button
+59218f0 feat(percent): 添加百分号按钮功能及测试
+9ea6ac5 chore: update team config — gateway running state + iron rule 7
+01b3773 feat: import OpenCalc HarmonyOS port as opencalc/ subfolder
+b346ea2 docs: 添加 3 员工邀请到仓库的手工操作指南
+718a1db feat: 注入 3 个员工 SOUL.md 灵魂定义
+8cb0094 chore: 填入 3 个员工 GitHub Token + 更新用户名引用
+5faa73c chore: 更新 handoff.yaml 标记仓库已推送至 GitHub
+c886a61 feat: 初始化 1+N 数字员工团队配置
+```
+
+## commit signoff 状态
+  ✅ 5fadde77 2026-06-16 docs(issue-15): todo.md 记录 re-dispatch v2 全过程 signed=True
+  ✅ 5009c079 2026-06-16 fix(issue-15): re-dispatch v2 真实 UI 渲染截图 (UNBLOCK rev-01 #1) signed=True
+  ✅ 68982c33 2026-06-16 fix(infra): 补 HarmonyOS 编译必需资源(让 hvigorw assembleHap 能跑) signed=True
+  ✅ 7dff45d1 2026-06-16 fix(history): re-dispatch for rev-01 [issue #15] signed=True
+  ✅ 8083dfcf 2026-06-16 feat(history): 按日期分组 (今天/昨天/更早) [issue #15] signed=True
+  ✅ 52154498 2026-06-15 fix(aid-init): update capabilities.json to point to main rep signed=True
+
+## AID 产物 (specs/changes/ 下)
+  - 20260616-requirement-add-中等模糊: apply-report.md(17923B), delta-design.md(9242B), delta-spec.md(5680B), design-review.md(2780B), info.md(7217B), proposal.md(4640B), tasks.md(7352B), todo.md(5544B)
+  - 20260612-requirement-add-realtime-preview: apply-report.md(19617B), delta-spec.md(9465B), design.md(14987B), info.md(9173B), proposal.md(4496B), tasks.md(9359B), todo.md(2223B)
+  - 20260611-requirement-add-percent-button: apply-report.md(8724B), delta-spec.md(4251B), design.md(6340B), info.md(6547B), proposal.md(3281B), tasks.md(5258B), todo.md(2936B)
+
+## 截图证据
+  ❌ 无真实截图
+
+## 你的工作
+
+🤖 非交互模式 (claude -p), 全自动, 不允许问问题. 所有决策自己拍板.
+
+按以下检查表审查, **每项都必须勾完**:
+
+### 阻塞项 (任一 FAIL = REQUEST_CHANGES)
+1. [ ] AID 三阶段完整 (PLANNING+IMPLEMENTING+APPLYING 产出齐全)
+   - 需有: proposal.md / delta-spec.md / info.md / design.md / tasks.md / apply-report.md
+2. [ ] 真实跑了 harmonyos-ui-test (有截图 + uiautomator dump)
+3. [ ] commit 全部 signed-off (见上面的 signoff 状态)
+4. [ ] 无铁律 7 违规 (测试日志不能伪造)
+5. [ ] 在 feat/* 分支, 没直接推 main
+6. [ ] AID 产物存在 (specs/changes/ 下至少有 proposal.md + apply-report.md)
+
+### 建议项 (不阻塞但要列出)
+- commits 符合 conventional commits 规范
+- TDD 节奏 (test 与 feat 分开 commit)
+- 代码可读性 (命名, 重复, 复杂度)
+
+## 输出
+
+**严格**按下面格式写到一个 JSON 文件 (路径给你了, 不要 print 到 stdout):
+
+路径: `D:/huawei/Demo/calculatorHuawei/.claude/review-logs/2026-06-16/issue-15-review.json`
+
+格式:
+```json
+{
+  "verdict": "APPROVE" 或 "REQUEST_CHANGES",
+  "summary": "<一句话总结, 用中文, 25 字以内>",
+  "blocking": [
+    {"item": "<检查项名>", "evidence": "<具体证据, 文件:行号 或 commit SHA>"},
+    ...
+  ],
+  "suggestions": [
+    "<commit SHA>: <建议>",
+    ...
+  ],
+  "highlights": [
+    "<commit SHA>: <做得好的点>",
+    ...
+  ],
+  "comment": "<完整 markdown 评论, 用下面模板之一>"
+}
+```
+
+### 评论模板 (APPROVE)
+```
+[rev-01] APPROVED — <summary>
+
+## 审查结果
+| 检查项 | 状态 |
+|--------|------|
+| AID 三阶段 | OK |
+| harmonyos-ui-test | OK |
+| commit signoff | OK |
+| 分支规范 | OK |
+| 铁律 7 不伪造 | OK |
+
+## 主要亮点
+- <highlights 内容>
+
+## 决定
+已 close. 感谢 @littleleafccccc 的贡献.
+```
+
+### 评论模板 (REQUEST_CHANGES)
+```
+[rev-01] REQUEST CHANGES — <summary>
+
+## 审查结果
+| 检查项 | 状态 | 备注 |
+|--------|------|------|
+| AID 三阶段 | OK/FAIL | <备注> |
+| harmonyos-ui-test | OK/FAIL | <备注> |
+| commit signoff | OK/FAIL | <备注> |
+| 分支规范 | OK/FAIL | <备注> |
+| 铁律 7 不伪造 | OK/FAIL | <备注> |
+
+## 阻塞项 (必须修复)
+- `<文件路径>:<行号>` 或 `<commit SHA>` — <问题描述>
+  修复建议: <具体怎么改>
+
+## 建议项 (建议修复)
+- <commit SHA>: <建议>
+
+## 接下来
+@littleleafccccc 请修复阻塞项后再 assign rev-01.
+issue 保持 open, 不要关闭.
+```
+
+## 工作流步骤
+
+1. cd 到 worktree: `D:\huawei\Demo\worktrees\issue-15`
+2. 用 Read 工具读关键文件 (apply-report.md, spec 产物, 关键代码 diff)
+3. 用 Bash 跑 `git show <sha>` 看每个 commit 的实际改动
+4. 用 Bash 跑 `git diff origin/main..HEAD -- <file>` 看具体行
+5. 按检查表逐项判断
+6. 用 Write 工具写 JSON 到 `D:/huawei/Demo/calculatorHuawei/.claude/review-logs/2026-06-16/issue-15-review.json`
+7. **不要**发 GitHub 评论 (review_issues.py 会负责发)
+8. **不要** close/assign issue (review_issues.py 会负责)
+9. **不要** commit 任何改动 (审查者只读)
+
+如果 worktree 不存在 (D:/huawei/Demo/worktrees/issue-15 缺失), 写:
+```json
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "worktree 缺失",
+  "blocking": [{"item": "worktree 缺失", "evidence": "D:/huawei/Demo/worktrees/issue-15 不存在"}],
+  "suggestions": [],
+  "highlights": [],
+  "comment": "[rev-01] REQUEST CHANGES — worktree 缺失, dev-01 还没创建..."
+}
+```
+
+如果分支没 push 到 origin, 写:
+```json
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "分支未推送",
+  "blocking": [{"item": "分支未推送", "evidence": "feat/issue-15-中等模糊 不在 origin 上"}],
+  ...
+}
+```

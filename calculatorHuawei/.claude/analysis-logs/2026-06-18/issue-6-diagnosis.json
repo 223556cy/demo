@@ -1,0 +1,31 @@
+{
+  "issue_ticket": {
+    "issue_number": 6,
+    "title": "百分号按钮需求跑完 AID 三阶段后被直接 CLOSED, rev-01 审查从未触发, 分支未合并",
+    "verdict": "CLOSED",
+    "priority": "MEDIUM",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "Issue #6 (加百分号按钮 50+10%=55) 的 AID 流程在 worktree feat/issue-6-percentage 上完整跑通了 PLANNING→IMPLEMENTING→APPLYING 三阶段, 9 个 AID 产物 (proposal/delta-spec/info/design/tasks/todo/apply-report) 全部齐全, TDD 9/9 PASS + harmonyos-ui-test 降级静态检查 24/24 PASS, apply-report.md 末尾明确写有 '待审查员 (rev-01) 复核' 但 issue 被直接 CLOSED, 未触发任何 aid-reviewing/rev-01 审查, 未创建 PR, feat/issue-6-percentage 分支至今未合并到 main (git log 仅见 fix/merge-conflict-calculator-page 等其它分支).",
+    "root_cause_analysis": "归类 B (漏掉步骤). aid-applying/SKILL.md (L1-100 实测) 全文件 grep 'review|rev-01|审查|REVIEW|reviewing' 0 命中, 完全无审查概念, 步骤仅止于 step3-4 (产出应用报告). session 1 (dfec4c6d.jsonl) L8 调 Skill aid-workflow 后按 PLANNING(L75-L92 写 proposal/delta-spec/info/design) → IMPLEMENTING(L99 写 tasks) → APPLYING(L107-L172 写 percent_node.mjs + Edit CalculatorPage.ets + 写 apply-report.md) 顺序跑完即结束; session 2 (7a6e469b.jsonl) L59 调的是 Skill harmonyos-ui-test 做 ArkTS 静态检查(L75-L76 写 ui_static_check.mjs 24/24 PASS) 并把结果塞进 apply-report.md (L106-L114 Edit), 不是真正的 aid-reviewing/rev-01 代码审查. apply-report.md 自己写了 '审核状态: 自检通过, 待审查员 (rev-01) 复核' 与 9.1 '[ ] 审查员 (rev-01) Code Review', 但 aid-applying 既未把此条设为强制门槛也未触发 Skill aid-reviewing handoff, 导致流程闭环断裂, issue 被外部直接关闭时无人把关.",
+    "optimization_direction": "在 aid-applying/SKILL.md 的 step3-4 (产出应用报告) 之后新增强制 step3-5 (rev-01 handoff): 必须调用 Skill aid-reviewing 并把审查结论写入 apply-report.md §9.1, 否则视为 APPLYING 未完成、铁律 0 违规、issue 不得 close、PR 不得 merge.",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-6/2026-06-11/dfec4c6d-fcc4-4438-b5db-f4e72a62216d.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-6/2026-06-11/7a6e469b-5f50-4202-9e44-48b455cd5ffd.jsonl"
+    ],
+    "evidence_anchors": [
+      "jsonl#1 (dfec4c6d) L8 assistant: tool_use Skill aid-workflow (编排三阶段, 未含 REVIEWING)",
+      "jsonl#1 L75-L92 Write proposal/delta-spec/info/design.md (PLANNING 产物齐全)",
+      "jsonl#1 L99 Write tasks.md (IMPLEMENTING 产物齐全)",
+      "jsonl#1 L114-L132 Write/Edit percent_node.mjs + Bash node percent_node.mjs (TDD RED→GREEN, 9/9 PASS)",
+      "jsonl#1 L141-L152 Edit CalculatorPage.ets (+18/-1 UI 改造)",
+      "jsonl#1 L172 Write apply-report.md, 内部明文 '审核状态: 自检通过, 待审查员 (rev-01) 复核' 与 '9.1 [ ] 审查员 (rev-01) Code Review'",
+      "jsonl#2 (7a6e469b) L59 assistant: tool_use Skill harmonyos-ui-test (静态检查, 不是真正的 rev-01 code review)",
+      "jsonl#2 L68 Bash which hdc/hvigorw/devecos 均 not found → harmonyos-ui-test 降级为 ArkTS 字符串解析",
+      "jsonl#2 L75-L76 Write ui_static_check.mjs + Bash node ui_static_check.mjs (24/24 PASS 降级校验)",
+      "jsonl#2 L106-L114 Edit apply-report.md 把静态检查结果塞进 §3.4, 未触发 aid-reviewing/rev-01",
+      "skill 文件实测: aid-applying/SKILL.md grep 'review|rev-01|审查' 0 命中, 流程止于 step3-4",
+      "git log 显示 feat/issue-6-percentage 分支未在最近 5 个 merge commit 中 (a4f8f9e / 7837aaa / 35bf911 / c4109f4 / 585e095), 仅在 fix/merge-conflict-calculator-page 出现过关联代码, 但 PR/merge 路径不存在"
+    ]
+  }
+}

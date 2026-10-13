@@ -1,0 +1,20 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "commit 缺少 Signed-off-by 阻塞合并",
+  "blocking": [
+    {
+      "item": "commit signoff",
+      "evidence": "d3b5ae4 feat(factorial): add ! button to scientific mode (Issue #21) — trailers 仅含 Co-Authored-By, 缺 Signed-off-by. 任务上下文要求 'commit 全部 signed-off'."
+    }
+  ],
+  "suggestions": [
+    "d3b5ae4: 拆分为 test/feat 两个 commit (ISSUE21_F1..F8 测试先 RED 后 UI GREEN) 符合 TDD 节奏, 当前 1 个 commit 模糊了 TDD 边界"
+  ],
+  "highlights": [
+    "d3b5ae4: 主动接管上一轮被错误标记'安全拦截'的噪声 attempt, 在 apply-report §8 透明记录, 决策可追溯",
+    "d3b5ae4: 5/5 harmonyos-ui-test 真实跑通, 截图 (1320x2856 PNG) + dump (含 ! 按钮文本 + 720 结果) 双证据齐全, 铁律 7 未违规",
+    "d3b5ae4: AID 三阶段 7 个 artifact 齐全 (proposal/delta-spec/info/design/tasks/todo/apply-report), 不动现有不变量 (CalcEngine.fact, Expression.formatFactorial)",
+    "d3b5ae4: 单元测试 13/13 实跑通过 (含 5 个 percent 回归 0 破坏), 8 个 factorial 用例覆盖基本/边界/隐式乘/语法错误"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — commit 缺少 Signed-off-by 阻塞合并\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | proposal/delta-spec/info/design/tasks/todo/apply-report 7 个 artifact 齐全 |\n| harmonyos-ui-test | OK | 5/5 PASS, 7 张截图 (1320x2856 PNG) + 8 个 uiautomator dump (含 ! 按钮 + 720 结果) |\n| commit signoff | **FAIL** | d3b5ae4 trailers 仅含 Co-Authored-By, 缺 Signed-off-by |\n| 分支规范 | OK | feat/issue-21-测试噪声-aid-planning, 未直接推 main |\n| 铁律 7 不伪造 | OK | 单元测试 13/13 实跑通过, 输出与 apply-report §3.1 完全一致 |\n\n## 阻塞项 (必须修复)\n- `d3b5ae4` — commit message 缺 `Signed-off-by: littleleafccccc <...>` trailer\n  修复建议: `git commit --amend --signoff` 然后 `git push --force-with-lease origin feat/issue-21-测试噪声-aid-planning`\n\n## 建议项 (建议修复)\n- d3b5ae4: 拆分为 test/feat 两个 commit (ISSUE21_F1..F8 测试先 RED 后 UI GREEN) 符合 TDD 节奏, 当前 1 个 commit 模糊了 TDD 边界\n\n## 主要亮点\n- d3b5ae4: 主动接管上一轮被错误标记'安全拦截'的噪声 attempt, 在 apply-report §8 透明记录, 决策可追溯\n- d3b5ae4: 5/5 harmonyos-ui-test 真实跑通, 截图 + dump 双证据齐全, 铁律 7 未违规\n- d3b5ae4: AID 三阶段 7 个 artifact 齐全, 不动现有不变量\n- d3b5ae4: 单元测试 13/13 实跑通过 (含 5 个 percent 回归 0 破坏)\n\n## 接下来\n@littleleafccccc 请修复阻塞项 (补 Signed-off-by) 后再 assign rev-01.\nissue 保持 open, 不要关闭."
+}

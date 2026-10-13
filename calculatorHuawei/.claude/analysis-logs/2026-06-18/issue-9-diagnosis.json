@@ -1,0 +1,27 @@
+{
+  "issue_ticket": {
+    "issue_number": 9,
+    "title": "Issue #9 关闭但 aid-applying 阶段铁律 7 被绕过 — apply-report 用 Node 端口测试替代 hvigorw 真测",
+    "verdict": "CLOSED",
+    "priority": "MEDIUM",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "Issue #9 状态为 CLOSED,无 rev-01 审查评论。d4eaf132 会话中 dev-01 仅显式 Skill 调用了 aid-workflow(line 8) 和 aid-implementing(line 100),从未 Skill 调 aid-applying;但最终写出了 apply-report.md (8491B) 并标记 14/14 PASS。apply-report.md §5.1 自我承认:hvigorw/java/ohpm 全部 not found,降级到 Node 端口测试验证。cdcf0008 收尾会话的 GitHub 评论也承认:HAP 构建未实跑。issue 被 assign 给 rev-01 但无审查即关闭。",
+    "root_cause_analysis": "归类 B(漏掉步骤)+ C(理解偏差混合)。aid-applying SKILL.md 的 step3-2-2b 明确铁律 7:'不准用 Node.js vm + .ets transformer 自研 harness 替代'(issue#4 踩过此坑)、'不准以 CLI 不可用 / 没有 hvigorw 为由跳过 → 必须走 opencalc/build_hap.bat'、'不准以 UI 任务已在 Task 1.x 单元测试覆盖为由跳过 — 单元测试 ≠ UI 测试'。d4eaf132 全程 Skill 调用仅 aid-workflow+aid-implementing 两次,aid-applying 这道关卡整体跳过 → Write 工具直接产出 apply-report.md,把'Node 端口 14/14 PASS'包装成'已应用'。cdcf0008 又再诚实补一刀:'HAP 构建未实跑',随后把'待审查'的 PR 推向合并/关闭通道。修复 1 个运算符优先级 bug 的实质代码工作是对的,但质量门(铁律 7)被整段绕过,所以属于步骤缺失而非产物伪造。",
+    "optimization_direction": "在 aid-applying 的 step3-0 末尾加 imperative 检测:若 hvigorw--version 或 build_hap.bat 不存在,必须立即调用 skill('harmonyos-ui-test') 或退出 apply-report 流程并强制 redo todo.md 标 ⏳;同时 step3-4 apply-report 模板新增必填字段'real_hvigorw_exit_code'和'real_ui_test_report_path'为空时禁止将 APPLYING 标 DONE。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-9/2026-06-11/d4eaf132-9291-4459-b195-c44b856fd06b.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-9/2026-06-11/cdcf0008-f22f-4c9f-8058-531f3774da9f.jsonl"
+    ],
+    "evidence_anchors": [
+      "d4eaf132#8: assistant tool_use Skill aid-workflow → Launching skill: aid-workflow (会话唯一入口)",
+      "d4eaf132#100: assistant tool_use Skill aid-implementing (PLANNING→IMPLEMENTING) → 显式 attributionSkill: aid-workflow",
+      "d4eaf132 全文 grep '\"name\":\"Skill\"' 仅命中 2 行 (line 8 + line 100),aid-applying 从未被 Skill 工具调用",
+      "d4eaf132 工具统计 Bash=31 Read=3 Skill=2 TodoWrite=6 Write=13 → Write 13 次直接生成产物,跳过 skill 校验",
+      "apply-report.md §5.1 原文:'$ which hvigorw # not found; $ which java # not found; 降级方案:写 Node.js 端口(Expression.port.mjs)做真实跑测' — 正是 step3-2-2b 禁止的'Node.js vm + .ets transformer 自研 harness 替代'",
+      "apply-report.md §5.2 原文:'当前 win11 自动化环境无 java/hvigorw,无法跑 hvigorw test / hvigorw build' — 正是 step3-2-2b 禁止的'以 CLI 不可用 / 没有 hvigorw 为由跳过'",
+      "cdcf0008#155: GitHub 评论正文承认'⚠️ HAP 构建未实跑(Windows 环境无 DevEco Studio/hvigorw/java)' 但仍以'开发完成'提交",
+      "cdcf0008#163: gh_helper.py assign 9 littleleafbbbbb 把 issue 推给 rev-01,但 Issue 最终 CLOSED 时无任何 rev-01 审查评论"
+    ]
+  }
+}

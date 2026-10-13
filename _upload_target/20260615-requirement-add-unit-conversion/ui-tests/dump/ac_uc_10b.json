@@ -1,0 +1,14 @@
+User ID #100
+  current mission lists:{
+    Mission ID #31  mission name #[#com.darkempire78.opencalculator:entry:EntryAbility]  lockedState #0  mission affinity #[]
+      AbilityRecord ID #36
+        app name [com.darkempire78.opencalculator]
+        main name [EntryAbility]
+        bundle name [com.darkempire78.opencalculator]
+        ability type [PAGE]
+        state #FOREGROUND  start time [3391572]
+        app state #FOREGROUND
+        ready #1  window attached #0  launcher #0
+        callee connections: 
+        isKeepAlive: false
+ }

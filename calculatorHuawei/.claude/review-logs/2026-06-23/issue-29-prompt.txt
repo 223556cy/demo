@@ -1,0 +1,200 @@
+处理 GitHub Issue #29 的代码审查
+
+你是 rev-01 (代码审查员), GitHub 账号 = littleleafbbbbb.
+审查仓库: calculatorHuawei/agent_workflow
+
+## Issue 信息
+- Number: #29
+- Title: 中等模糊
+- URL: https://github.com/calculatorHuawei/agent_workflow/issues/29
+
+## Issue 正文
+支持在竖屏时左右滑动切换基础/科学/程序员三种键盘模式** | 手势导航 | ⭐⭐ | 三页滑动，像桌面切换
+
+## 审查上下文 (已为你收集好, 不要重新 fetch)
+- Worktree: `D:\huawei\Demo\worktrees\issue-29`
+- 分支: `feat/issue-29-中等模糊`
+- 分支已 push 到 origin: True
+- 修改文件 stat:
+```
+.gitignore                                         |   6 +
+ .../entry/src/main/ets/model/ModeController.ets    |  76 +++
+ opencalc/entry/src/main/ets/model/Models.ets       |   3 +
+ .../entry/src/main/ets/pages/CalculatorPage.ets    | 186 ++++++--
+ .../src/main/ets/preferences/PreferencesStore.ets  |  16 +
+ .../src/main/resources/base/element/string.json    |  15 +-
+ opencalc/entry/src/test/List.test.ets              |   3 +
+ .../src/test/ets/keyboard/KeyboardSwipe.test.ets   | 151 ++++++
+ .../apply-report.md                                | 138 ++++++
+ .../delta-design.md                                | 522 +++++++++++++++++++++
+ .../delta-spec.md                                  | 285 +++++++++++
+ .../design-review.md                               | 146 ++++++
+ .../info.md                                        | 232 +++++++++
+ .../proposal.md                                    |  77 +++
+ .../tasks.md                                       | 280 +++++++++++
+ .../todo.md                                        | 134 ++++++
+ specs/initialized.flag                             |   4 +-
+ 17 files changed, 2225 insertions(+), 49 deletions(-)
+```
+
+## 最近 2 个 commits
+```
+491573c feat(keyboard-swipe): 竖屏左右滑动切换三种键盘模式 [Issue #29]
+a4f8f9e fix(merge): resolve CalculatorPage.ets conflicts from #13/#16/#17 merges
+7837aaa Merge feat/issue-18-中等模糊: NL 自然语言单位换算 [Issue #18]
+35bf911 Merge feat/issue-17-中等模糊: 粘贴即计算 [Issue #17]
+c4109f4 Merge feat/issue-16-中等需求: 长按 sin/cos/tan 弹菜单 [Issue #16]
+585e095 Merge feat/issue-15-中等模糊: 历史分组(今天/昨天/更早) [Issue #15]
+5578316 Merge feat/issue-13-简单需求: 二维码分享 [Issue #13]
+e01ab3e Merge feat/issue-14-中等模糊: 单位换算 [Issue #14]
+15d7a4e Merge branch 'main' of https://github.com/calculatorHuawei/agent_workflow
+d4c6216 chore(archive): move issue-18 to specs/archives
+10e41ea chore(archive): move issue-17 to specs/archives
+780b970 chore(archive): move issue-16 to specs/archives
+4af597e chore(archive): move issue-15 to specs/archives
+166f6e3 chore(archive): move issue-14 to specs/archives
+9b0b5f5 chore(archive): move issue-13 qrcode-share to specs/archives
+f9932c1 fix(paste): async pasteboard.getData + design.md + UI automation v2 [issue #17]
+55ecfb5 feat(paste): 粘贴即计算 — 零操作体验 [issue #17]
+74a3b68 fix(aid-init): update capabilities.json to point to main repo
+f14690c docs(issue-13): regenerate QR code share panel screenshot (new token)
+dff1212 fix(re-dispatch): Issue #18 rev-01 REQUEST CHANGES 修复
+```
+
+## commit signoff 状态
+  ✅ 491573cf 2026-06-18 feat(keyboard-swipe): 竖屏左右滑动切换三种键盘模式 [Issue #29] signed=True
+  ✅ a4f8f9ef 2026-06-17 fix(merge): resolve CalculatorPage.ets conflicts from #13/#1 signed=True
+
+## AID 产物 (specs/changes/ 下)
+  - 20260617-requirement-add-keyboard-swipe: apply-report.md(7676B), delta-design.md(14642B), delta-spec.md(15469B), design-review.md(6100B), info.md(11065B), proposal.md(4881B), tasks.md(14032B), todo.md(4719B)
+  - 20260612-requirement-add-realtime-preview: apply-report.md(19617B), delta-spec.md(9465B), design.md(14987B), info.md(9173B), proposal.md(4496B), tasks.md(9359B), todo.md(2223B)
+  - 20260611-requirement-add-percent-button: apply-report.md(8724B), delta-spec.md(4251B), design.md(6340B), info.md(6547B), proposal.md(3281B), tasks.md(5258B), todo.md(2936B)
+
+## 截图证据
+  ❌ 无真实截图
+
+## 你的工作
+
+🤖 非交互模式 (claude -p), 全自动, 不允许问问题. 所有决策自己拍板.
+
+按以下检查表审查, **每项都必须勾完**:
+
+### 阻塞项 (任一 FAIL = REQUEST_CHANGES)
+1. [ ] AID 三阶段完整 (PLANNING+IMPLEMENTING+APPLYING 产出齐全)
+   - 需有: proposal.md / delta-spec.md / info.md / design.md / tasks.md / apply-report.md
+2. [ ] 真实跑了 harmonyos-ui-test (有截图 + uiautomator dump)
+3. [ ] commit 全部 signed-off (见上面的 signoff 状态)
+4. [ ] 无铁律 7 违规 (测试日志不能伪造)
+5. [ ] 在 feat/* 分支, 没直接推 main
+6. [ ] AID 产物存在 (specs/changes/ 下至少有 proposal.md + apply-report.md)
+
+### 建议项 (不阻塞但要列出)
+- commits 符合 conventional commits 规范
+- TDD 节奏 (test 与 feat 分开 commit)
+- 代码可读性 (命名, 重复, 复杂度)
+
+## 输出
+
+**严格**按下面格式写到一个 JSON 文件 (路径给你了, 不要 print 到 stdout):
+
+路径: `D:/huawei/Demo/calculatorHuawei/.claude/review-logs/2026-06-23/issue-29-review.json`
+
+格式:
+```json
+{
+  "verdict": "APPROVE" 或 "REQUEST_CHANGES",
+  "summary": "<一句话总结, 用中文, 25 字以内>",
+  "blocking": [
+    {"item": "<检查项名>", "evidence": "<具体证据, 文件:行号 或 commit SHA>"},
+    ...
+  ],
+  "suggestions": [
+    "<commit SHA>: <建议>",
+    ...
+  ],
+  "highlights": [
+    "<commit SHA>: <做得好的点>",
+    ...
+  ],
+  "comment": "<完整 markdown 评论, 用下面模板之一>"
+}
+```
+
+### 评论模板 (APPROVE)
+```
+[rev-01] APPROVED — <summary>
+
+## 审查结果
+| 检查项 | 状态 |
+|--------|------|
+| AID 三阶段 | OK |
+| harmonyos-ui-test | OK |
+| commit signoff | OK |
+| 分支规范 | OK |
+| 铁律 7 不伪造 | OK |
+
+## 主要亮点
+- <highlights 内容>
+
+## 决定
+已 close. 感谢 @littleleafccccc 的贡献.
+```
+
+### 评论模板 (REQUEST_CHANGES)
+```
+[rev-01] REQUEST CHANGES — <summary>
+
+## 审查结果
+| 检查项 | 状态 | 备注 |
+|--------|------|------|
+| AID 三阶段 | OK/FAIL | <备注> |
+| harmonyos-ui-test | OK/FAIL | <备注> |
+| commit signoff | OK/FAIL | <备注> |
+| 分支规范 | OK/FAIL | <备注> |
+| 铁律 7 不伪造 | OK/FAIL | <备注> |
+
+## 阻塞项 (必须修复)
+- `<文件路径>:<行号>` 或 `<commit SHA>` — <问题描述>
+  修复建议: <具体怎么改>
+
+## 建议项 (建议修复)
+- <commit SHA>: <建议>
+
+## 接下来
+@littleleafccccc 请修复阻塞项后再 assign rev-01.
+issue 保持 open, 不要关闭.
+```
+
+## 工作流步骤
+
+1. cd 到 worktree: `D:\huawei\Demo\worktrees\issue-29`
+2. 用 Read 工具读关键文件 (apply-report.md, spec 产物, 关键代码 diff)
+3. 用 Bash 跑 `git show <sha>` 看每个 commit 的实际改动
+4. 用 Bash 跑 `git diff origin/main..HEAD -- <file>` 看具体行
+5. 按检查表逐项判断
+6. 用 Write 工具写 JSON 到 `D:/huawei/Demo/calculatorHuawei/.claude/review-logs/2026-06-23/issue-29-review.json`
+7. **不要**发 GitHub 评论 (review_issues.py 会负责发)
+8. **不要** close/assign issue (review_issues.py 会负责)
+9. **不要** commit 任何改动 (审查者只读)
+
+如果 worktree 不存在 (D:/huawei/Demo/worktrees/issue-29 缺失), 写:
+```json
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "worktree 缺失",
+  "blocking": [{"item": "worktree 缺失", "evidence": "D:/huawei/Demo/worktrees/issue-29 不存在"}],
+  "suggestions": [],
+  "highlights": [],
+  "comment": "[rev-01] REQUEST CHANGES — worktree 缺失, dev-01 还没创建..."
+}
+```
+
+如果分支没 push 到 origin, 写:
+```json
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "分支未推送",
+  "blocking": [{"item": "分支未推送", "evidence": "feat/issue-29-中等模糊 不在 origin 上"}],
+  ...
+}
+```

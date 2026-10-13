@@ -1,0 +1,100 @@
+⚠️ 这是 **RE-DISPATCH** 场景! Issue #13 之前已经 dispatch 过一次并被 rev-01 审过.
+rev-01 给的结论: **REQUEST CHANGES** — 两个 commit 都缺 Signed-off-by, 阻塞
+
+rev-01 完整反馈 (你需要逐条修复阻塞项后再 commit + force-push):
+```
+[rev-01] REQUEST CHANGES — 两个 commit 都缺 Signed-off-by, 阻塞
+
+## 审查结果
+| 检查项 | 状态 | 备注 |
+|--------|------|------|
+| AID 三阶段 | OK | proposal/delta-spec/info/design/design-review/tasks/apply-report/todo 8 个文件齐全, 1362 行 |
+| harmonyos-ui-test | OK | 7 张真实 PNG 截图 (1320x2856) + 14 个 uiautomator dump + results.json (6/7 PASS) |
+| commit signoff | **FAIL** | 89d2dde 与 955eab55 均无 Signed-off-by trailer |
+| 分支规范 | OK | feat/issue-13-简单需求, 未推 main |
+| 铁律 7 不伪造 | OK | build.log 8389 行真实输出 + 截图文件 size 187~208 KB 均为实拍 |
+
+## 阻塞项 (必须修复)
+- `89d2dde` feat(qrcode-share) — 缺 `Signed-off-by: littleleafbbbbb <littleleafbbbbb@users.noreply.github.com>`
+  修复建议: `git rebase --signoff 955eab55~1` 或 `git commit --amend --signoff` 然后 force-push
+- `955eab55` fix(aid-init) — 缺 `Signed-off-by: littleleafbbbbb <littleleafbbbbb@users.noreply.github.com>`
+  修复建议: 同样用 `--signoff` amend (注意: 这是本 issue 范围外的历史 commit, 但在同一分支必须一并修)
+
+## 建议项 (建议修复)
+- 89d2dde: 拆分 test 与 feat 提交 — 当前 50 个文件单 commit 违反 TDD 节奏
+- 89d2dde: 7 张 PNG 截图 (~1.4 MB) 建议从 git 移除, 改为 PR 评论附件或外部 storage
+- 89d2dde: .hvigor/outputs/build-logs/build.log (8389 行) 不应入仓
+- 89d2dde: ui-tests/dump/t01a~t06a 等 15 个 dump 文件无 results.json 引用, 疑似残留
+- 89d2dde: 955eab5 (fix(aid-init)) 严格说不属于本 issue #13 范畴, 建议拆分
+
+## 接下来
+@littleleafccccc 请修复阻塞项 (两个 commit 加 Signed-off-by) 后再 assign rev-01.
+issue 保持 open, 不要关闭.
+```
+
+**这次 re-dispatch 的工作流完全不同**:
+1. ⚠️ 不要从零写代码! worktree 里已有上次 AID 三阶段的产出 + 已 push 的 commits
+2. 先 `git fetch origin <branch>` 拿最新, 看 origin 上的 commits
+3. 读 worktree 里的 specs/changes/<dir>/apply-report.md 了解上次做了什么
+4. 读 specs/changes/<dir>/design-review.md / tasks.md 了解规划
+5. 读 rev-01 反馈里的**阻塞项**, 逐条修复:
+   - **commit signoff 缺失** → 用 `git rebase --signoff <base-sha>~1` 或 `git commit --amend --signoff <sha>`,然后 force-push
+   - **代码问题** → 改文件, 单独 commit, 不要再混进旧的 commit
+   - **缺少产物** → 补 specs/changes/<dir>/ 下缺失的文件
+6. 修复完后 force-push 到同一分支 `feat/issue-13-简单需求`
+7. 完成后跑 gh_helper.py comment <num> "@littleleafccccc re-dispatch 完成, force-push 已上 origin, 请 @littleleafbbbbb 再审"
+
+**严禁**:
+- ❌ 不要新建分支
+- ❌ 不要 close issue (留给 rev-01)
+- ❌ 不要 push 到 main
+- ❌ 不要修改 issue 的 assignees (保留 littleleafccccc)
+- ❌ 不要重写 AID 产物 (除非 rev-01 明确说要改)
+- ❌ 不要 force-push 之前不 rebase/--signoff
+
+================================================================
+处理 GitHub Issue #13: 简单需求
+Issue 正文:
+| **把当前算式和结果一键生成二维码，方便手机扫到电脑上用** | 分享 | ⭐⭐ | 跨设备协作场景 |
+
+工作目录: D:\huawei\Demo\worktrees\issue-13
+类型: requirement-add
+名称: 简单需求
+
+🤖 你是非交互模式 (claude -p)。**全自动,不允许问问题**。
+不需要等用户确认、不需要列"待确认项"、不要"请求授权"。
+所有决策自己拍板,所有步骤直接执行。dev-01 已经替你授权一切。
+
+请按 AID 工作流三阶段处理。Claude Code 会自动从 ~/.claude/skills/ 加载以下 skill:
+  - PLANNING 阶段:aid-planning skill → proposal.md / delta-spec.md / info.md / design.md
+  - IMPLEMENTING 阶段:aid-implementing skill → tasks.md
+  - APPLYING 阶段:aid-applying skill (+ tdd-enforcer) → apply-report.md + 真实代码改动 + 真实测试
+
+步骤:
+1. 读项目能力: read D:/huawei/Demo/calculatorHuawei/.claude/capabilities.json
+2. PLANNING 阶段 (自然语言匹配 aid-planning)
+3. IMPLEMENTING 阶段 (自然语言匹配 aid-implementing)
+4. APPLYING 阶段 (自然语言匹配 aid-applying + tdd-enforcer): RED-GREEN-REFACTOR,真实写代码 + 真实跑测试
+5. 每个阶段用 TodoWrite 跟踪进度,状态写到 specs/changes/<YYYYMMDD>-<type>-<name>/todo.md
+6. 完成后跑 git commit (不 push! dev-01 会帮你 push)
+7. 完成后跑 gh_helper.py comment <num> "@littleleafccccc claude -p 跑完,worktree 在 <wt_path> 等 push"
+
+⚠️ 你的工作范围 = AID 三阶段 + commit。**不**做:
+  - ❌ 不 push (dev-01 负责)
+  - ❌ 不 close issue (rev-01/用户负责)
+  - ❌ 不 reassign (dev-01 决定)
+  - ❌ 不发 issue 总结评论 (dev-01 负责)
+
+用户确认点处理 (方案 C,你自动答):
+  - 阶段间确认一律自动同意,理由记录 todo.md
+  - 编译环境检查真实跑 which hvigorw / hdc
+  - 高风险点必须暂停并 @littleleafccccc 等回复:
+    a) capabilities.json 缺失 (项目级)
+    b) hvigorw / hdc / DevEco SDK 不在 PATH
+    c) PLANNING 识别为 arch-refactor 或 platform-migration
+    d) delta-spec.md / design.md 涉及删除现有功能
+  - 暂停方式:gh_helper.py comment <num> @littleleafccccc,issue 标 awaiting-human-input,worktree 暂存不 commit/push
+
+⚠️ 如果 worktree 里已有该 issue 的 commit 和 AID 产物:
+  - 直接退出 (不要再写新 specs/changes/、不要再 commit)
+  - 输出 "Issue #<num> already handled at <commit SHA>" 到 stdout

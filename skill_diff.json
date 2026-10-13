@@ -1,0 +1,141 @@
+{
+  "session_id": "264c5a16-f4f1-48ff-9f40-d215e1cc2567",
+  "total_diffs": 17,
+  "severity_summary": {
+    "warn": 15,
+    "info": 2
+  },
+  "type_summary": {
+    "MISSING_SKILL": 5,
+    "MISSING_MANDATORY_SECTION": 10,
+    "MISSING_MANDATORY_SUBSKILL_INLINE": 2
+  },
+  "diffs": [
+    {
+      "type": "MISSING_SKILL",
+      "severity": "warn",
+      "skill": "aid-archiving",
+      "detail": "SKILL.md 定义且本任务相关,但 agent 没调(4 段)"
+    },
+    {
+      "type": "MISSING_SKILL",
+      "severity": "warn",
+      "skill": "aid-init",
+      "detail": "SKILL.md 定义且本任务相关,但 agent 没调(9 段)"
+    },
+    {
+      "type": "MISSING_SKILL",
+      "severity": "warn",
+      "skill": "aid-monitor",
+      "detail": "SKILL.md 定义且本任务相关,但 agent 没调(7 段)"
+    },
+    {
+      "type": "MISSING_SKILL",
+      "severity": "warn",
+      "skill": "harmonyos-ui-test",
+      "detail": "SKILL.md 定义且本任务相关,但 agent 没调(9 段)"
+    },
+    {
+      "type": "MISSING_SKILL",
+      "severity": "warn",
+      "skill": "tdd-enforcer",
+      "detail": "SKILL.md 定义且本任务相关,但 agent 没调(4 段)"
+    },
+    {
+      "type": "MISSING_MANDATORY_SECTION",
+      "severity": "warn",
+      "skill": "aid-planning",
+      "section": "step3",
+      "title": "需求澄清",
+      "detail": "SKILL.md 强制要求该段,但 agent 未做"
+    },
+    {
+      "type": "MISSING_MANDATORY_SECTION",
+      "severity": "warn",
+      "skill": "aid-planning",
+      "section": "step6",
+      "title": "需求复杂度评估",
+      "detail": "SKILL.md 强制要求该段,但 agent 未做"
+    },
+    {
+      "type": "MISSING_MANDATORY_SECTION",
+      "severity": "warn",
+      "skill": "aid-planning",
+      "section": "step9-4",
+      "title": "产出审视报告",
+      "detail": "SKILL.md 强制要求该段,但 agent 未做"
+    },
+    {
+      "type": "MISSING_MANDATORY_SECTION",
+      "severity": "warn",
+      "skill": "aid-implementing",
+      "section": "step2-2-1",
+      "title": "确定任务依赖关系",
+      "detail": "SKILL.md 强制要求该段,但 agent 未做"
+    },
+    {
+      "type": "MISSING_MANDATORY_SECTION",
+      "severity": "warn",
+      "skill": "aid-applying",
+      "section": "step3-0-4",
+      "title": "检查测试环境",
+      "detail": "SKILL.md 强制要求该段,但 agent 未做"
+    },
+    {
+      "type": "MISSING_MANDATORY_SECTION",
+      "severity": "warn",
+      "skill": "aid-applying",
+      "section": "step3-0-5",
+      "title": "环境问题处理",
+      "detail": "SKILL.md 强制要求该段,但 agent 未做"
+    },
+    {
+      "type": "MISSING_MANDATORY_SECTION",
+      "severity": "warn",
+      "skill": "aid-applying",
+      "section": "step3-1-2",
+      "title": "检查代码质量",
+      "detail": "SKILL.md 强制要求该段,但 agent 未做"
+    },
+    {
+      "type": "MISSING_MANDATORY_SECTION",
+      "severity": "warn",
+      "skill": "aid-applying",
+      "section": "step3-2-1",
+      "title": "按照 tasks.md 执行代码生成/修改（TDD 模式）",
+      "detail": "SKILL.md 强制要求该段,但 agent 未做"
+    },
+    {
+      "type": "MISSING_MANDATORY_SECTION",
+      "severity": "warn",
+      "skill": "aid-applying",
+      "section": "step3-2-2b",
+      "title": "HarmonyOS UI 测试（强制）",
+      "detail": "SKILL.md 强制要求该段,但 agent 未做"
+    },
+    {
+      "type": "MISSING_MANDATORY_SECTION",
+      "severity": "warn",
+      "skill": "aid-applying",
+      "section": "step3-2-2b-降级",
+      "title": "（铁律 7 兜底 — 强制 5 步 + 自检 + 反模式）",
+      "detail": "SKILL.md 强制要求该段,但 agent 未做"
+    },
+    {
+      "type": "MISSING_MANDATORY_SUBSKILL_INLINE",
+      "severity": "info",
+      "skill": "aid-applying",
+      "parent_section": "step3-0-4",
+      "sub_skill": "harmonyos-ui-test",
+      "detail": "SKILL.md 要求 aid-applying:step3-0-4 必须调 skill('harmonyos-ui-test'),agent 没调 Skill tool,但行为痕迹显示 agent 内联了 harmonyos-ui-test 的工作(thinking 命中 2 个关键词,Bash 命中 3 个模式 — agent 内联了行为但没走 Skill 流程)"
+    },
+    {
+      "type": "MISSING_MANDATORY_SUBSKILL_INLINE",
+      "severity": "info",
+      "skill": "aid-applying",
+      "parent_section": "step3-2-1",
+      "sub_skill": "tdd-enforcer",
+      "detail": "SKILL.md 要求 aid-applying:step3-2-1 必须调 skill('tdd-enforcer'),agent 没调 Skill tool,但行为痕迹显示 agent 内联了 tdd-enforcer 的工作(thinking 命中 3 个关键词,Bash 命中 3 个模式 — agent 内联了行为但没走 Skill 流程)"
+    }
+  ]
+}

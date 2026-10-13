@@ -1,0 +1,252 @@
+# 首席诊断任务 (Issue #37)
+
+## Issue 上下文
+- Number: #37
+- Title: [bug] sin(x) 在 GraphPage 渲染成直线 — isDegree 时序竞态 (issue #26 回归)
+- 最终结论: **APPROVE** — 时序+语义双修复, 完整正弦波已验证
+- URL: https://github.com/calculatorHuawei/agent_workflow/issues/37
+- 状态: closed
+- 标签: bug, priority:high, analysis:pending, regression
+
+## Issue 正文
+## 🐛 Bug: sin(x) 在 GraphPage 上渲染成直线 (Plot-Graph 时序竞态)
+
+**类型**: bugfix (P1 - 用户首次进入绘图页就看到错误结果)
+**关联**: Issue #26 (plot-graph)
+
+### 复现步骤
+1. 安装 issue #26 的 HAP 到 DevEco 模拟器
+2. 启动 OpenCalc → 切到程序员模式
+3. 点击工具栏 📈 进入 GraphPage
+4. 默认 `sin(x)`, xMin=-6.28, xMax=6.28, samples=200
+5. **期望**: 完整正弦波 (3 个波峰/波谷)
+6. **实际**: 一条从左下到右上的**直线**
+
+### 根因 (rev-01 已定位)
+
+`opencalc/entry/src/main/ets/pages/GraphPage.ets` 第 46-62 行 `aboutToAppear()` 有**异步时序竞态**:
+
+```typescript
+aboutToAppear(): void {
+    this.prefs.init().then((): void => { this.loadPrefs() })   // 微任务
+    setTimeout((): void => { this.vm.compute() }, 0)           // 宏任务
+}
+```
+
+ArkTS 事件循环规则: **微任务先于宏任务** 执行。所以:
+
+1. `prefs.init().then(loadPrefs)` 微任务先跑
+2. `loadPrefs()` 调 `getRadiansDefault()` → 用户偏好 `radianMode=false` (默认角度)
+3. `vm.setRadianMode(!false)` = `setRadianMode(true)` → **`vm.isDegree = true`**
+4. 然后宏任务跑 → `vm.compute()` 闭包捕获 `this.isDegree=true`
+5. `engine.evaluateAt(e, x, true)` → 把 x 当成**角度**算 sin
+6. `Math.sin(x * π/180)`, 在 x∈[-6.28, 6.28] 范围内几乎全是小角度
+7. **小角近似** `sin(x°) ≈ x * π/180 ≈ 0.01745 * x` → 200 个采样点几乎线性
+8. 渲染出来是一条直线
+
+### 证据 (hilog 抓取)
+
+```
+evalAt_in  x=-6.28    deg=true
+fn_sin_out ret=-0.10938734658651553  ← sin(-6.28°) ≈ -0.109
+evalAt_in  x=+6.28    deg=true
+fn_sin_out ret=+0.10938734658651555  ← sin(+6.28°) ≈ +0.109
+```
+
+200 个采样点全部满足 `y ≈ x * π/180` (线性) → 画出来是直线。
+
+### 修复建议
+
+把 `vm.compute()` 移到 `loadPrefs` 的 `.then()` 里:
+
+```typescript
+aboutToAppear(): void {
+    // ...路由参数解析...
+    const ctx: common.UIAbilityContext = getContext(this) as common.UIAbilityContext
+    this.prefs = new PreferencesStore(ctx)
+    this.prefs.init().then((): void => {
+      this.loadPrefs()
+      this.vm.compute()  // ← 在这里调,等 loadPrefs 完成
+    })
+    // 删除原来的 setTimeout(() => vm.compute(), 0)
+}
+```
+
+### TDD 验收标准
+
+| 验证项 | 期望 |
+|--------|------|
+| hilog 显示 `deg=false` | 是 |
+| x=π/2 ≈ 1.57 时 y | ≈ 1.0 |
+| x=π ≈ 3.14 时 y | ≈ 0.0 |
+| x=3π/2 ≈ 4.71 时 y | ≈ -1.0 |
+| y_min < -0.9 且 y_max > 0.9 | 是 |
+| 截图: 曲线有 3 个波峰 + 3 个波谷 | 是 |
+| Calculator.test.mjs | 13/13 PASS (无回归) |
+| GraphViewModel.test.mjs | 23/23 PASS (无回归) |
+
+### 工作要求
+
+按 aid-applying skill (含 tdd-enforcer) 走 RED-GREEN-REFACTOR:
+
+1. **RED**: 写一个 Node 测试模拟 aboutToAppear 时序,断言 loadPrefs 完成前不能触发 vm.compute (或者 UI 测试中 sin(x) 渲染时 hilog 必须显示 deg=false)
+2. **GREEN**: 修改 `GraphPage.ets` 把 setTimeout 移到 .then() 里
+3. **REFACTOR**: 清理调试代码
+4. 跑 `hvigorw assembleHap` + 装到模拟器 + 截图
+5. 跑 Calculator.test.mjs + GraphViewModel.test.mjs 确认无回归
+6. `git commit` (不 push,等 rev-01 push)
+7. 写 `specs/changes/20260707-bug-sin-straight-line/apply-report.md`
+8. `gh_helper.py comment @littleleafbbbbb` 转交 rev-01 v4 复审
+
+### 关联资源
+
+- rev-01 完整诊断 + hilog 证据: issue #26 评论 #4910684088
+- 根因代码位置: `opencalc/entry/src/main/ets/pages/GraphPage.ets:46-62`
+- 期望 worktree: `D:/huawei/Demo/worktrees/issue-35`
+- 期望 branch: `fix/issue-35-sin-straight-line`
+
+## rev-01 完整审查评论 (最重要)
+[rev-01] APPROVED — 时序+语义双修复, 完整正弦波已验证
+
+## 审查结果
+
+| 检查项 | 状态 |
+|--------|------|
+| AID 三阶段 | OK |
+| rev-01 亲手跑 UI 测试 | OK (17 用例, 15 PASS, 2 等价覆盖) |
+| 截图 (12 张, 需 ≥8) | OK |
+| uiautomator dump (11 份, 需 ≥3) | OK |
+| 补充测试用例 (17 个, 需 ≥8) | OK |
+| commit signoff (891d795 主修复) | OK |
+| 分支规范 | OK |
+| 铁律 7 不伪造 | OK |
+| AID 产物 | OK |
+| 运行时数学 (5 AC) | OK |
+| 异步时序 | OK |
+| 临时调试代码已清理 | OK |
+
+## 运行时语义验证 (v4 新增 — Issue #26 教训)
+
+| AC | 验证项 | 实际 | 结果 |
+|----|--------|------|------|
+| AC-2 | sin(π/2) | 1.000000 | PASS |
+| AC-3 | sin(π) | 0.000000 | PASS |
+| AC-4 | sin(3π/2) | -1.000000 | PASS |
+| AC-5 | yRange | 1.9999 (>1.5) | PASS |
+| AC-6 | 波峰/波谷 | 2/2 (issue body 写 3/3 是笔误) | PASS |
+
+Buggy 对照: yRange=0.2188 (≈直线, 与 dev-01 报告 0.219 一致).
+
+## UI 测试证据
+
+- 测试用例 (17 个): .claude/review-logs/2026-07-08/ui-evidence/issue-37/review-test-cases.md
+- 截图 (12 张): .claude/review-logs/2026-07-08/ui-evidence/issue-37/screenshots/
+- uiautomator dump (11 份): .claude/review-logs/2026-07-08/ui-evidence/issue-37/dumps/
+- 运行时验证: runtime_semantic_verify.js (5/5 AC PASS)
+- 单元测试: 87/87 PASS
+
+## 决定
+
+已 close. 感谢 @littleleafccccc (dev-01) 的贡献.
+
+## 建议 (非阻塞)
+
+1. 在 PR 描述中明确披露 Task 5.3 是语义改动 (不只是时序修复).
+2. 简化 GraphPage.ets:59-60 注释, 避免对 ArkTS 事件循环顺序产生误解.
+3. (后续 P2) 增加独立 graphUseDegrees 偏好替代强制覆盖 radiansDefault.
+
+## Worktree 信息
+- Path: `D:\huawei\Demo\worktrees\issue-37` (exists=True)
+- Branch: `feat/issue-37-bug-sin-x-在-graphpa`
+- AID 产物 change_id: `20260708-bugfix-sin-straight-line`
+- AID 产物列表: apply-report.md(9927B), delta-design.md(12641B), delta-spec.md(3462B), design-review.md(4222B), info.md(7928B), proposal.md(4349B), tasks.md(8642B), todo.md(3322B)
+
+## Session 对话文件路径 (核心证据)
+  ❌ 无 session jsonl 文件 (issue 可能没经过 dev-01 claude -p)
+
+## 工作目录 (Claude 必须能读)
+- 项目根: `D:/huawei/Demo/calculatorHuawei`
+- Worktree: `D:/huawei/Demo/worktrees/issue-37`
+- Session 原始: `D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-37`
+
+## 你的工作 (法医式诊断 4 步链)
+
+🤖 非交互模式 (claude -p), 全自动, 不允许问问题. 所有决策自己拍板.
+
+### 步骤 A. 现象还原 (Phenomenon)
+1. 通读 session jsonl: 看 claude -p 调了几次 aid-planning / aid-implementing / aid-applying / tdd-enforcer skill
+2. 看每个 skill 内部怎么跑的: 有没有 step 跳过、有没有命令失败、产物缺什么
+3. 对比 AID 产物: proposal.md / delta-spec.md / design.md / tasks.md / apply-report.md 是否齐全
+4. 提取核心现象 (1 句话总结, 50-150 字)
+
+### 步骤 B. 根因剖析 (Root Cause) — 归类到以下 4 类之一
+- **A. 幻觉乱写** — claude 自己瞎写 (改了 prompt / 产物) 但 skill 没要求
+- **B. 漏掉步骤** — 流程里有一步没做 (要加 imperative 规则)
+- **C. 理解偏差** — skill 规则存在但歧义 (要改写措辞)
+- **D. 外部因素** — 不是 skill 的问题 (e.g. 网络、SDK 缺失、用户描述不清)
+  - 此时 target_skill_filename = 'N/A' (跳过 skill 优化)
+
+### 步骤 C. 精准定位靶点 (Target Skill)
+从以下候选里选**唯一**一个负责的 skill (必须**确切存在**于文件系统):
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-planning/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-implementing/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/tdd-enforcer/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-parse/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-clarify/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-codebase/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/mod-design/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-init/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-archiving/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-monitor/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-reviewing/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/dfr-fmea-harmony/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/harmonyos-ui-test/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/prd-generator/SKILL.md
+
+**唯一性铁律**: 同时指责多个 skill = 失职. 选**最直接**造成失败的那一个.
+
+**证据要求**: 引用 session jsonl 里的具体动作 (e.g. 'jsonl#3 assistant 调了 Skill aid-applying 但产物 apply-report.md 缺失').
+
+### 步骤 D. 优先级判定 (Priority)
+- **HIGH** — 阻塞发布 / 影响 30% 以上 issue / 安全相关
+- **MEDIUM** — 影响 10-30% issue / 体验问题
+- **LOW** — 偶发 / 边缘场景 / 文档改进
+
+## 输出格式 (严格 JSON, 不允许偏差)
+
+**严格**按下面格式写到指定 JSON 文件 (路径给你了, **不要** print 到 stdout):
+
+路径: `D:/huawei/Demo/calculatorHuawei/.claude/analysis-logs/2026-07-08/issue-37-diagnosis.json`
+
+```json
+{
+  "issue_ticket": {
+    "issue_number": 37,
+    "title": "<一句话总结 Bug>",
+    "verdict": "APPROVE",
+    "priority": "<HIGH | MEDIUM | LOW>",
+    "target_skill_filename": "<花名册中确切存在的文件名 不带 .md, 或 'N/A'>",
+    "target_skill_path": "<绝对路径 或 'N/A'>",
+    "phenomenon": "<客观描述 50-150 字>",
+    "root_cause_analysis": "<含 A/B/C/D 归类 100-300 字, 引用 session jsonl 具体动作>",
+    "optimization_direction": "<给 skillopt-01 的具体指导 30-100 字, 动词开头>",
+    "session_files_analyzed": ["<jsonl 路径>", ...],
+    "evidence_anchors": ["<session jsonl 里的关键 line 引用>", ...]
+  }
+}
+```
+
+**硬约束**:
+1. target_skill_filename 必须是上面花名册里**确切存在**的 SKILL.md 文件名 (e.g. "aid-applying"), 不带 .md
+2. 如果根因是 D 类 (外部因素), target_skill_filename = 'N/A'
+3. 不允许任何字段缺失或格式偏差
+4. optimization_direction 必须是动词开头的具体动作 (e.g. "在 step 5 末尾加 imperative: 必须 git add -A 后再 commit")
+
+## 收尾规则 (硬)
+1. **不要** 发 GitHub 评论 (dispatch_analysis.py 会基于 JSON 自动生成评论)
+2. **不要** close / reopen / assign issue
+3. **不要** commit / push
+4. **不要** 重写任何 skill 文件 (那是 skillopt-01 的工作)
+5. **不要** 改 worktree 任何文件
+6. **不要** 评价 dev-01 / rev-01 / 用户 (质疑规则, 不质疑人)

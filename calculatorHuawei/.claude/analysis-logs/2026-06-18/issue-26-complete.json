@@ -1,0 +1,12 @@
+{
+  "issue": 26,
+  "title": "进阶",
+  "verdict": "APPROVE",
+  "priority": "LOW",
+  "target_skill": "aid-applying",
+  "phenomenon": "Issue #26 函数图像绘制 AID 三阶段跑通且 rev-01 APPROVE: 8 个 artifact 齐全 (proposal/delta-spec/info/delta-design/design-review/tasks/todo/apply-report), 单元测试 77/77 PASS (PlotUtils 41 + evaluateAt 13 + GraphViewModel 23), hvigorw assembleHap BUILD SUCCESSFUL, harmonyos-ui-test AC-1/2 PASS 含真实 screenshot/05_graph3.png + dump_graph3.json, 3 commit (b8eeb2ba/a4f8f9e/7066438) 均带 Signed-off-by. 但 apply-report.md L78-85 的 AC 表与 delta-spec.md L201-238 的 AC 清单存在 silent 错位: delta-spec AC-2='修改表达式' AC-3='修改 x 范围' 被 apply-report 偷换为 AC-2='默认 sin(x) 渲染曲线' AC-3='修改表达式', 整体 AC-3 起下移 1 位且 delta-spec AC-3 '修改 x 范围' 在 apply-report 中消失.",
+  "completed_at": "2026-06-18T17:53:24.866993",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-06-18\\issue-26.md"
+}

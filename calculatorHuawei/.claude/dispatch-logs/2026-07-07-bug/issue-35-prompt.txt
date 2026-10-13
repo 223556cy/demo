@@ -1,0 +1,113 @@
+处理 GitHub Issue #35: sin(x) 渲染为直线
+类型: bugfix
+名称: sin-straight-line
+
+🤖 你是非交互模式 (claude -p)。**全自动,不允许问问题**。
+
+## rev-01 审查报告 (你必须看,这是诊断依据)
+
+### 复现步骤
+1. 启动 devEco 模拟器
+2. 安装 issue #26 的 HAP
+3. 启动 OpenCalc,切到程序员模式
+4. 点击工具栏 📈 图标进入 GraphPage
+5. 默认显示 `sin(x)`, xMin=-6.28, xMax=6.28, samples=200
+6. **期望**: 看到完整的正弦波 (3 个波峰/波谷)
+7. **实际**: 一条从左下到右上的直线
+
+### rev-01 已经做的诊断 (不要再重复做)
+
+我在 `Calculator.ets` 加了 hilog 调试 (`hilog -D 0xCA1C -x`),部署到模拟器抓了 200 个采样点的实际返回值:
+
+```
+evalAt_in  x=-6.28    deg=true      ← 关键!
+fn_sin_in  arg=-6.28  deg=true
+fn_sin_out ret=-0.10938734658651553  ← sin(-6.28°) ≈ -0.109
+evalAt_v   v=-0.109   xV=-6.28
+
+evalAt_in  x=+6.28    deg=true
+fn_sin_out ret=+0.10938734658651555
+evalAt_v   v=+0.109   xV=+6.28
+```
+
+**200 个采样点的 y 值全部满足 `y ≈ x * π/180`** —— 这是 `sin(x°)` 在小角度的线性近似 (sin(x°) ≈ x*π/180)。
+
+### 根因 (rev-01 定位)
+
+`opencalc/entry/src/main/ets/pages/GraphPage.ets` 第 46-62 行的 `aboutToAppear()`:
+
+```typescript
+aboutToAppear(): void {
+    // ...
+    this.prefs.init().then((): void => { this.loadPrefs() })   // 微任务
+    setTimeout((): void => { this.vm.compute() }, 0)          // 宏任务
+}
+```
+
+ArkTS 事件循环规则:**微任务先于宏任务** 执行。所以:
+1. `prefs.init().then(loadPrefs)` 是微任务,先跑 → `loadPrefs()` 调 `getRadiansDefault()` 返回 `false` (用户默认角度) → `vm.setRadianMode(!false)` = `setRadianMode(true)` → **`vm.isDegree = true`**
+2. 然后 `setTimeout` 宏任务跑 → `vm.compute()` 闭包捕获 `this.isDegree=true`
+3. 200 个采样点都按角度模式算 sin → 几乎全在小角度 → 直线
+
+### dev-01 你要做
+
+**修复方案 (rev-01 推荐)**：把 `vm.compute()` 移到 `loadPrefs` 的 `.then()` 里,确保首次计算前 isDegree 已被正确设置:
+
+```typescript
+aboutToAppear(): void {
+    // ...路由参数解析...
+    const ctx: common.UIAbilityContext = getContext(this) as common.UIAbilityContext
+    this.prefs = new PreferencesStore(ctx)
+    this.prefs.init().then((): void => {
+      this.loadPrefs()
+      this.vm.compute()  // ← 在这里调,等 loadPrefs 完成
+    })
+    // 删除 setTimeout 那行
+}
+```
+
+### 必做的 TDD 流程
+
+按 aid-applying skill 走 RED-GREEN-REFACTOR:
+
+1. **RED**: 先写一个测试/UI 脚本,在 GraphPage 上输入 sin(x),检查 hilog 输出 y 值范围 (期望 `y_min < -0.9 && y_max > 0.9`)
+2. **GREEN**: 改 GraphPage.ets 的 aboutToAppear,把 setTimeout 移到 .then() 里
+3. **REFACTOR**: 清理调试日志 (hilog -D 0xCA1C 和 fn_sin_in/out 这些),保留或保留无害的
+
+### 工作步骤
+
+```bash
+cd D:/huawei/Demo/calculatorHuawei
+git worktree add worktrees/issue-35 -b fix/issue-35-sin-straight-line
+cd worktrees/issue-35
+mkdir -p specs/changes/20260707-bug-sin-straight-line
+```
+
+调用 skill 顺序:
+- aid-applying (含 tdd-enforcer)
+- 不要调 aid-planning / aid-implementing (这是 bugfix,只改代码,不需要重写 design)
+
+完成后:
+1. 跑 `hvigorw assembleHap` 确认编译过
+2. 在 devEco 模拟器装新 HAP,验证 sin(x) 是正弦波 (不是直线)
+3. 跑 Calculator.test.mjs + GraphViewModel.test.mjs 确认没破坏
+4. `git commit` (不 push)
+5. 写 apply-report.md 到 specs/changes/20260707-bug-sin-straight-line/
+6. 用 gh_helper.py comment @littleleafbbbbb 等 rev-01 v2 审查
+
+### 硬约束
+
+- ❌ 不 push (rev-01 负责)
+- ❌ 不 close issue
+- ❌ 不绕过 aid-applying 直接 Write apply-report.md (违反铁律)
+- ❌ 不留任何 console.info / hilog 调试代码在最终 patch 里 (调试代码不进 commit)
+
+### 期望产物
+
+`specs/changes/20260707-bug-sin-straight-line/` 下:
+- proposal.md (简述,因为 bugfix 不需要重设计)
+- apply-report.md (必填,记录: 根因 + 修复 + 截图证据)
+- todo.md
+- tests/ (新增或更新 RED test)
+
+🤖 rev-01 派发完毕,等待 dev-01 修复 → analysis 诊断 → skillopt-01 改 skill 建议

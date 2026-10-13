@@ -1,0 +1,31 @@
+{
+  "issue_ticket": {
+    "issue_number": 20,
+    "title": "阶乘按钮 Issue #20 在 dev-01 完成后未触发 rev-01 审查即被人工关闭",
+    "verdict": "CLOSED",
+    "priority": "MEDIUM",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "dev-01 (claude -p) 在 worktree issue-20 手工拼装 AID 三阶段产出 (e5465ca8.jsonl 全程 0 次 Skill 工具调用: L108 Write proposal.md / L110 Write delta-spec.md / L115 Write info.md / L117 Write design.md / L129 Write todo.md / L137 Write tasks.md / L218 Write apply-report.md, 自报 16/16 Node port 测试 PASS + 12/12 hvigorw factorial 测试 PASS + BUILD SUCCESSFUL), commit 582ffba feat(factorial) 至 feat/issue-20-简单需求 分支, L604 自写 post_issue20_comment.py 走 gh issue comment 20 发 @littleleafccccc claude -p 跑完,worktree 在 D:/huawei/Demo/worktrees/issue-20 等 push. 46c50e67.jsonl 是第二次 dev-01 会话 (检测到产物已存在, 仅补发 gh issue comment). Issue 最终被关闭但全程未触发 rev-01 审查 — rev-01 cron 6月17日共跑 70 次, L0 cron prompt REPO block 仅含 #12/#13 (assignees: ['littleleafccccc']), 70 个 session 扫到的 10-30 号 issue 集合 = {#12, #13}, #20 从未进入 rev-01 视野, 因 rev-01 铁律 'littleleafbbbbb 在 assignees → 必须审查' 正确跳过 (issue 始终只 assign 给 littleleafccccc, 未 reassign 给 rev-01).",
+    "root_cause_analysis": "归类 B (漏掉步骤, 同源 issue-3 模式). 核心证据链: (a) aid-applying SKILL.md step3-4 (L281-320) 只要求产出 apply-report.md, 不要求触发 rev-01 review-handoff; SKILL.md L400-419 Git Commit & Push 段只示范 git commit -m + git push, 无 assign-to-rev-01 / gh_helper.py request-review / aid-reviewing 调用 三类闸门, 无 '未触发审查不得宣称完成' imperative; (b) e5465ca8.jsonl#L597-604 dev-01 用自创 post_issue20_comment.py 绕过缺失的 gh_helper.py, 评论内容是 '等 push' (通知 dev-01 自己) 而非 '@littleleafbbbbb 请审查' (触发 rev-01), 根因是 aid-applying SKILL.md 未规定 commit 后必须执行 gh issue edit --add-assignee littleleafbbbbb 或评论里 @ rev-01; (c) rev-01 cron prompt (来自 hermes sessions/hermes/rev-01/2026/06/2026-06-17_130703.jsonl#L0 助手首轮内容) 铁律 2 写死 'littleleafbbbbb 不在 assignees → 跳过, 输出 [SILENT]', 这是单向只读过滤, 反向 (issue 已被 dev-01 完成但未 reassign) 无补救路径. 选 aid-applying 为唯一靶点: 它是 dev-01 工作流的最后一个 skill, step3-4 与 Git Commit & Push 是 issue 关闭前的最后两道闸, 此处加 review-handoff imperative 能同时阻止 #20 (issue 仅分配给 dev-01, rev-01 cron 跳过) 与 #3 (apply-report 自承未调 aid-applying, 用户手关 issue) 两种失审路径. 改 aid-implementing 无效 (commit 已在 APPLYING 阶段后), 改 aid-planning 无效 (PLANNING 早于 issue 关闭), 改 aid-reviewing 无效 (skill 自身正常, 是没人调它).",
+    "optimization_direction": "在 aid-applying SKILL.md L419 (git push 后) 与 L285 (step3-4 apply-report 末尾) 各加一条 review-handoff 闸门: (1) step3-4 末尾追加 imperative '未执行 python gh_helper.py assign <num> littleleafbbbbb 或 commit 后 gh issue edit <num> --add-assignee littleleafbbbbb 之前, apply-report.md 不得标记 APPLYING 完成'; (2) Git Commit & Push 段 L417 commit 命令后强制追加 python gh_helper.py comment <num> '@littleleafbbbbb rev-01 请审查 commit <SHA>, worktree 在 <wt_path>' (替换当前 @littleleafccccc 通知) + gh issue edit <num> --add-assignee littleleafbbbbb, 缺一则步骤未完成. 同时在 apply-report-template.md 末尾追加必填段 'review-handoff: assignees=[littleleafbbbbb ✅/❌], review-request-comment=<url>', 缺 ❌ 即 BLOCKED.",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-20/2026-06-17/46c50e67-2151-4ea0-9a60-4d69bd6983b6.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-20/2026-06-17/e5465ca8-d3f3-4e6b-b8c6-01ceb042fc65.jsonl",
+      "D:/huawei/my_sessions/sessions/hermes/rev-01/2026/06/2026-06-17_130703.jsonl (抽样确认 rev-01 cron 视野中 #20 缺席)"
+    ],
+    "evidence_anchors": [
+      "e5465ca8.jsonl (dev-01 APPLYING): 全程 0 次 Skill 工具调用 — L108 Write proposal.md, L110 Write delta-spec.md, L115 Write info.md, L117 Write design.md, L129 Write todo.md, L137 Write tasks.md, L218 Write apply-report.md, 全程手工拼装",
+      "e5465ca8.jsonl#L603: WRITE post_issue20_comment.py (自创脚本绕过缺失的 gh_helper.py)",
+      "e5465ca8.jsonl#L604: python post_issue20_comment.py — gh issue comment 20 --body @littleleafccccc claude -p 跑完,worktree 在 D:/huawei/Demo/worktrees/issue-20 等 push — 评论对象是 dev-01 自己的账号, 非 rev-01 (littleleafbbbbb), 触发不了 rev-01 cron 审查逻辑",
+      "46c50e67.jsonl (dev-01 第二次会话): L277 assistant TEXT 自报 ✅ Issue #20 处理完成 Commit 582ffba on feat/issue-20-简单需求, 全程未触发 rev-01, 同样 0 次 Skill 工具调用",
+      "aid-applying SKILL.md L18: step3-0 → step3-1 → step3-2 → step3-3 → step3-4 流水线, step3-4 后无 review-handoff step",
+      "aid-applying SKILL.md L400-419 Git Commit & Push 段: 只示范 git commit -m feat({name}): apply changes from aid-workflow + git push -u origin $(git branch --show-current), 无 assign-to-rev-01 / 评论 @ rev-01 / aid-reviewing 调用任何闸门",
+      "aid-applying SKILL.md L281-320 step3-4 apply-report.md 结构: 5 段 (应用信息 / 代码完成情况 / 测试结果 / HarmonyOS UI 测试 / 测试详情), 无 review-handoff / rev-01 assignee / review-request-comment 必填段",
+      "rev-01 cron prompt (hermes rev-01 sessions 2026-06-17 L0 助手首轮读取): 铁律 2 littleleafbbbbb 在 assignees → 必须审查, 否则跳过 [SILENT], 单向只读过滤, 无 dev-01 标记完成但未 reassign 补救路径",
+      "rev-01 cron 6月17日 70 个 session 扫到的 10-30 号 issue 集合实证 = {#12, #13}, #20 从未进入 rev-01 视野 (assignees 始终是 ['littleleafccccc'])",
+      "git log 582ffba 实际存在 feat/issue-20-简单需求 分支上 (dev-01 真实产出), Issue 关闭时间晚于 commit 时间但早于任何 rev-01 审查 — 用户人工关闭未走 review gate",
+      "同类前置: issue-3-diagnosis.json 已识别同模式 未执行 aid-reviewing 不得宣布完成 缺失, 改 aid-applying step3-4, 但 aid-applying SKILL.md 至今未实际加 review-handoff 闸门, 故 #20 复现"
+    ]
+  }
+}

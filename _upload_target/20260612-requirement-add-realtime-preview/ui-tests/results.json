@@ -1,0 +1,110 @@
+[
+  {
+    "ac_id": "AC-RP-01",
+    "name": "空表达式 → 空预览",
+    "expected": "",
+    "actual": " ",
+    "status": "PASS",
+    "note": "result=0",
+    "time": "16:23:26"
+  },
+  {
+    "ac_id": "AC-RP-02",
+    "name": "简单加法 1+2 → 实时预览=3",
+    "expected": "3",
+    "actual": "3",
+    "status": "PASS",
+    "note": "result=0",
+    "time": "16:23:30"
+  },
+  {
+    "ac_id": "AC-RP-03",
+    "name": "5-10 → 实时预览=-5",
+    "expected": "-5",
+    "actual": "-5",
+    "status": "PASS",
+    "note": "result=0",
+    "time": "16:23:36"
+  },
+  {
+    "ac_id": "AC-RP-04",
+    "name": "1+ → 末位运算符无预览",
+    "expected": "",
+    "actual": " ",
+    "status": "PASS",
+    "note": "result=0",
+    "time": "16:23:41"
+  },
+  {
+    "ac_id": "AC-RP-05",
+    "name": "sin(0 未闭合无预览",
+    "expected": "",
+    "actual": "N/A",
+    "status": "SKIP",
+    "note": "基础模式无 sin 按钮",
+    "time": "16:23:44"
+  },
+  {
+    "ac_id": "AC-RP-06",
+    "name": "1++2 语法错误无预览",
+    "expected": "",
+    "actual": "3",
+    "status": "FAIL",
+    "note": "result=0",
+    "time": "16:23:50"
+  },
+  {
+    "ac_id": "AC-RP-07",
+    "name": "sin(0) → 预览=0",
+    "expected": "0",
+    "actual": "N/A",
+    "status": "SKIP",
+    "note": "基础模式无 sin 按钮；切到科学模式后未发现",
+    "time": "16:23:54"
+  },
+  {
+    "ac_id": "AC-RP-08",
+    "name": "50+10% → 实时预览=55",
+    "expected": "55",
+    "actual": "55",
+    "status": "PASS",
+    "note": "result=0",
+    "time": "16:24:01"
+  },
+  {
+    "ac_id": "AC-RP-10",
+    "name": "错误恢复后 1+1 → 预览=2",
+    "expected": "2",
+    "actual": "2",
+    "status": "PASS",
+    "note": "ErrorFlags 隔离验证 result=0",
+    "time": "16:24:10"
+  },
+  {
+    "ac_id": "AC-RP-11",
+    "name": "1000+2000 → 预览=3,000 (千分位)",
+    "expected": "3,000",
+    "actual": "3,000",
+    "status": "PASS",
+    "note": "result=0",
+    "time": "16:24:18"
+  },
+  {
+    "ac_id": "AC-RP-12",
+    "name": "AC 后清空预览",
+    "expected": "",
+    "actual": " ",
+    "status": "PASS",
+    "note": "result=0",
+    "time": "16:24:24"
+  },
+  {
+    "ac_id": "AC-RP-13",
+    "name": "预览与结果一致",
+    "expected": "preview=3, result=3",
+    "actual": "preview=3, result=3",
+    "status": "PASS",
+    "note": "实时预览与最终结果应一致",
+    "time": "16:24:32"
+  }
+]

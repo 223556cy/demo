@@ -1,0 +1,118 @@
+⚠️ 这是 **RE-DISPATCH** 场景! Issue #27 之前已经 dispatch 过一次并被 rev-01 审过.
+rev-01 给的结论: **REQUEST CHANGES** — commit 未签名 + 无 UI 自动化证据
+
+rev-01 完整反馈 (你需要逐条修复阻塞项后再 commit + force-push):
+```
+[rev-01] REQUEST CHANGES — commit 未签名 + 无 UI 自动化证据
+
+## 审查结果
+| 检查项 | 状态 | 备注 |
+|--------|------|------|
+| AID 三阶段 | OK | proposal/delta-spec/info/delta-design/design-review/tasks/todo/apply-report 齐全 |
+| harmonyos-ui-test | FAIL | ui-tests/ 目录为空, 无截图无 dump, 模拟器未连接被 defer |
+| commit signoff | FAIL | 19ff4e2 提交信息无 Signed-off-by 行 |
+| 分支规范 | OK | feat/issue-27-进阶, 未直推 main |
+| 铁律 7 不伪造 | OK | Node 26/26 + hvigorw BUILD 输出为真实跑测结果 |
+
+## 阻塞项 (必须修复)
+- `19ff4e21a60c4f0935b274d1b183b5d461809b45` — commit 19ff4e2 缺 Signed-off-by trailer
+  修复建议: `git commit --amend -s -m "feat(result-display): 分数/小数显示自由切换 [Issue #27]"`, 需保留原 author + date
+- `specs/changes/20260617-requirement-add-result-display-toggle/ui-tests/` — ui-tests 目录为空, 无任何截图/dump
+  修复建议: 等模拟器上线后按 harmonyos-ui-test skill 跑 AC-1~5 截图序列 (1÷2=0.5 → 切换 → 显示 1/2 → 切换 → 显示回 0.5 → 启动后模式保留), 至少 5 张截图 + 1 份 uiautomator dump 提交到 ui-tests/
+
+## 建议项 (建议修复)
+- 19ff4e2: 单 commit 混合功能 + 测试, 建议拆 test(commit) → feat(commit) 两步, 符合 TDD 节奏
+- 19ff4e2: `FractionUtil.ets:40` 1e15 建议提取为 SCALE 常量并加注释
+- 19ff4e2: `CalculatorPage.ets:611` 切换按钮的 Text+border+onClick 链建议提取为 @Builder
+- 19ff4e2: hypium 测试 (FractionUtil.test.ets) 已注册但未实跑, 等模拟器可用时必须补跑
+
+## 主要亮点
+- FractionUtil 设计专业: 1e15 截断 + GCD 化简 + 9999 分母阈值三重防御
+- lastRawResult 缓存避免字符串反解丢精度, 优于常见做法
+- 历史记录与显示模式解耦, this.result 始终小数, formatResultForDisplay 仅 UI 层格式化
+- 横屏隐藏 / 错误态短路 / 无结果态短路 三种边界条件都处理
+- AID 三阶段产物完整, Node 测试 26/26 PASS, hvigorw 编译通过无新增 WARN
+
+## 接下来
+@littleleafccccc 请修复阻塞项后再 assign rev-01.
+issue 保持 open, 不要关闭.
+```
+
+**这次 re-dispatch 的工作流完全不同**:
+1. ⚠️ 不要从零写代码! worktree 里已有上次 AID 三阶段的产出 + 已 push 的 commits
+2. 先 `git fetch origin <branch>` 拿最新, 看 origin 上的 commits
+3. 读 worktree 里的 specs/changes/<dir>/apply-report.md 了解上次做了什么
+4. 读 specs/changes/<dir>/design-review.md / tasks.md 了解规划
+5. 读 rev-01 反馈里的**阻塞项**, 逐条修复:
+   - **commit signoff 缺失** → 用 `git rebase --signoff <base-sha>~1` 或 `git commit --amend --signoff <sha>`,然后 force-push
+   - **代码问题** → 改文件, 单独 commit, 不要再混进旧的 commit
+   - **缺少产物** → 补 specs/changes/<dir>/ 下缺失的文件
+6. 修复完后 force-push 到同一分支 `feat/issue-27-进阶`
+7. 完成后跑 gh_helper.py comment <num> "@littleleafccccc re-dispatch 完成, force-push 已上 origin, 请 @littleleafbbbbb 再审"
+
+**严禁**:
+- ❌ 不要新建分支
+- ❌ 不要 close issue (留给 rev-01)
+- ❌ 不要 push 到 main
+- ❌ 不要修改 issue 的 assignees (保留 littleleafccccc)
+- ❌ 不要重写 AID 产物 (除非 rev-01 明确说要改)
+- ❌ 不要 force-push 之前不 rebase/--signoff
+
+================================================================
+处理 GitHub Issue #27: 进阶
+Issue 正文:
+ **计算结果支持小数和分数两种显示，自由切换** | 分数显示 | ⭐⭐ | 学生用户强需求 |
+
+工作目录: D:\huawei\Demo\worktrees\issue-27
+类型: requirement-add
+名称: 进阶
+
+🤖 你是非交互模式 (claude -p)。**全自动,不允许问问题**。
+不需要等用户确认、不需要列"待确认项"、不要"请求授权"。
+所有决策自己拍板,所有步骤直接执行。dev-01 已经替你授权一切。
+
+请按 AID 工作流三阶段处理。**你必须**用 Skill 工具显式按顺序调用以下 skill（注意:不是"自动加载",必须主动调 Skill tool,否则产物会命名错误/缺审视报告）:
+  - PLANNING 阶段:aid-planning skill (内部按 step1→step9 顺序,会**自动调用** rq-parse / rq-clarify / rq-codebase / mod-design 子 skill) → 产物: proposal.md / delta-spec.md / info.md / **delta-design.md** / design-review.md
+    - ⚠️ 组件设计 (step8) 必须由 mod-design skill 输出 delta-design.md,不能直接 Write design.md
+    - ⚠️ 设计审视 (step9) 必须输出 design-review.md,缺这个文件 dev-01 会判为 PLANNING 阶段未完成
+  - IMPLEMENTING 阶段:aid-implementing skill → tasks.md
+  - APPLYING 阶段:aid-applying skill (+ tdd-enforcer) → apply-report.md + 真实代码改动 + 真实测试
+
+**硬约束 (违反任意一条 = 任务失败, dev-01 会在 review 阶段打回)**:
+  1. **必须**用 Skill 工具调用 aid-planning,不能用 Bash/Write 直接写 proposal.md / delta-spec.md / info.md / delta-design.md / design-review.md
+  2. **必须**让 aid-planning 调 mod-design (step8) 产出 delta-design.md (不是 design.md)
+  3. **必须**让 aid-planning 跑完 step9 产出 design-review.md
+  4. **必须**用 Skill 工具调用 aid-applying (含 tdd-enforcer),不能用 Bash/Write 直接写 apply-report.md
+  5. **禁止**绕过任何 skill 的安全拦截 (如阶乘/! 拦截);如 SKILL 返回 interception,立即停止并 @人类,不要"接管"重做
+
+步骤:
+1. 读项目能力: read D:/huawei/Demo/calculatorHuawei/.claude/capabilities.json
+2. **调用 Skill 工具** 加载 aid-planning,跑 step1→step9 (中间会自动调 rq-parse / rq-clarify / rq-codebase / mod-design)
+3. **调用 Skill 工具** 加载 aid-implementing
+4. **调用 Skill 工具** 加载 aid-applying (+ tdd-enforcer): RED-GREEN-REFACTOR,真实写代码 + 真实跑测试
+5. 每个阶段用 TodoWrite 跟踪进度,状态写到 specs/changes/<YYYYMMDD>-<type>-<name>/todo.md
+6. 完成后跑 git commit (不 push! dev-01 会帮你 push)
+7. 完成后跑 gh_helper.py comment <num> "@littleleafccccc claude -p 跑完,worktree 在 <wt_path> 等 push"
+
+⚠️ 你的工作范围 = AID 三阶段 + commit。**不**做:
+  - ❌ 不 push (dev-01 负责)
+  - ❌ 不 close issue (rev-01/用户负责)
+  - ❌ 不 reassign (dev-01 决定)
+  - ❌ 不发 issue 总结评论 (dev-01 负责)
+  - ❌ 不直接用 Write/Bash 写 PLANNING 制品 (必须经 aid-planning skill)
+  - ❌ 不跳过 step9 design-review.md (视为 PLANNING 阶段未完成)
+
+用户确认点处理 (方案 C,你自动答):
+  - 阶段间确认一律自动同意,理由记录 todo.md
+  - 编译环境检查真实跑 which hvigorw / hdc
+  - 高风险点必须暂停并 @littleleafccccc 等回复:
+    a) capabilities.json 缺失 (项目级)
+    b) hvigorw / hdc / DevEco SDK 不在 PATH
+    c) PLANNING 识别为 arch-refactor 或 platform-migration
+    d) delta-spec.md / delta-design.md 涉及删除现有功能
+    e) **SKILL 返回安全拦截 (如阶乘/! 触发 aid-planning 拦截规则)**
+  - 暂停方式:gh_helper.py comment <num> @littleleafccccc,issue 标 awaiting-human-input,worktree 暂存不 commit/push
+
+⚠️ 如果 worktree 里已有该 issue 的 commit 和 AID 产物:
+  - 直接退出 (不要再写新 specs/changes/、不要再 commit)
+  - 输出 "Issue #<num> already handled at <commit SHA>" 到 stdout

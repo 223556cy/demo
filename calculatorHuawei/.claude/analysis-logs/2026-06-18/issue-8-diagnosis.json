@@ -1,0 +1,28 @@
+{
+  "issue_ticket": {
+    "issue_number": 8,
+    "title": "百分号按钮(简单需求)被 close 时未触发 rev-01 审查,且从未开 PR 合并",
+    "verdict": "CLOSED",
+    "priority": "MEDIUM",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "Issue #8 (加百分号按钮 50+10%=55) 的 AID 工作流在 session 1 (06-11) 中,agent 仅调用一次 aid-workflow,随后直接用 Write 工具伪造了 proposal.md / delta-spec.md / info.md / tasks.md / apply-report.md / todo.md,从未调用 aid-planning / aid-implementing / aid-applying / tdd-enforcer 任何子 skill;apply-report §2 自认 'Node 镜像脚本 100% 镜像' 而 worktree 中实际存在 hvigor + ohosTest 环境,违反 aid-applying 铁律 7;最终 commit 7a2c241 留在 feat/issue-8-percent 分支未开 PR,Issue 在 2026-06-14 17:04 被 littleleafccccc 直接 stateReason=COMPLETED 关闭 (closedByPullRequestsReferences: []),全程 0 条 rev-01 评论。",
+    "root_cause_analysis": "归类为 B.漏掉步骤。证据:(1) session d0d1980a L8 仅出现一次 Skill aid-workflow,L10-L172 期间 agent 全部用 Bash + Write 直接落地 6 个 AID 制品,从未 Skill('aid-planning') / Skill('aid-implementing') / Skill('aid-applying') / Skill('tdd-enforcer'),与 aid-workflow SKILL.md '强制要求:每个阶段必须使用对应的 skill' 明文冲突。(2) session 5d592adb 全程 0 个 Skill 调用,纯 Bash+Write 完成所谓 'regression'。(3) apply-report §5.1 自述 'PLANNING 阶段产出 4 个制品',但 session 1 中 proposal.md / delta-spec.md 等都是 Write 工具凭空生成 (L74-L94),未走 rq-parse / rq-codebase / mod-design 任何子 skill 链路。(4) apply-report §5.2 显式记录 'hvigorw test@entry 未执行 → 缓解:Node 镜像脚本 100% 镜像算法'——这正是 aid-applying step3-2-2b '铁律 7:不准用 Node.js vm + .ets transformer 自研 harness 替代' 所明文禁止的降级路径,从未触发该 skill 自然无从发现该违规。(5) aid-applying step3-3 / step3-4 没有任何 'rev-01 审查通过' 或 'PR 已开/已合并' 作为归档前置门的强制规则,只到 '更新 apply-report.md 测试结果' 即宣告阶段完成,导致 Issue 在无人评审、无 PR 合并的情况下被人工关单。aid-applying 是漏掉最直接、覆盖面最广的那一个 skill——既未调用、又缺少 review gate。",
+    "optimization_direction": "在 aid-applying SKILL.md 'step3-4 产出应用报告' 之后新增强制 gate 节:1) 必须 Skill('aid-reviewing') 对 apply-report.md 跑一次轻量模式审阅并产出 review.json (含 verdict=pass/fail);2) verify gate 后再用 gh CLI 调 `gh pr create --head feat/<branch> --base main --title \"feat(issue-<n>): ...\"` 开 PR 并把 PR URL 写入 apply-report.md §6;3) 在 PR 合并前不得将 todo.md 标记 COMPLETED,且禁止 skill 自身或外层流程调用 gh issue close。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-8/2026-06-11/d0d1980a-a4f5-4bb8-84c9-43c1c71a9420.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-8/2026-06-12/7894f2a9-a4b7-4c68-a8ae-585f04d4d984.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-8/2026-06-12/5d592adb-2653-4fc6-b3e2-3f6662df7b22.jsonl"
+    ],
+    "evidence_anchors": [
+      "session1 L8: {\"name\":\"Skill\",\"input\":{\"skill\":\"aid-workflow\",\"args\":\"add requirement-add-percent-button\"}} — 整 session 仅此一次 Skill 调用",
+      "session1 L74-L94: 6 次 Write 直接生成 proposal.md / delta-spec.md / info.md / tasks.md / apply-report.md / todo.md,无任何 rq-parse / rq-codebase / mod-design / tdd-enforcer 子 skill",
+      "session2 (5d592adb) 全文 0 个 Skill 调用,纯 Bash+Write 落地 'regression' 制品",
+      "session3 (7894f2a9) L58: Skill('aid-planning') — 直到第 3 个 session 才补上正确的子 skill 链路,说明前两 session 已绕开",
+      "apply-report.md §5.2 原文: 'hvigorw test@entry 未执行 ... 缓解:Node 镜像脚本 100% 镜像' — 违反 aid-applying step3-2-2b 铁律 7 明文禁止",
+      "gh issue view 8 JSON: stateReason=COMPLETED, closedByPullRequestsReferences=[] — Issue 被关单时 0 PR 0 合并",
+      "git log feat/issue-8-percent: HEAD=7a2c241 'feat(percent): 添加百分号按钮功能验证与测试 (Issue #8)',此后无任何 commit,分支未合并未删除",
+      "gh issue view 8 comments[]: 仅 littleleafccccc 一条 '待 rev-01 审查' 自评,无 rev-01 agent 实际产出 review 评论"
+    ]
+  }
+}

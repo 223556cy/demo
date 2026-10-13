@@ -1,0 +1,7 @@
+Issue #19 processed at 2026-06-17T11:38:47.048112
+Commit: cf42ff97c0dd928aad1ac5acb8c93c939a94573d
+Branch: feat/issue-19-简单需求
+Worktree: `D:\huawei\Demo\worktrees\issue-19`
+Change: 20260617-requirement-add-factorial-button
+Comment OK: True
+Dispatch log: `D:\huawei\Demo\calculatorHuawei\.claude\dispatch-logs\2026-06-17\issue-19.md`

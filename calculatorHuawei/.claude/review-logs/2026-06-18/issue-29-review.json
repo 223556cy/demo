@@ -1,0 +1,23 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "feat commit 未 sign-off 且缺 UI 测试证据",
+  "blocking": [
+    {
+      "item": "commit signoff",
+      "evidence": "2c79e0b 提交消息中无 Signed-off-by 行 (a4f8f9e 已有 Signed-off-by), 违反铁律"
+    },
+    {
+      "item": "harmonyos-ui-test 缺失",
+      "evidence": "apply-report.md 仅记录 99 个单元测试结果, 未提供任何截图、uiautomator dump 或 on-device 验证; capabilities.json 中 ui_test.available=true 且本 issue 是 ⭐⭐ 中等模糊的 UI 交互变更, 需真实跑 harmonyos-ui-test 验证 Swiper 切换行为"
+    }
+  ],
+  "suggestions": [
+    "2c79e0b: 将 feat commit 拆为 test (RED) + feat (GREEN) 两个 commit, 严格遵循 TDD RED-GREEN 分阶段提交, 而非单 commit 一次性提交"
+  ],
+  "highlights": [
+    "2c79e0b: AID 三阶段制品齐全 (proposal/delta-spec/info/delta-design/design-review/tasks/apply-report), 设计审查 design-review.md 通过",
+    "2c79e0b: ModeController 状态机抽离为纯函数, 28 个 KeyboardSwipe 单元测试覆盖枚举/边界/优先级/preferences, 可独立单测, 架构清晰",
+    "2c79e0b: onSwiperChange 设计为单一可信源, 模式按钮与手势都走 changeIndex → onChange 同步, 互斥写避免双开, 设计合理"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — feat commit 未 sign-off 且缺 UI 测试证据\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | proposal/delta-spec/info/delta-design/design-review/tasks/apply-report 齐全 |\n| harmonyos-ui-test | FAIL | apply-report 仅含单元测试, 无截图/uiautomator dump, capabilities.json 标记 ui_test.available=true |\n| commit signoff | FAIL | 2c79e0b feat commit 缺 Signed-off-by (a4f8f9e 已签) |\n| 分支规范 | OK | feat/issue-29-中等模糊, 未直推 main |\n| 铁律 7 不伪造 | OK | apply-report 诚实标注 1 个 pre-existing 失败 (AC-11 Issue #9) |\n\n## 阻塞项 (必须修复)\n- `2c79e0b` — feat commit 缺 Signed-off-by 行, 违反铁律.\n  修复建议: `git commit --amend -s -m \"<原 message>\"` 然后 force-push (因已 push 到 origin)\n- `specs/changes/20260617-requirement-add-keyboard-swipe/apply-report.md` — 缺 UI 测试证据.\n  修复建议: 在应用阶段跑 harmonyos-ui-test, 截图三页 (基础/科学/程序员) 的 Swiper 切换效果, 附 dump 文件; 在 apply-report.md 的\"测试结果\"章节新增\"### UI 自动化测试 (harmonyos-ui-test)\"子节, 列出截图路径与 uiautomator dump 输出\n\n## 建议项 (建议修复)\n- 2c79e0b: 将 feat commit 拆为 test (RED) + feat (GREEN) 两个 commit, 严格遵循 TDD RED-GREEN 分阶段提交, 而非单 commit 一次性提交\n\n## 亮点\n- 2c79e0b: AID 三阶段制品齐全, design-review 通过\n- 2c79e0b: ModeController 抽离为纯函数, 28 个单元测试覆盖全 (枚举/边界/优先级/preferences), 架构清晰\n- 2c79e0b: onSwiperChange 作为单一可信源, 模式按钮 + 手势都走 changeIndex, 互斥写避免双开\n\n## 接下来\n@littleleafccccc 请修复阻塞项后再 assign rev-01.\nissue 保持 open, 不要关闭."
+}

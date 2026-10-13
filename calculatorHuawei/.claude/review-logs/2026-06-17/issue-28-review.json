@@ -1,0 +1,27 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "主 commit 未 signoff, UI 自动化 T21 未跑",
+  "blocking": [
+    {
+      "item": "commit signoff",
+      "evidence": "c7ba0fc (主 feature commit feat(memory-slots)) 末尾没有 Signed-off-by trailer, 仅 a4f8f9e (fix merge) 有 signoff. 任务上下文 '❌ c7ba0fc6 2026-06-17 feat(memory-slots) ... signed=False' 明确标注未签"
+    },
+    {
+      "item": "harmonyos-ui-test",
+      "evidence": "specs/changes/20260617-requirement-add-memory-slots/ui-tests/ 目录为空, 无任何截图 (.png/.jpg) 也无 uiautomator dump. apply-report.md 第 42 行 T21 状态标 '⏭️ Deferred', 147-162 行承认未跑 hdc file recv / 无截图证据. 任务上下文 '❌ 无真实截图'"
+    }
+  ],
+  "suggestions": [
+    "c7ba0fc: 将 TaskApply 阶段拆分 — 把 specs/* 文档与 opencalc/ 源码分两个 commit, 方便评审 & 后续 revert",
+    "c7ba0fc: CalculatorPage.ets L17 注释行 '// aid-workflow 20260617 Issue #28: 记忆槽 (M1-M6 + MR)' 可与 import 合并一行, 减少行数",
+    "c7ba0fc: T21 (UI 自动化) 即便 deferred, 也应在 ui-tests/ 下放 README 说明 deferred 原因与接力计划, 避免后续 reviewer 误判"
+  ],
+  "highlights": [
+    "c7ba0fc: AID 三阶段产物完整 — proposal/delta-spec/info/delta-design/design-review/tasks/apply-report 7 份文档齐全, 闭环",
+    "c7ba0fc: 业务逻辑与 Node 端口 1:1 镜像, 10/10 单元测试 (MemorySlots.test.mjs) 真跑过且本次复跑 10/10 PASS",
+    "c7ba0fc: FMEA 7 项消减措施 (NaN/Infinity 拒绝、1-6 守卫、MR 互斥、空槽 disabled 等) 全部落到代码注释, 可追溯",
+    "c7ba0fc: assembleHap BUILD SUCCESSFUL in 14.2s, 新增代码 0 新警告, 编译期 ArkTS 严格类型检查全过",
+    "c7ba0fc: 复用既有 LongPressMenuPanel 的常量 (MENU_*_COLOR/HEIGHT/WIDTH) 与遮罩风格, 视觉与交互一致"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — 主 commit 未 signoff, UI 自动化 T21 未跑\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | PLANNING/IMPLEMENTING/APPLYING 7 份文档齐全 (proposal/delta-spec/info/delta-design/design-review/tasks/apply-report) |\n| harmonyos-ui-test | FAIL | specs/changes/20260617-requirement-add-memory-slots/ui-tests/ 目录为空, apply-report T21 显式 ⏭️ Deferred, 无截图无 uiautomator dump |\n| commit signoff | FAIL | c7ba0fc 主 commit 缺 Signed-off-by trailer, 仅 a4f8f9e (merge fix) 已签 |\n| 分支规范 | OK | feat/issue-28-简单需求 跟踪 origin/feat/issue-28-简单需求, 未直推 main |\n| 铁律 7 不伪造 | OK | Node 端口 10/10 真跑过 (本次复跑确认), assembleHap 真跑过, hypium 失败系 worktree pre-existing 限制 |\n\n## 阻塞项 (必须修复)\n- `c7ba0fc` — 主 feature commit 缺 `Signed-off-by: littleleafccccc <littleleafccccc@users.noreply.github.com>` trailer\n  修复建议: `git rebase --exec 'git commit --amend --no-edit -s' c7ba0fc` 或 interactive rebase 在 c7ba0fc 上 amend 加 `-s`, 然后 force-push (分支未合并, 安全)\n- `specs/changes/20260617-requirement-add-memory-slots/ui-tests/` (空目录) + `apply-report.md:42` — T21 UI 自动化未执行, 0 截图 0 dump, 违反铁律 (有 UI 变更必须有 hdc 真实跑证据)\n  修复建议: 补跑 `harmonyos-ui-test` 流程: `hdc install -r` HAP → 启动 EntryAbility → 模拟 \"1+2=\" → 长按 1 键 → dump 验证 toast \"已存入 M1\" → 点击 MR → dump 验证 6 槽菜单 → 点击 M1 → 验证 expression 追加 3. 至少 4 张截图存到 ui-tests/, 引用到 apply-report.md\n\n## 建议项 (建议修复)\n- c7ba0fc: 将 TaskApply 阶段拆分 — 把 specs/* 文档与 opencalc/ 源码分两个 commit, 方便评审 & 后续 revert\n- c7ba0fc: CalculatorPage.ets L17 注释行 `// aid-workflow 20260617 Issue #28: 记忆槽 (M1-M6 + MR)` 可与 import 合并一行, 减少行数\n- c7ba0fc: T21 (UI 自动化) 即便 deferred, 也应在 ui-tests/ 下放 README 说明 deferred 原因与接力计划, 避免后续 reviewer 误判\n\n## 主要亮点\n- AID 三阶段产物完整, 7 份文档闭环\n- Node 端口 1:1 镜像 ArkTS 业务逻辑, 10/10 测试真跑过 (本次复跑 10/10 PASS)\n- FMEA 7 项消减措施 (NaN/Infinity 拒绝、1-6 守卫、MR 互斥、空槽 disabled 等) 全部落到代码注释, 可追溯\n- assembleHap BUILD SUCCESSFUL, 新增代码 0 新警告\n- 复用既有 LongPressMenuPanel 常量与遮罩风格, 视觉一致\n\n## 接下来\n@littleleafccccc 请修复阻塞项后再 assign rev-01.\nissue 保持 open, 不要关闭."
+}

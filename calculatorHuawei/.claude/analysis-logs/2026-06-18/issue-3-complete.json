@@ -1,0 +1,12 @@
+{
+  "issue": 3,
+  "title": "功能需求",
+  "verdict": "UNKNOWN",
+  "priority": "MEDIUM",
+  "target_skill": "aid-applying",
+  "phenomenon": "Issue #3「实时预览结果」在 worktree feat/issue-3-realtime-preview 上完成 PLANNING+IMPLEMENTING 后,aid-applying/aid-reviewing/aid-archiving 三个 skill 均未被调用;apply-report.md 是用户 223556cy 手工补提交(commit 6cd28cb),apply-report 自称 '本报告由 aid-applying skill 生成' 系署名幻觉;todo.md 标记 ARCHIVING 待审核但 Issue 直接 CLOSED。",
+  "completed_at": "2026-06-18T17:29:22.675685",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-06-18\\issue-3.md"
+}

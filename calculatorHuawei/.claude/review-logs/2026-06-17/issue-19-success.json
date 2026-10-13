@@ -1,0 +1,13 @@
+{
+  "issue": 19,
+  "title": "简单需求",
+  "verdict": "REQUEST_CHANGES",
+  "summary": "缺 DCO sign-off + 无真实 UI 自动化跑测",
+  "branch": "feat/issue-19-简单需求",
+  "wt_path": "D:\\huawei\\Demo\\worktrees\\issue-19",
+  "comment_ok": true,
+  "action": "assign-littleleafccccc(ok=True)",
+  "action_ok": true,
+  "reviewed_at": "2026-06-17T12:00:44.961833",
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\review-logs\\2026-06-17\\issue-19.md"
+}

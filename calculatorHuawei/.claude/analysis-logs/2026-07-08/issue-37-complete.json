@@ -1,0 +1,12 @@
+{
+  "issue": 37,
+  "title": "[bug] sin(x) 在 GraphPage 渲染成直线 — isDegree 时序竞态 (issue #26 回归)",
+  "verdict": "APPROVE",
+  "priority": "MEDIUM",
+  "target_skill": "aid-applying",
+  "phenomenon": "Issue #37 body 在 step2 (根因解释) 中**完整列出**双因果链 — (a) 微任务先于宏任务导致时序竞态,(b) setRadianMode(!radianMode) 配合 radiansDefault=false 默认值导致 isDegree=true (语义翻转);但其 fix proposal 代码块仅展示时序修复 (setTimeout 移入 .then()),**未覆盖**语义翻转根因。Claude (worker) 按 tasks.md 执行:Task 3.1 时序修复 → Task 5.2 hilog + 截图发现 sin 仍为直线 → 触发 Task 5.3 (条件性扩展修复) → setRadianMode(false) 强制弧度制 → Task 5.3 后重新截图显示完整正弦波。apply-report.md#L16-25 显式记录 '⚠️ 关键发现:Issue body 方案不完整,需双修复',commit 891d795 同时落地两个独立 fix(aboutToAppear 时序 + loadPrefs 强制 radian)。最终 46/46 测试 PASS + E2E 完整正弦波 + 12 张截图 + 11 份 uidump。",
+  "completed_at": "2026-07-08T16:04:16.010188",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-07-08\\issue-37.md"
+}

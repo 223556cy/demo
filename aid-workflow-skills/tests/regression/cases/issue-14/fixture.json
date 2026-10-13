@@ -1,0 +1,24 @@
+{
+  "id": "issue-14",
+  "issue": {
+    "number": 14,
+    "title": "#14 单位换算v1",
+    "category": "单位换算",
+    "requirement_id": 8,
+    "rev_01_rounds": 4
+  },
+  "paths": {
+    "baseline_worktree": "D:\\huawei\\Demo\\worktrees\\issue-14",
+    "opencalc_subpath": "opencalc"
+  },
+  "spec_dir": "D:\\huawei\\Demo\\aid-workflow-skills\\tests\\regression\\cases\\issue-14\\spec",
+  "expected": {
+    "diff_file": "D:\\huawei\\Demo\\aid-workflow-skills\\tests\\regression\\cases\\issue-14\\expected\\expected.diff",
+    "compile_exit": 0,
+    "test_pass": true
+  },
+  "ui_test": {
+    "required": true,
+    "fixture_path": null
+  }
+}

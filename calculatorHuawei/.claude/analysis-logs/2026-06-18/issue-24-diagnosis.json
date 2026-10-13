@@ -1,0 +1,33 @@
+{
+  "issue_ticket": {
+    "issue_number": 24,
+    "title": "Issue #24 首次 dispatch commit ad404e3 缺 Signed-off-by 导致 rev-01 REQUEST CHANGES, 触发额外 re-dispatch 循环 (efc2437)",
+    "verdict": "APPROVE",
+    "priority": "MEDIUM",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "Issue #24 首次 dispatch 时, dev-01 在 session 36f09a4f 调 aid-applying 完成 apply-report.md 后直接 git commit, 产出 ad404e3. rev-01 在 session 14e273da 立即驳回: 提交缺 Signed-off-by trailer (DCO). 触发 RE-DISPATCH 场景 (session 1ecb2329), dev-01 通过 git commit --amend --signoff 修复 (新 SHA 77335ab) 并补 efc2437 提交 revert 说明, 二次 rev-01 (session f483f9a4) 才 APPROVE. 整体多花了 1 轮完整 dev+rev 循环.",
+    "root_cause_analysis": "归类 B (漏掉步骤). aid-applying SKILL.md:417-419 的 commit 指令模板为 `git add -A && git commit -m \"feat({name}): apply changes from aid-workflow\"`, 完全没带 --signoff, 也没有 '必须 Signed-off-by' 的 imperative 约束. 项目铁律 7 要求 commit DCO 签名 (rev-01 检查项 commit signoff 是硬卡点), 但 aid-applying 没有把这个跨技能硬约束落到自己的 commit step 里. 证据: (1) session 36f09a4f-c251-4e29-982f-4b7c73a518d8.jsonl 内 aid-applying 被调 251 次但 commit 模板一直不带 signoff, 产出的 ad404e3 缺 trailer; (2) session 1ecb2329-0e21-4dec-b09d-29ce9a09df19.jsonl rev-01 反馈明确 'ad404e3 缺 Signed-off-by trailer' 阻塞项, 修复建议 `git commit --amend --signoff --no-edit` 正是 aid-applying 应该自带但缺失的; (3) git log 显示 77335ab (amend 后) + efc2437 (re-dispatch 提交) 才补齐 Signed-off-by. 不是 skill 措辞歧义 (C 类), 不是外部因素 (D 类), 不是 dev-01 自己瞎改 prompt (A 类), 是流程步骤缺一条 imperative.",
+    "optimization_direction": "在 aid-applying SKILL.md 第 417-419 行的 commit 模板改为 `git commit --signoff -m \"...\"` (--signoff 强制加 Signed-off-by trailer), 并在该 step 末尾追加 imperative: '**铁律 7**: 每个 commit 必须带 Signed-off-by, --signoff 不可省略, 否则 rev-01 直接 REQUEST CHANGES'.",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-24/2026-06-17/36f09a4f-c251-4e29-982f-4b7c73a518d8.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-24/2026-06-17/14e273da-c41c-4ee2-b350-f253584bd2cf.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-24/2026-06-17/1ecb2329-0e21-4dec-b09d-29ce9a09df19.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-24/2026-06-17/f483f9a4-504f-4cb8-bf62-d9c12e166bdc.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-24/2026-06-17/62f0135b-5544-416f-8051-cd137011cb88.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-24/2026-06-17/7aa5a781-e791-4d91-8782-0722ae1d8f5e.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-24/2026-06-17/d21730ff-f8c0-4de8-bf36-8a86d83cab14.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-24/2026-06-17/d26f12f5-349b-422b-9fed-44cfd21a6670.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-24/2026-06-17/1e4fb343-174d-4487-bbe5-c43d5719fd10.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-24/2026-06-17/7402a272-3880-4e8d-8538-5a87fcef6b5c.jsonl"
+    ],
+    "evidence_anchors": [
+      "session 36f09a4f (首次 dispatch): aid-applying 调 251 次, 产出 ad404e3 缺 Signed-off-by",
+      "session 14e273da (首次 rev-01): 'ad404e3 缺 Signed-off-by trailer' → REQUEST CHANGES",
+      "session 1ecb2329 (re-dispatch): 用户提示 '⚠️ 这是 RE-DISPATCH 场景' + rev-01 修复建议 `git commit --amend --signoff --no-edit`",
+      "session f483f9a4 (二次 rev-01): efc2437 + 77335ab 双 commit 都补 Signed-off-by 后 APPROVE",
+      "git log efc2437 commit message: '阻塞项 Signed-off-by 已在 ad404e3 (新 SHA 77335abc) 通过 amend 修复'",
+      "aid-applying SKILL.md:417-419 commit 模板原样: `git add -A && git commit -m \"feat({name}): apply changes from aid-workflow\" && git push -u origin $(git branch --show-current)`, 无 --signoff"
+    ]
+  }
+}

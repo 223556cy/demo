@@ -1,0 +1,13 @@
+{
+  "issue": 30,
+  "title": "[CRON] 数据采集脚本连接失败 - WinError 10061",
+  "verdict": "REQUEST_CHANGES",
+  "summary": "commit 缺 Signed-off-by, 阻塞合并",
+  "branch": "feat/issue-30-cron-数据采集脚本连接失败-win",
+  "wt_path": "D:\\huawei\\Demo\\worktrees\\issue-30",
+  "comment_ok": true,
+  "action": "assign-littleleafccccc(ok=True)",
+  "action_ok": true,
+  "reviewed_at": "2026-06-29T11:55:58.672500",
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\review-logs\\2026-06-29\\issue-30.md"
+}

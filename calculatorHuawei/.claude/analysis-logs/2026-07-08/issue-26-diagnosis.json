@@ -1,0 +1,36 @@
+{
+  "issue_ticket": {
+    "issue_number": 26,
+    "title": "APPROVE 通过但 integration-all 又出 5 个 fix commit(cos/tan evaluateAt 强制 sin debug / x range 默认 -2~2 太窄 / 无 auto-redraw)—— apply-report 单元测试与 UI AC 覆盖深度不足",
+    "verdict": "APPROVE",
+    "priority": "MEDIUM",
+    "target_skill_filename": "tdd-enforcer",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/tdd-enforcer/SKILL.md",
+    "phenomenon": "rev-01 对 Issue #26 (4db7331) 判 APPROVE,AID 三阶段 + 77/77 单元测试 + UI AC-1/2 PASS + harmonyos-ui-test 6 截图 6 dump + commits signed-off 全部过。但 APPROVE 后 integration-all 分支在 2026-06-26 又出现 5 个 fix commit:331bf62 (revert evaluateAt 强制 sin debug code, cos/tan 才正常)、a347814 (debug: force sin 注入)、1c6ae56 (debug: console.log 定位 sin bug)、3b57d7a (default xMin/xMax 从 '-2'/'2' 改为 '-6.28'/'6.28' 让 sin/cos 显示完整周期)、d867054 (GraphPage 加 300ms debounce auto-redraw onChange, 之前仅绘制按钮触发)。apply-report L80-86 把 AC-3~AC-8 全部 ⏭️ Deferred '由单元测试覆盖',Calculator.test.mjs L222-271 的 evaluateAt 测试只覆盖 sin(x)/x^2/2*x/log(x)/sin(x+cos(x) 五组,无独立 cos(x)、tan(x)、atan/arcta 等价类用例。",
+    "root_cause_analysis": "归类 B (漏掉步骤) + C (规则歧义) 混合。证据链:1481b555.jsonl#L13 todo.md 'APPLYING 77/77 单测 + UI PASS' + apply-report.md#L80-86 把 AC-3~8 显式 ⏭️ (推断) → tdd-enforcer/SKILL.md L138-139「当前 task 的所有验收标准都有对应测试且通过后进入下一个 task」+ apply-report.md#L181 显式承认 xMin/xMax 默认值因 ArkUI TextInput 渲染问题被改为 '-2'/'2'(jsonl#apply-report.md#L181) → Calculator.test.mjs#L222-271 evaluateAt 13 个用例仅含 sin(x)/sin(x)+cos(x) 复合,缺独立 cos(x)、tan(x) (推断) → commit a347814 注入 `return Math.sin(this.xValue)` debug code 后 Calculator 单测全过(因 sin(x) 永远 PASS)+ 复合测试 cos(0)+sin(0)=1 也碰巧等于 1 (推断) → commit 331bf62 revert debug code 时才暴露 cos/tan 全失败 (jsonl#commit 331bf62)。so why 三层穿透:L1 现象 — apply-report AC-3~8 ⏭️ + Calculator 仅测 sin(x);L2 流程 — tdd-enforcer 仅要求「每个验收标准有对应测试」但缺「等价类 ≥ N」硬指标,导致单函数 sin 视为等价类完整;L3 根因 — tdd-enforcer SKILL.md L82「一个测试只验证一个行为」未配套「一类输入需 ≥ N 个等价类用例(三角函数需 sin/cos/tan 三类各 ≥ 1)」或「修改类 AC 必须走 UI 而非单元测试替代」的强约束,aid-applying 在 AC-3~8 ⏭️ 时也未触发 4 要素 self-check(只走了一次 UI 验证的 AC-1/2 PASS),所以默认 x range 错误(auto-redraw 缺失)从 L1 穿过 L3 直至 production。",
+    "optimization_direction": "修改 tdd-enforcer/SKILL.md step「RED - 写失败测试」与「完成检查清单」两处:(1) 在「一个测试只验证一个行为」之后追加『对于多分支/多函数 API(三角函数 sin/cos/tan、条件分支、错误标志位等),每个等价类必须有 ≥1 独立 it 用例,不允许用单函数 + 复合表达式替代等价类覆盖』;(2) 在「完成检查清单」追加『[ ] 含 UI 交互的 AC(输入变更、状态切换、动画)必须有 UI 自动化执行证据(harmonyos-ui-test 截图+dump),不允许 ⏭️ 委托给单元测试替代』;(3) 联动 aid-applying/SKILL.md step3-2-2b-降级 触发条件,在 AC-3~8 类 '修改类 AC' 被 ⏭️ 时强制跑用户书面同意 + todo.md ⏳ 三要素 + capabilities.json 覆写 + hdc 原始输出 4 CHECK,否则 verdict=REQUEST_CHANGES;覆盖未来场景:任意 trig/branch/状态机类新功能(等价类不足)、任何带 onChange/onTouch/路由跳转的 UI AC(测试覆盖错配)。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-26/2026-06-17/1481b555-2e82-4c94-a0a8-c879da177caf.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-26/2026-06-17/b8ef88ba-d30d-46b3-8e04-e85c34883eab.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-26/2026-06-17/264c5a16-f4f1-48ff-9f40-d215e1cc2567.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-26/2026-06-17/de996b9f-0b00-41d0-8282-f07d32ab0f2e.jsonl"
+    ],
+    "evidence_anchors": [
+      "1481b555.jsonl#L3 user prompt: 'RE-DISPATCH 场景! Issue #26 之前已经 dispatch 过一次并被 rev-01 审过. rev-01 给的结论: REQUEST CHANGES — 4db7331 缺少 Signed-off-by,其余通过' — 证明原始 4db7331 已 APPROVE 其他检查项",
+      "1481b555.jsonl#L13 todo.md 内容: '- [x] APPLYING (aid-applying + tdd-enforcer → apply-report.md, 77/77 单测 + UI PASS)' — 原始 dispatch 已完成 aid-applying+tdd-enforcer",
+      "1481b555.jsonl#L21 grep 输出: 'NO Signed-off-by trailer found in 4db7331' — 原始 commit 缺签",
+      "1481b555.jsonl#L23 commit 4db7331 message body: 'APPLYING 制品: 单元测试: PlotUtils 41/41, evaluateAt 13/13, GraphViewModel 23/23 = 77/77 PASS' — 关键证据:evaluateAt 仅 13 个用例",
+      "apply-report.md#L80-86 UI 自动化 AC 状态表: AC-3 ⏭️ '由 PlotUtils/Calculator 单测覆盖'、AC-4 ⏭️ '由 Calculator.test.mjs 覆盖(7 个 null 用例)'、AC-5/AC-7 ⏭️ '由 GraphViewModel.test.mjs 覆盖'、AC-6 ⏭️ '由 PlotUtils.test.mjs 覆盖(AC-2 null y 用例)'、AC-8 ⏭️ '由 GraphViewModel.test.mjs 覆盖' — 全部 AC-3~8 委托给单元测试,未在 UI 执行,违反铁律 7 不准替代原则",
+      "apply-report.md#L181 已知问题: 'xMin/xMax 输入框: 改用整数默认值(-2/2)而非小数(-6.283185307)...ArkUI TextInput 对含小数的长字符串有渲染异常' — 显式承认默认值偏离 spec,但未触发 defaults 回退测试",
+      "Calculator.test.mjs#L222-271 evaluateAt 测试集: 13 个 it 仅 8 个表达式变体 (sin(x)@0、sin(x)@π、x^2@3、2*x@3、1/x@0、log(x)@-1、sin(x、cos(x)+sin(x)@0) — 关键缺口:无独立 `cos(x)` 在 x≠0 (e.g. cos(π/2)) 用例,无独立 `tan(x)` 在任意点用例",
+      "Calculator.test.mjs#L268 'cos(x)+sin(x)@0 = 1' — 复合测试在 cos/tan debug bug 下碰巧 PASS (cos(0)+sin(0) = 1+0 = 1 恒等,无论 evaluateAt 是否被强制返回 sin(x),只要 sin(0)=0 即满足),等于 0 真实暴露力",
+      "GraphPage.ets#L25-30 (commit 3b57d7a diff): '@State xMinInput: string = -2' 改为 '-6.28' — 证明默认 x range [-2, 2] 时 sin 在此区间近似直线(-2 弧度≈-114° sin=-0.91, 2 弧度 sin=0.91),未触发 '完整周期可视化' 验证",
+      "GraphViewModel.ets#L15-19 DEFAULT_X_MIN/MAX 注释 '默认 xMin (-2π)' 但 GraphPage @State 覆盖为 '-2' — 默认值与 ViewModel 内部常量不一致,apply-report 未察觉",
+      "commit d867054 (fix graph auto-redraw 300ms debounce): GraphPage.ets +66 行新增 onChange debounce → 此前 evaluate() 仅在 '绘制' 按钮 onClick 时调用,无 f(x) onChange 自动重算 — apply-report AC-3 (修改表达式) 被 ⏭️ 跳过导致未发现",
+      "commit a347814 'debug: force evaluateAt to return sin(x) to test' — debug code 注入 evaluateAt,所有 evaluateAt 调用固定返回 sin(xValue),commit 1c6ae56 加 console.log,commit 331bf62 revert 后 cos/tan 才正确",
+      "commit 331bf62 diff: 'aid-workflow 20260626: DEBUG 强制返回 sin(x) 看曲线 如果曲线变成 M 形,说明 evaluate 对 sin(x) 处理有 bug' → 改为正常 evaluate(v) + isFinite 检查 — 关键证据:debug code 长期驻留未被发现",
+      "tdd-enforcer/SKILL.md#L82 '一个测试只验证一个行为' — 缺等价类覆盖硬指标,允许 sin+cos 复合测试代替 cos/tan 独立用例",
+      "tdd-enforcer/SKILL.md#L213-226 完成检查清单 — 仅 '每个验收标准都有对应测试' + '每个测试先看到失败(RED)',缺 '等价类覆盖' + 'UI 交互 AC 必须 UI 验证' 强约束"
+    ]
+  }
+}

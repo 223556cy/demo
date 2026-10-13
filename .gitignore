@@ -1,0 +1,36 @@
+# ---- Dependencies / build artifacts ----
+node_modules/
+oh_modules/
+.hvigor/
+build/
+dist/
+__pycache__/
+*.pyc
+
+# ---- Caches / scratch ----
+.scratch/
+.trace_board_cache/
+.agentdebug/
+.worktrees-backup/
+*.log
+
+# ---- Worktrees (linked to calculatorHuawei/.git, cannot be committed) ----
+worktrees/
+
+# ---- Large session dumps ----
+*.jsonl
+jsonl/
+
+# ---- Editor / local ----
+.vscode/
+.claude/settings.local.json
+.claude/*.local.*
+Thumbs.db
+.DS_Store
+
+# ---- e2e snapshot dirs with over-long base64 paths (break git on Windows) ----
+claude-code-viewer/e2e/snapshots/
+
+# ---- Nested repos' git dirs (kept locally, excluded from parent repo) ----
+.git_backup/
+.git_backup_parent_sync/

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(PYTHONIOENCODING=utf-8 python skills/oneplusn-agent-onboarding/scripts/onboard_agent.py --handoff my-ai-team/handoff.yaml --name arch-01 --role architect --agent-type hermes --github-username myait-arch01 --github-email 2690920195+arch01@qq.com --gateway-port 8100)",
+      "Read(//c/Users/26909/.hermes/**)"
+    ]
+  }
+}

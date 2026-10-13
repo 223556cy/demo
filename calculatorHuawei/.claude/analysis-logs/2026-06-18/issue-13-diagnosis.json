@@ -1,0 +1,38 @@
+{
+  "issue_ticket": {
+    "issue_number": 13,
+    "title": "AID 三阶段产物自一致性校验缺失 (apply-report AC 编号/todo 双视图/info scope 标注/HistoryFilter scope creep/TDD commit 未拆)",
+    "verdict": "APPROVE",
+    "priority": "LOW",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "Issue #13 一键分享二维码 AID 三阶段 (aid-planning → aid-implementing → aid-applying) 跑通: 单元测试 12/12 PASS, UI 自动化 6/7 PASS (1 BLOCKED baseline), 7 真截图 + 21 dump + 真 hvigorw compile + 真 hdc emulator 安装, 最终合并入库 feat/issue-13-简单需求. 但 rev-01 在 35d4b44d / 9d50c98a review-logs 中列出 5 处文档/产物自相矛盾仍 APPROVE: (1) apply-report.md 列出 AC-RP-01~06 (6 条) 与 delta-spec.md AC-01~08 (8 条) 编号/数量不一致; (2) todo.md 顶部阶段表格全 ✅ DONE 与底部 bullet list 多项 [ ] 仍未勾选, 自相矛盾; (3) info.md 写 HistoryFilter.ets \"(已有,不涉及)\" 但 git show 5d99bc5 该文件首次新增; (4) TDD 严格来说应拆 (test)+(feat) 两 commit, 当前生产代码与测试同 commit; (5) HistoryFilter.ets 不属于本 issue scope 但被 5d99bc5 引入.",
+    "root_cause_analysis": "归类 B (漏掉步骤) — aid-applying skill 在 APPLYING 阶段产出 apply-report.md / 同步更新 todo.md / info.md 时, 未强制要求'产物自一致性校验'三角闭合. 证据 1: jsonl#aaf6e31e (主会话, 849 行) L757 assistant Write apply-report.md 后只做 git status 与 git diff --stat, 未跑 cat ui-tests/results.json 取实测条目数与 grep -c 'AC-' delta-spec.md 取声明 AC 数做计数对照, 导致 apply-report 列 6 条 AC-RP 与 delta-spec 8 条 AC 不对齐. 证据 2: jsonl#aaf6e31e L122 Write design-review.md 后未触发 git log -- opencalc/.../HistoryFilter.ets 比对, info.md 描述与实际首次新增矛盾未被捕获. 证据 3: todo.md 模板在 aid-planning 阶段初始化顶部表格与底部 bullet list 双视图, 但 aid-applying 推进阶段时仅更新顶部 ✅ 状态, 未同步 bullet [ ] → [x], 形成两套互相打架的状态机. 证据 4: rev-01 session 35d4b44d / 9d50c98a 实际写盘 review-logs/issue-13-review.json 时明确把 5 项标为'非阻塞'且最终 APPROVE, 反向证明 skill 把产物自洽性归为软建议而非硬 gate.",
+    "optimization_direction": "在 aid-applying SKILL.md §3-2-5 (apply-report.md 生成 step) 末尾追加 imperative 规则: 写 apply-report.md 前必须 (a) jq 'length' ui-tests/results.json 取实测条目数, (b) grep -cE '^- AC-' delta-spec.md 取声明 AC 数, (c) 两者不一致时禁止 commit 并要求修订 apply-report.md; 同时新增 §3-2-X 段要求 todo.md 顶部表格与底部 bullet list 必须同源 (二选一, 不允许双视图), 若保留双视图则 PR 模板加 reviewer checklist 第 N 项 'todo.md 自洽'.",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-13/2026-06-15/aaf6e31e-423b-4502-be12-7b3781ae99db.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-13/2026-06-15/2c102cd0-e863-4619-bdaf-bee9e0b1e7a0.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-13/2026-06-15/32acf595-4d72-4f9d-b1d5-b244d36ec84f.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-13/2026-06-15/345957ab-591d-4722-a822-b6fb244d2ee9.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-13/2026-06-15/35d4b44d-b614-483f-8742-1ef57f9a9d8b.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-13/2026-06-15/6f4227c1-3885-4866-9898-169722d2f603.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-13/2026-06-15/704136e5-3aea-4409-b6c3-bf1dea7ed7d2.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-13/2026-06-15/7d6c63de-a03d-4c80-8cce-aa9d130825f0.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-13/2026-06-15/9d50c98a-bcf9-4708-8e70-3b15758be4cf.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-13/2026-06-15/bed55b03-c507-4855-90f2-37e4daafab8f.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-13/2026-06-15/dbf30f1e-94c2-4fc0-9e3d-1014f2455307.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-13/2026-06-15/f76e02b6-129a-496f-aaed-7548b293feff.jsonl"
+    ],
+    "evidence_anchors": [
+      "jsonl#aaf6e31e L52 assistant Skill aid-planning | L131 Skill aid-implementing | L147 Skill aid-applying (三阶段 skill 顺序调用正常)",
+      "jsonl#aaf6e31e L122 Write design-review.md (PLANNING 第 9 步产出) | L757 Write apply-report.md (APPLYING 最终产出)",
+      "jsonl#aaf6e31e L231 Edit CalculatorPage.ets (生产代码与测试同 commit, 违反 TDD (test)/(feat) 拆分)",
+      "apply-report.md L38: UI 自动化测试 6/7 PASS (1 BLOCKED baseline) vs L65-70 仅列 6 条 AC-RP-01~06 (缺失 AC-07/AC-08), 与 delta-spec.md 8 条 AC 数量不对齐",
+      "todo.md L21-24 顶部表格全 DONE vs L48-63 底部 bullet list 多项未勾选, 自相矛盾",
+      "info.md L11 HistoryFilter.ets 描述 '(已有,不涉及)' 与 git show 5d99bc5 该文件首次新增矛盾",
+      "delta-spec.md grep '^- AC-' = 8 条 (AC-01~AC-08), results.json jq length = 7 (1 BLOCKED + 6 PASS), apply-report.md AC 表 6 条 (AC-RP-01~AC-RP-06), 三方计数互不一致",
+      "jsonl#35d4b44d L82 Write issue-13-review.json | jsonl#9d50c98a L100 Write issue-13-review.json (rev-01 二次复审, 均归类 5 项矛盾为'非阻塞建议'并 APPROVE)",
+      "jsonl#aaf6e31e L24-30: which hvigorw/hdc/gh/gh_helper 全缺失, claude 改用 capabilities.json 绝对路径 (外部环境约束, 不归本 skill 责任)"
+    ]
+  }
+}

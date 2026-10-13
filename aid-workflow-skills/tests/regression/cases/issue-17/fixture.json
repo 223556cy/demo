@@ -1,0 +1,24 @@
+{
+  "id": "issue-17",
+  "issue": {
+    "number": 17,
+    "title": "#17 粘贴即计算",
+    "category": "粘贴计算",
+    "requirement_id": 10,
+    "rev_01_rounds": 1
+  },
+  "paths": {
+    "baseline_worktree": "D:\\huawei\\Demo\\worktrees\\issue-17",
+    "opencalc_subpath": "opencalc"
+  },
+  "spec_dir": "D:\\huawei\\Demo\\aid-workflow-skills\\tests\\regression\\cases\\issue-17\\spec",
+  "expected": {
+    "diff_file": "D:\\huawei\\Demo\\aid-workflow-skills\\tests\\regression\\cases\\issue-17\\expected\\expected.diff",
+    "compile_exit": 0,
+    "test_pass": true
+  },
+  "ui_test": {
+    "required": true,
+    "fixture_path": null
+  }
+}

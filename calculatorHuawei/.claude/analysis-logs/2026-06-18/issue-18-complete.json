@@ -1,0 +1,12 @@
+{
+  "issue": 18,
+  "title": "中等模糊",
+  "verdict": "APPROVE",
+  "priority": "MEDIUM",
+  "target_skill": "aid-planning",
+  "phenomenon": "首次 dispatch(51ec9572.jsonl)的 aid-planning L58 调用后,L100/L115 Write 了 proposal.md(124 行)+ delta-spec.md(244 行),L136 design-review.md 将两者自评为 [x] 完整,但 8dfb316 commit 的 git show --name-status 仅含 apply-report/design-review/design/info/tasks/todo(6 份),proposal.md 与 delta-spec.md 消失,rev-01 判 REQUEST CHANGES,后续 dff1212 才回 PLANNING 补写。",
+  "completed_at": "2026-06-18T17:42:17.287906",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-06-18\\issue-18.md"
+}

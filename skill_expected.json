@@ -1,0 +1,1748 @@
+{
+  "schema_version": "1.0",
+  "description": "从 SKILL.md 解析的预期步骤序列。每个 skill 一组 sections + mandatory sub_skills。",
+  "skills": {
+    "aid-analysis-locate-bug": {
+      "sections": [
+        {
+          "id": "step1",
+          "title": "从 log_anchors 解析文件 + 行号",
+          "level": 3,
+          "line_no": 38,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "从 spec_to_code_mapping 找偏离位置",
+          "level": 3,
+          "line_no": 47,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3",
+          "title": "交叉验证 + 定位",
+          "level": 3,
+          "line_no": 54,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "free-text",
+      "section_count": 3,
+      "expected_products": []
+    },
+    "aid-analysis-log-scan": {
+      "sections": [
+        {
+          "id": "step1",
+          "title": "Glob 扫描 + 文件存在性检查",
+          "level": 3,
+          "line_no": 63,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "提取错误信号",
+          "level": 3,
+          "line_no": 77,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3",
+          "title": "排序 + 优先级",
+          "level": 3,
+          "line_no": 88,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "free-text",
+      "section_count": 3,
+      "expected_products": []
+    },
+    "aid-analysis-output": {
+      "sections": [
+        {
+          "id": "step1",
+          "title": "读 5 个 stage JSON 产物",
+          "level": 3,
+          "line_no": 242,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "拼装 v2.2 22 字段 JSON",
+          "level": 3,
+          "line_no": 251,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3",
+          "title": "跑 validate_diagnosis_v2.py 自动校验",
+          "level": 3,
+          "line_no": 258,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step4",
+          "title": "写 diagnosis.json",
+          "level": 3,
+          "line_no": 268,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step5",
+          "title": "报告产出",
+          "level": 3,
+          "line_no": 272,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "free-text",
+      "section_count": 5,
+      "expected_products": [
+        {
+          "file": "diagnosis.json",
+          "evidence": "verb=写"
+        },
+        {
+          "file": "root_cause.json",
+          "evidence": "verb=写"
+        }
+      ]
+    },
+    "aid-analysis-phenomenon": {
+      "sections": [
+        {
+          "id": "step1",
+          "title": "读 issue 详情",
+          "level": 3,
+          "line_no": 42,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "定位 session 对话文件",
+          "level": 3,
+          "line_no": 50,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3",
+          "title": "对比 AID 产物齐全度",
+          "level": 3,
+          "line_no": 60,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step4",
+          "title": "提取现象(50-150 字, 1 句话)",
+          "level": 3,
+          "line_no": 71,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "free-text",
+      "section_count": 4,
+      "expected_products": [
+        {
+          "file": "design-review.md",
+          "evidence": "common_aid_artifact"
+        }
+      ]
+    },
+    "aid-analysis-root-cause": {
+      "sections": [
+        {
+          "id": "B-0",
+          "title": "推理方法选择",
+          "level": 3,
+          "line_no": 45,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "B-1",
+          "title": "提取客观事实(5 类来源,3-7 条)",
+          "level": 3,
+          "line_no": 63,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "B-2",
+          "title": "构造因果链(强制 `[机制: ...]`)",
+          "level": 3,
+          "line_no": 76,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "B-3",
+          "title": "so why 穿透验证(≥ 3 层)",
+          "level": 3,
+          "line_no": 97,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "B-4",
+          "title": "A/B/C/D 归类",
+          "level": 3,
+          "line_no": 107,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "B-5",
+          "title": "反事实验证",
+          "level": 3,
+          "line_no": 118,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "B-6",
+          "title": "备选链与排除理由(≥ 1 条)",
+          "level": 3,
+          "line_no": 126,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "B-7",
+          "title": "证据强度评级",
+          "level": 3,
+          "line_no": 134,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "B-8",
+          "title": "Anti-Bias 自检",
+          "level": 3,
+          "line_no": 144,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "B-9",
+          "title": "多 bug 穷尽探测",
+          "level": 3,
+          "line_no": 155,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "B-10",
+          "title": "运行时证据强制(行为类 bug 必填)",
+          "level": 3,
+          "line_no": 169,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "B-11",
+          "title": "零状态 / 默认路径(3 个零状态)",
+          "level": 3,
+          "line_no": 190,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "C-0",
+          "title": "精确定位(skill + section + 行号)",
+          "level": 3,
+          "line_no": 205,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "C-1",
+          "title": "通用性体检(3 问)",
+          "level": 3,
+          "line_no": 223,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "C-2",
+          "title": "结构化修复(6 字段对象)",
+          "level": 3,
+          "line_no": 234,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "C-2.1",
+          "title": "修复覆盖矩阵(闭环铁律)",
+          "level": 3,
+          "line_no": 253,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "C-3",
+          "title": "修复不完整时的处置",
+          "level": 3,
+          "line_no": 272,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D",
+          "title": "优先级判定",
+          "level": 3,
+          "line_no": 278,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "E",
+          "title": "修复路径判定(关键: fix_path)",
+          "level": 3,
+          "line_no": 286,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "F",
+          "title": "多维度分类(4 字段)",
+          "level": 3,
+          "line_no": 308,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "free-text",
+      "section_count": 20,
+      "expected_products": [
+        {
+          "file": "apply-report.md",
+          "evidence": "arrow"
+        }
+      ]
+    },
+    "aid-analysis-spec-code-map": {
+      "sections": [
+        {
+          "id": "step1",
+          "title": "定位 change-id + 读 spec",
+          "level": 3,
+          "line_no": 43,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "抽取需求文本(20-100 字 / 条)",
+          "level": 3,
+          "line_no": 52,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3",
+          "title": "源码定位(Grep + Read + 语义理解)",
+          "level": 3,
+          "line_no": 56,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step4",
+          "title": "判定 status",
+          "level": 3,
+          "line_no": 65,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "free-text",
+      "section_count": 4,
+      "expected_products": []
+    },
+    "aid-applying": {
+      "sections": [
+        {
+          "id": "step3-0",
+          "title": "环境检查",
+          "level": 2,
+          "line_no": 65,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-0-1",
+          "title": "检测项目类型",
+          "level": 3,
+          "line_no": 71,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-0-2",
+          "title": "检查编译环境",
+          "level": 3,
+          "line_no": 91,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-0-3",
+          "title": "尝试编译项目",
+          "level": 3,
+          "line_no": 109,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-0-4",
+          "title": "检查测试环境",
+          "level": 3,
+          "line_no": 127,
+          "mandatory": true,
+          "sub_skills_required": [
+            "harmonyos-ui-test"
+          ],
+          "iron_laws": [
+            7
+          ]
+        },
+        {
+          "id": "step3-0-5",
+          "title": "环境问题处理",
+          "level": 3,
+          "line_no": 152,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-1",
+          "title": "确认应用条件",
+          "level": 2,
+          "line_no": 175,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-1-1",
+          "title": "检查代码完成状态",
+          "level": 3,
+          "line_no": 177,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-1-2",
+          "title": "检查代码质量",
+          "level": 3,
+          "line_no": 184,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-2",
+          "title": "代码应用",
+          "level": 2,
+          "line_no": 194,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-2-1",
+          "title": "按照 tasks.md 执行代码生成/修改（TDD 模式）",
+          "level": 3,
+          "line_no": 196,
+          "mandatory": true,
+          "sub_skills_required": [
+            "tdd-enforcer"
+          ],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-2-2",
+          "title": "运行全量测试",
+          "level": 3,
+          "line_no": 217,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-2-2b",
+          "title": "HarmonyOS UI 测试（强制）",
+          "level": 3,
+          "line_no": 226,
+          "mandatory": true,
+          "sub_skills_required": [
+            "harmonyos-ui-test"
+          ],
+          "iron_laws": [
+            7
+          ]
+        },
+        {
+          "id": "step3-2-2b-降级",
+          "title": "（铁律 7 兜底 — 强制 5 步 + 自检 + 反模式）",
+          "level": 3,
+          "line_no": 245,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": [
+            7
+          ]
+        },
+        {
+          "id": "step3-2-3",
+          "title": "执行 lint 检查",
+          "level": 3,
+          "line_no": 335,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-2-4",
+          "title": "执行集成测试（如有）",
+          "level": 3,
+          "line_no": 344,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-3",
+          "title": "更新任务状态",
+          "level": 2,
+          "line_no": 350,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3-4",
+          "title": "产出应用报告",
+          "level": 2,
+          "line_no": 360,
+          "mandatory": true,
+          "sub_skills_required": [
+            "harmonyos-ui-test"
+          ],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [
+        {
+          "parent_section": "step3-0-4",
+          "sub_skill": "harmonyos-ui-test"
+        },
+        {
+          "parent_section": "step3-2-1",
+          "sub_skill": "tdd-enforcer"
+        }
+      ],
+      "naming_style": "free-text",
+      "section_count": 18,
+      "expected_products": [
+        {
+          "file": "package.json",
+          "evidence": "table_column"
+        },
+        {
+          "file": "apply-report-template.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "todo-template.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "todo.md",
+          "evidence": "verb=写"
+        },
+        {
+          "file": "capabilities.json",
+          "evidence": "verb=写"
+        },
+        {
+          "file": "apply-report.md",
+          "evidence": "arrow"
+        }
+      ]
+    },
+    "aid-archiving": {
+      "sections": [
+        {
+          "id": "Step1",
+          "title": "查找待归档变更",
+          "level": 3,
+          "line_no": 20,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step2",
+          "title": "检查归档条件",
+          "level": 3,
+          "line_no": 39,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step3",
+          "title": "执行归档操作",
+          "level": 3,
+          "line_no": 60,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step4",
+          "title": "更新索引和完成",
+          "level": 3,
+          "line_no": 107,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "free-text",
+      "section_count": 4,
+      "expected_products": [
+        {
+          "file": "apply-report.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "proposal.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "delta-spec.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "delta-design.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "tasks.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "design-review.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "info.md",
+          "evidence": "table_column"
+        }
+      ]
+    },
+    "aid-implementing": {
+      "sections": [
+        {
+          "id": "step2-1",
+          "title": "任务分解",
+          "level": 2,
+          "line_no": 58,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2-1-1",
+          "title": "阅读设计文档",
+          "level": 3,
+          "line_no": 60,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2-1-2",
+          "title": "识别代码组件",
+          "level": 3,
+          "line_no": 66,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2-1-3",
+          "title": "拆分为最小可开发任务",
+          "level": 3,
+          "line_no": 87,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2-2",
+          "title": "任务排序",
+          "level": 2,
+          "line_no": 98,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2-2-1",
+          "title": "确定任务依赖关系",
+          "level": 3,
+          "line_no": 100,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2-2-2",
+          "title": "制定开发顺序",
+          "level": 3,
+          "line_no": 107,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2-3",
+          "title": "产出 tasks.md",
+          "level": 2,
+          "line_no": 116,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step1",
+          "title": "基础设施",
+          "level": 3,
+          "line_no": 137,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "核心功能",
+          "level": 3,
+          "line_no": 151,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "free-text",
+      "section_count": 10,
+      "expected_products": [
+        {
+          "file": "tasks-template.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "todo-template.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "tasks.md",
+          "evidence": "verb=产出"
+        }
+      ]
+    },
+    "aid-init": {
+      "sections": [
+        {
+          "id": "Step1",
+          "title": "检查初始化状态",
+          "level": 2,
+          "line_no": 55,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step2",
+          "title": "验证项目路径",
+          "level": 2,
+          "line_no": 79,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step3",
+          "title": "检查环境",
+          "level": 2,
+          "line_no": 130,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step4",
+          "title": "创建目录结构",
+          "level": 2,
+          "line_no": 387,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step5",
+          "title": "用户确认目录配置",
+          "level": 2,
+          "line_no": 400,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step6",
+          "title": "Git 状态检查",
+          "level": 2,
+          "line_no": 432,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step7",
+          "title": "会话恢复检查",
+          "level": 2,
+          "line_no": 464,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step8",
+          "title": "写入初始化标记",
+          "level": 2,
+          "line_no": 485,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step9",
+          "title": "初始化完成",
+          "level": 2,
+          "line_no": 595,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "free-text",
+      "section_count": 9,
+      "expected_products": [
+        {
+          "file": "package.json",
+          "evidence": "table_column"
+        }
+      ]
+    },
+    "aid-monitor": {
+      "sections": [
+        {
+          "id": "step1",
+          "title": "会话自省（上下文收集）",
+          "level": 3,
+          "line_no": 28,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "Git 历史分析",
+          "level": 3,
+          "line_no": 49,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3",
+          "title": "错误检测（自动）",
+          "level": 3,
+          "line_no": 60,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step4",
+          "title": "错误检测（用户标记）",
+          "level": 3,
+          "line_no": 80,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step5",
+          "title": "错误分类",
+          "level": 3,
+          "line_no": 96,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step6",
+          "title": "事件报告生成",
+          "level": 3,
+          "line_no": 108,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step7",
+          "title": "知识库同步",
+          "level": 3,
+          "line_no": 115,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "free-text",
+      "section_count": 7,
+      "expected_products": []
+    },
+    "aid-planning": {
+      "sections": [
+        {
+          "id": "step1",
+          "title": "用户意图理解",
+          "level": 3,
+          "line_no": 40,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step1",
+          "title": ".1 Git 分支检查（推荐）",
+          "level": 3,
+          "line_no": 55,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "需求理解",
+          "level": 3,
+          "line_no": 74,
+          "mandatory": true,
+          "sub_skills_required": [
+            "rq-parse"
+          ],
+          "iron_laws": []
+        },
+        {
+          "id": "step3",
+          "title": "需求澄清",
+          "level": 3,
+          "line_no": 95,
+          "mandatory": true,
+          "sub_skills_required": [
+            "rq-clarify"
+          ],
+          "iron_laws": []
+        },
+        {
+          "id": "step4",
+          "title": "需求spec设计",
+          "level": 3,
+          "line_no": 112,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step5",
+          "title": "针对需求的代码仓理解",
+          "level": 3,
+          "line_no": 132,
+          "mandatory": true,
+          "sub_skills_required": [
+            "rq-codebase"
+          ],
+          "iron_laws": []
+        },
+        {
+          "id": "step6",
+          "title": "需求复杂度评估",
+          "level": 3,
+          "line_no": 150,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step7",
+          "title": "架构设计",
+          "level": 3,
+          "line_no": 204,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step8",
+          "title": "组件设计",
+          "level": 3,
+          "line_no": 243,
+          "mandatory": true,
+          "sub_skills_required": [
+            "mod-design"
+          ],
+          "iron_laws": []
+        },
+        {
+          "id": "step9",
+          "title": "设计审视",
+          "level": 3,
+          "line_no": 262,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step9-1",
+          "title": "完整性检查",
+          "level": 4,
+          "line_no": 268,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step9-2",
+          "title": "一致性检查",
+          "level": 4,
+          "line_no": 276,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step9-3",
+          "title": "规范性检查",
+          "level": 4,
+          "line_no": 283,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step9-4",
+          "title": "产出审视报告",
+          "level": 4,
+          "line_no": 290,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [
+        {
+          "parent_section": "step3",
+          "sub_skill": "rq-clarify"
+        },
+        {
+          "parent_section": "step2",
+          "sub_skill": "rq-parse"
+        },
+        {
+          "parent_section": "step5",
+          "sub_skill": "rq-codebase"
+        },
+        {
+          "parent_section": "step8",
+          "sub_skill": "mod-design"
+        }
+      ],
+      "naming_style": "free-text",
+      "section_count": 14,
+      "expected_products": [
+        {
+          "file": "new-arch.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "delta-design.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "tasks.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "delta-spec.md",
+          "evidence": "verb=产出"
+        },
+        {
+          "file": "info.md",
+          "evidence": "verb=产出"
+        },
+        {
+          "file": "proposal.md",
+          "evidence": "verb=产出"
+        },
+        {
+          "file": "design-review.md",
+          "evidence": "common_aid_artifact"
+        }
+      ]
+    },
+    "aid-reviewing": {
+      "sections": [],
+      "sub_skills_required": [],
+      "naming_style": "unknown",
+      "section_count": 0,
+      "expected_products": []
+    },
+    "dfr-fmea-harmony": {
+      "sections": [
+        {
+          "id": "step1",
+          "title": "理解当前需求",
+          "level": 3,
+          "line_no": 80,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "可靠性分析（FMEA）",
+          "level": 3,
+          "line_no": 100,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "-1：准备分析 - 提取关键信息",
+          "level": 4,
+          "line_no": 102,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "-2：故障模式识别 - 多源匹配法",
+          "level": 4,
+          "line_no": 143,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "-3：故障影响分析 - 多源匹配法",
+          "level": 4,
+          "line_no": 207,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "-4：故障原因分析 - 多源成因追踪",
+          "level": 4,
+          "line_no": 262,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "-5：改进措施分析 - 系统化措施生成",
+          "level": 4,
+          "line_no": 307,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3",
+          "title": "输出非功能性需求分析",
+          "level": 4,
+          "line_no": 363,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step4",
+          "title": "迭代优化",
+          "level": 4,
+          "line_no": 393,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "free-text",
+      "section_count": 9,
+      "expected_products": []
+    },
+    "harmonyos-ui-test": {
+      "sections": [
+        {
+          "id": "step1",
+          "title": "检测格式并读取",
+          "level": 4,
+          "line_no": 870,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "-4：分类、状态依赖、格式化（通用）",
+          "level": 4,
+          "line_no": 975,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step5",
+          "title": "格式化源文件",
+          "level": 4,
+          "line_no": 990,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step6",
+          "title": "-8：同原规范（01_用例分析.md、02_测试执行计划.md）",
+          "level": 4,
+          "line_no": 1034,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step1",
+          "title": "环境准备",
+          "level": 3,
+          "line_no": 1036,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step2",
+          "title": "逐行执行测试",
+          "level": 3,
+          "line_no": 1054,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step3",
+          "title": "截图处理（Excel / Markdown）",
+          "level": 3,
+          "line_no": 1152,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step4",
+          "title": "持续保存",
+          "level": 3,
+          "line_no": 1235,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "step5",
+          "title": "生成测试报告",
+          "level": 3,
+          "line_no": 1242,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "free-text",
+      "section_count": 9,
+      "expected_products": [
+        {
+          "file": "01_用例分析.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "02_测试执行计划.md",
+          "evidence": "table_column"
+        },
+        {
+          "file": "03_测试报告.md",
+          "evidence": "table_column"
+        }
+      ]
+    },
+    "mod-design": {
+      "sections": [
+        {
+          "id": "Step0",
+          "title": "确定输出类型",
+          "level": 2,
+          "line_no": 29,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step1",
+          "title": "理解需求与现有架构",
+          "level": 2,
+          "line_no": 35,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step2",
+          "title": "生成设计文档",
+          "level": 2,
+          "line_no": 45,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D1",
+          "title": "概述",
+          "level": 2,
+          "line_no": 51,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D2",
+          "title": "功能清单",
+          "level": 2,
+          "line_no": 73,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D3",
+          "title": "实现模型",
+          "level": 2,
+          "line_no": 88,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D3",
+          "title": ".1: 上下文视图",
+          "level": 3,
+          "line_no": 99,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D3",
+          "title": ".2: 总体架构",
+          "level": 3,
+          "line_no": 103,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D3",
+          "title": ".3: 模块划分",
+          "level": 3,
+          "line_no": 111,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D3",
+          "title": ".4: 设计系统规格",
+          "level": 3,
+          "line_no": 120,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D3",
+          "title": ".5 - D3.N: 模块实现设计",
+          "level": 3,
+          "line_no": 155,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D4",
+          "title": "接口设计",
+          "level": 2,
+          "line_no": 228,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D5",
+          "title": "数据模型",
+          "level": 2,
+          "line_no": 260,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D6",
+          "title": "UI 设计系统",
+          "level": 2,
+          "line_no": 287,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D7",
+          "title": "页面清单与导航",
+          "level": 2,
+          "line_no": 304,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D8",
+          "title": "用户交互规格",
+          "level": 2,
+          "line_no": 326,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D9",
+          "title": "平台集成",
+          "level": 2,
+          "line_no": 346,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "D10",
+          "title": "偏好设置目录",
+          "level": 2,
+          "line_no": 378,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step3",
+          "title": "自验证",
+          "level": 2,
+          "line_no": 389,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "D-chapter",
+      "section_count": 19,
+      "expected_products": [
+        {
+          "file": "design.md",
+          "evidence": "verb=生成"
+        }
+      ]
+    },
+    "prd-generator": {
+      "sections": [],
+      "sub_skills_required": [],
+      "naming_style": "unknown",
+      "section_count": 0,
+      "expected_products": [
+        {
+          "file": "prd_analysis_report.md",
+          "evidence": "verb=生成"
+        }
+      ]
+    },
+    "rq-clarify": {
+      "sections": [],
+      "sub_skills_required": [],
+      "naming_style": "unknown",
+      "section_count": 0,
+      "expected_products": []
+    },
+    "rq-codebase": {
+      "sections": [
+        {
+          "id": "Step1",
+          "title": "需求类别分析",
+          "level": 3,
+          "line_no": 28,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step2",
+          "title": "确定重点分析类别",
+          "level": 3,
+          "line_no": 55,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step3",
+          "title": "架构分析",
+          "level": 3,
+          "line_no": 80,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step4",
+          "title": "接口/契约识别",
+          "level": 3,
+          "line_no": 108,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step5",
+          "title": "公共组件或函数识别",
+          "level": 3,
+          "line_no": 136,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step6",
+          "title": "影响范围分析",
+          "level": 3,
+          "line_no": 162,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step7",
+          "title": "现有代码分析",
+          "level": 3,
+          "line_no": 190,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step8",
+          "title": "风险识别",
+          "level": 3,
+          "line_no": 216,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step9",
+          "title": "测试验证策略",
+          "level": 3,
+          "line_no": 242,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step10",
+          "title": "监控运维支持",
+          "level": 3,
+          "line_no": 268,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "Step11",
+          "title": "生成 info.md",
+          "level": 3,
+          "line_no": 294,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [],
+      "naming_style": "free-text",
+      "section_count": 11,
+      "expected_products": [
+        {
+          "file": "info.md",
+          "evidence": "verb=生成"
+        }
+      ]
+    },
+    "rq-parse": {
+      "sections": [],
+      "sub_skills_required": [],
+      "naming_style": "unknown",
+      "section_count": 0,
+      "expected_products": []
+    },
+    "tdd-enforcer": {
+      "sections": [
+        {
+          "id": "RED",
+          "title": "GREEN-REFACTOR 流程",
+          "level": 2,
+          "line_no": 71,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "RED",
+          "title": "写失败测试",
+          "level": 3,
+          "line_no": 79,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "GREEN",
+          "title": "最小代码通过",
+          "level": 3,
+          "line_no": 108,
+          "mandatory": false,
+          "sub_skills_required": [],
+          "iron_laws": []
+        },
+        {
+          "id": "REFACTOR",
+          "title": "重构",
+          "level": 3,
+          "line_no": 128,
+          "mandatory": true,
+          "sub_skills_required": [],
+          "iron_laws": []
+        }
+      ],
+      "sub_skills_required": [
+        {
+          "parent_section": "unknown",
+          "sub_skill": "local-test"
+        }
+      ],
+      "naming_style": "tdd-color",
+      "section_count": 4,
+      "expected_products": []
+    }
+  }
+}

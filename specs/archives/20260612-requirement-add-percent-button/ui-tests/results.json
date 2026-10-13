@@ -1,0 +1,74 @@
+[
+  {
+    "name": "AC-001-01: 50+10% = 55",
+    "status": "PASS",
+    "expected": "55",
+    "actual": "55",
+    "note": "",
+    "time": "10:24:40"
+  },
+  {
+    "name": "AC-001-02: 200-15% = 170",
+    "status": "PASS",
+    "expected": "170",
+    "actual": "170",
+    "note": "",
+    "time": "10:24:47"
+  },
+  {
+    "name": "AC-001-03: 8×5% = 0.4",
+    "status": "PASS",
+    "expected": "0.4",
+    "actual": "0.4",
+    "note": "",
+    "time": "10:24:53"
+  },
+  {
+    "name": "AC-001-04: 100÷10% = 1000 (实际为 1000)",
+    "status": "PASS",
+    "expected": "1,000",
+    "actual": "1,000",
+    "note": "",
+    "time": "10:24:59"
+  },
+  {
+    "name": "AC-001-05: -50+10% = -55",
+    "status": "PASS",
+    "expected": "-55",
+    "actual": "-55",
+    "note": "",
+    "time": "10:25:06"
+  },
+  {
+    "name": "AC-001-06: 50+10%=55, +5%, = 57.75",
+    "status": "PASS",
+    "expected": "57.75",
+    "actual": "57.75",
+    "note": "",
+    "time": "10:25:15"
+  },
+  {
+    "name": "AC-001-07: 50%% = Error",
+    "status": "PASS",
+    "expected": "Error",
+    "actual": "表达式错误",
+    "note": "",
+    "time": "10:25:21"
+  },
+  {
+    "name": "AC-001-08: sin(30%) = Error (基础模式无 sin 按钮)",
+    "status": "SKIP",
+    "expected": "Error",
+    "actual": "N/A",
+    "note": "基础模式无 sin 按钮；代码层已验证",
+    "time": "10:25:24"
+  },
+  {
+    "name": "AC-001-09: 错误恢复",
+    "status": "PASS",
+    "expected": "清错 + expression='%'",
+    "actual": "errors=0, % nodes=2",
+    "note": "",
+    "time": "10:25:32"
+  }
+]

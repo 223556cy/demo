@@ -1,0 +1,399 @@
+处理 GitHub Issue #30 的代码审查
+
+你是 rev-01 (代码审查员), GitHub 账号 = littleleafbbbbb.
+审查仓库: calculatorHuawei/agent_workflow
+
+## Issue 信息
+- Number: #30
+- Title: [CRON] 数据采集脚本连接失败 - WinError 10061
+- URL: https://github.com/calculatorHuawei/agent_workflow/issues/30
+
+## Issue 正文
+## 问题概述
+
+定时任务的数据采集脚本执行失败，报错 WinError 10061（连接被拒绝）。
+
+## 错误日志
+
+```
+Script exited with code 1
+stdout:
+[2026-06-26 09:36:48] [pm-01] ==================================================
+[2026-06-26 09:36:48] [pm-01] ????
+[2026-06-26 09:36:50] [pm-01] [ERR] <urlopen error [WinError 10061] ?????????????????>
+```
+
+## 错误分析
+
+**WinError 10061** 表示目标服务器拒绝连接，可能原因：
+1. 数据采集目标服务未运行
+2. 网络配置问题
+3. 防火墙阻止了连接
+4. 端口号或地址配置错误
+
+## 需要跟进的事项
+
+- [ ] 确认数据采集目标服务状态
+- [ ] 检查网络连通性
+- [ ] 验证配置参数
+- [ ] 修复或重新启动相关服务
+
+## 分类
+
+- **类型**: 运维/bug
+- **严重级别**: 中
+- **影响**: 定时数据采集中断
+
+---
+*自动创建于 cron 任务: pm-01*
+
+
+## 审查上下文 (已为你收集好, 不要重新 fetch)
+- Worktree: `D:\huawei\Demo\worktrees\issue-30`
+- 分支: `feat/issue-30-cron-数据采集脚本连接失败-win`
+- 分支已 push 到 origin: True
+- 修改文件 stat:
+```
+.gitignore                                         |   7 +
+ .../src/main/ets/calculator/BaseConverter.ets      | 157 ++++
+ .../entry/src/main/ets/calculator/Calculator.ets   |  38 +
+ .../entry/src/main/ets/calculator/MemorySlots.ets  |  94 +++
+ .../entry/src/main/ets/common/FractionUtil.ets     | 105 +++
+ .../src/main/ets/common/NaturalLanguageParser.ets  |  61 +-
+ opencalc/entry/src/main/ets/common/PlotUtils.ets   | 307 ++++++++
+ .../entry/src/main/ets/common/UnitConverter.ets    |  65 +-
+ .../entry/src/main/ets/history/HistorySearch.ets   |  27 +
+ .../entry/src/main/ets/model/ModeController.ets    |  76 ++
+ opencalc/entry/src/main/ets/model/ModeModel.ets    |  50 ++
+ opencalc/entry/src/main/ets/model/Models.ets       |  15 +-
+ .../entry/src/main/ets/pages/CalculatorPage.ets    | 596 ++++++++++++--
+ opencalc/entry/src/main/ets/pages/GraphPage.ets    | 415 ++++++++++
+ .../entry/src/main/ets/pages/ProgrammerPanel.ets   | 125 +++
+ .../src/main/ets/preferences/PreferencesStore.ets  |  44 +-
+ .../src/main/ets/viewmodels/GraphViewModel.ets     | 132 ++++
+ .../src/main/resources/base/element/string.json    |  15 +-
+ .../main/resources/base/profile/main_pages.json    |   3 +-
+ opencalc/entry/src/test/List.test.ets              |  18 +-
+ .../src/test/ets/calculator/BaseConverter.test.ets | 178 +++++
+ .../src/test/ets/calculator/Calculator.test.ets    |  76 ++
+ .../src/test/ets/calculator/Expression.test.ets    |  68 ++
+ .../src/test/ets/calculator/MemorySlots.test.ets   |  88 +++
+ .../src/test/ets/common/FractionUtil.test.ets      | 103 +++
+ .../test/ets/common/NaturalLanguageParser.test.ets | 154 ++++
+ .../entry/src/test/ets/common/PlotUtils.test.ets   | 185 +++++
+ .../src/test/ets/common/UnitConverter.test.ets     | 153 +++-
+ .../src/test/ets/history/HistorySearch.test.ets    | 147 ++++
+ .../src/test/ets/keyboard/KeyboardSwipe.test.ets   | 151 ++++
+ .../apply-report.md                                | 208 +++++
+ .../delta-spec.md                                  |  62 ++
+ .../design.md                                      | 114 +++
+ .../info.md                                        |  65 ++
+ .../proposal.md                                    |  85 ++
+ .../tasks.md                                       | 122 +++
+ .../tests/Expression.port.mjs                      | 321 ++++++++
+ .../tests/Expression.test.mjs                      | 112 +++
+ .../tests/expression-eval.mjs                      |  37 +
+ .../todo.md                                        |  33 +
+ .../apply-report.md                                | 138 ++++
+ .../delta-design.md                                | 522 ++++++++++++
+ .../delta-spec.md                                  | 285 +++++++
+ .../design-review.md                               | 146 ++++
+ .../info.md                                        | 232 ++++++
+ .../proposal.md                                    |  77 ++
+ .../tasks.md                                       | 280 +++++++
+ .../todo.md                                        | 134 ++++
+ .../apply-report.md                                | 210 +++++
+ .../delta-design.md                                | 580 ++++++++++++++
+ .../delta-spec.md                                  | 350 +++++++++
+ .../design-review.md                               | 194 +++++
+ .../20260617-requirement-add-memory-slots/info.md  | 284 +++++++
+ .../proposal.md                                    |  70 ++
+ .../20260617-requirement-add-memory-slots/tasks.md | 862 ++++++++++++++++++++
+ .../tests/MemorySlots.port.mjs                     |  63 ++
+ .../tests/MemorySlots.test.mjs                     |  87 ++
+ .../20260617-requirement-add-memory-slots/todo.md  |  73 ++
+ .../apply-report.md                                | 229 ++++++
+ .../delta-design.md                                | 871 +++++++++++++++++++++
+ .../delta-spec.md                                  | 262 +++++++
+ .../design-review.md                               | 156 ++++
+ .../20260617-requirement-add-plot-graph/info.md    | 306 ++++++++
+ .../proposal.md                                    |  80 ++
+ .../20260617-requirement-add-plot-graph/tasks.md   | 269 +++++++
+ .../tests/Calculator.source.mjs                    | 141 ++++
+ .../tests/Calculator.test.mjs                      | 295 +++++++
+ .../tests/GraphViewModel.test.mjs                  | 203 +++++
+ .../tests/PlotUtils.source.mjs                     | 142 ++++
+ .../tests/PlotUtils.test.mjs                       | 349 +++++++++
+ .../20260617-requirement-add-plot-graph/todo.md    |  43 +
+ .../ui-tests/dump_graph.json                       |   1 +
+ .../ui-tests/dump_graph2.json                      |   1 +
+ .../ui-tests/dump_graph3.json                      |   1 +
+ .../ui-tests/dump_graph_fixed.json                 |   1 +
+ .../ui-tests/dump_graph_sin.json                   |   1 +
+ .../ui-tests/dump_main.json                        |   1 +
+ .../ui-tests/inspect_dump.py                       |  36 +
+ .../ui-tests/parse_ui.py                           |  50 ++
+ .../ui-tests/results.json                          |  17 +
+ .../ui-tests/run_tests.py                          | 151 ++++
+ .../ui-tests/screenshot/01_main.png                | Bin 0 -> 195705 bytes
+ .../ui-tests/screenshot/02_graph.png               | Bin 0 -> 139984 bytes
+ .../ui-tests/screenshot/03_graph_fixed.png         | Bin 0 -> 151176 bytes
+ .../ui-tests/screenshot/04_graph2.png              | Bin 0 -> 151508 bytes
+ .../ui-tests/screenshot/05_graph3.png              | Bin 0 -> 209507 bytes
+ .../ui-tests/screenshot/ac01_graph_opened.png      | Bin 0 -> 210137 bytes
+ .../apply-report.md                                | 119 +++
+ .../delta-design.md                                | 653 +++++++++++++++
+ .../delta-spec.md                                  | 295 +++++++
+ .../design-review.md                               | 190 +++++
+ .../info.md                                        | 252 ++++++
+ .../proposal.md                                    |  76 ++
+ .../tasks.md                                       | 284 +++++++
+ .../todo.md                                        |  70 ++
+ .../apply-report.md                                | 245 ++++++
+ .../delta-design.md                                | 529 +++++++++++++
+ .../delta-spec.md                                  | 161 ++++
+ .../design-review.md                               | 132 ++++
+ .../info.md                                        | 211 +++++
+ .../proposal.md                                    |  57 ++
+ .../tasks.md                                       | 237 ++++++
+ .../tests/FractionUtil.port.mjs                    |  95 +++
+ .../tests/FractionUtil.test.mjs                    | 155 ++++
+ .../todo.md                                        |  72 ++
+ .../apply-report.md"                               | 203 +++++
+ .../delta-design.md"                               | 537 +++++++++++++
+ .../delta-spec.md"                                 | 298 +++++++
+ .../design-review.md"                              | 166 ++++
+ .../info.md"                                       | 229 ++++++
+ .../proposal.md"                                   | 216 +++++
+ .../tasks.md"                                      | 221 ++++++
+ .../tests/NaturalLanguageParser.port.mjs"          |  96 +++
+ .../tests/UnitConverter.port.impl.mjs"             | 174 ++++
+ .../tests/UnitConverter.port.mjs"                  |  96 +++
+ .../todo.md"                                       |  62 ++
+ .../apply-report.md                                | 192 +++++
+ .../delta-design.md                                | 496 ++++++++++++
+ .../delta-spec.md                                  | 227 ++++++
+ .../design-review.md                               | 150 ++++
+ .../info.md                                        | 206 +++++
+ .../proposal.md                                    |  92 +++
+ .../tasks.md                                       | 203 +++++
+ .../tests/HistoryGroup.port.mjs                    |  41 +
+ .../tests/HistoryGroup.test.mjs                    | 180 +++++
+ .../tests/HistorySearch.port.mjs                   |  19 +
+ .../tests/HistorySearch.test.mjs                   | 154 ++++
+ .../todo.md                                        |  56 ++
+ .../ui-tests/parse_ui.py                           |  65 ++
+ .../ui-tests/results.json                          | 112 +++
+ .../ui-tests/run_search_tests.py                   | 509 ++++++++++++
+ .../ui-tests/screenshot/00_initial.png             | Bin 0 -> 189620 bytes
+ .../ui-tests/screenshot/01_history_open.png        | Bin 0 -> 163961 bytes
+ .../ui-tests/screenshot/04_after_x_click.png       | Bin 0 -> 163785 bytes
+ .../ui-tests/uidump.json                           |   1 +
+ .../apply-report.md                                | 165 ++++
+ .../delta-design.md                                | 634 +++++++++++++++
+ .../delta-spec.md                                  | 312 ++++++++
+ .../design-review.md                               | 167 ++++
+ .../20260626-bugfix-cron-poll-issues-retry/info.md | 257 ++++++
+ .../proposal.md                                    | 207 +++++
+ .../tasks.md                                       | 295 +++++++
+ .../20260626-bugfix-cron-poll-issues-retry/todo.md |  72 ++
+ specs/initialized.flag                             |   4 +-
+ 144 files changed, 23876 insertions(+), 76 deletions(-)
+```
+
+## 最近 29 个 commits
+```
+a3b0da8 fix(cron-poll): add network retry mechanism for pm-01 poll_issues.py (Issue #30)
+331bf62 fix: revert evaluateAt debug code (was forcing sin) - cos/tan now work
+a347814 debug: force evaluateAt to return sin(x) to test
+1c6ae56 debug: add console.log in evaluateAt to find sin(x) bug
+3b57d7a fix(graph): default x range to -2π~2π so sin/cos show full cycle
+d867054 fix(graph): auto-redraw on f(x) change with 300ms debounce + better error UI
+5457b43 fix: pass number to setProgrammerModeDefault
+c8509e6 fix(prefs): remove duplicate programmer-mode methods from Issue #22 (Issue #29 version is canonical)
+f270a7b merge: integrate Issue #29 keyboard-swipe into demo/integration-all
+3d2705f merge: integrate Issue #28 memory-slots into demo/integration-all
+306b344 merge: integrate Issue #27 result-display-toggle into demo/integration-all
+f4026aa merge: integrate Issue #26 plot-graph into demo/integration-all
+f0544f8 merge: integrate Issue #25 unit-conversion-extension into demo/integration-all
+2477553 merge: integrate Issue #24 history-search into demo/integration-all
+ea8993c Merge remote-tracking branch 'origin/feat/issue-22-简单需求' into demo/integration-all
+d88bb47 Merge remote-tracking branch 'origin/feat/issue-21-测试噪声-aid-planning' into demo/integration-all
+b86f7c7 fix(memory-slots): ArkTS strict-mode adjustments (Issue #28)
+491573c feat(keyboard-swipe): 竖屏左右滑动切换三种键盘模式 [Issue #29]
+8a7ea50 feat(factorial): add ! button to scientific mode (Issue #21)
+19ff4e2 feat(result-display): 分数/小数显示自由切换 [Issue #27]
+```
+
+## commit signoff 状态
+  ❌ a3b0da8d 2026-06-26 fix(cron-poll): add network retry mechanism for pm-01 poll_i signed=False
+  ❌ 331bf62e 2026-06-26 fix: revert evaluateAt debug code (was forcing sin) - cos/ta signed=False
+  ❌ a347814d 2026-06-26 debug: force evaluateAt to return sin(x) to test signed=False
+  ❌ 1c6ae566 2026-06-26 debug: add console.log in evaluateAt to find sin(x) bug signed=False
+  ❌ 3b57d7ae 2026-06-26 fix(graph): default x range to -2π~2π so sin/cos show full c signed=False
+  ❌ d867054c 2026-06-26 fix(graph): auto-redraw on f(x) change with 300ms debounce + signed=False
+  ❌ 5457b438 2026-06-26 fix: pass number to setProgrammerModeDefault signed=False
+  ❌ c8509e68 2026-06-26 fix(prefs): remove duplicate programmer-mode methods from Is signed=False
+  ❌ f270a7b6 2026-06-26 merge: integrate Issue #29 keyboard-swipe into demo/integrat signed=False
+  ❌ 3d2705f5 2026-06-26 merge: integrate Issue #28 memory-slots into demo/integratio signed=False
+  ❌ 306b3440 2026-06-26 merge: integrate Issue #27 result-display-toggle into demo/i signed=False
+  ❌ f4026aac 2026-06-26 merge: integrate Issue #26 plot-graph into demo/integration- signed=False
+  ❌ f0544f8e 2026-06-26 merge: integrate Issue #25 unit-conversion-extension into de signed=False
+  ❌ 24775534 2026-06-26 merge: integrate Issue #24 history-search into demo/integrat signed=False
+  ❌ ea8993c5 2026-06-26 Merge remote-tracking branch 'origin/feat/issue-22-简单需求' int signed=False
+  ❌ d88bb47f 2026-06-26 Merge remote-tracking branch 'origin/feat/issue-21-测试噪声-aid- signed=False
+  ❌ b86f7c7e 2026-06-18 fix(memory-slots): ArkTS strict-mode adjustments (Issue #28) signed=False
+  ✅ 491573cf 2026-06-18 feat(keyboard-swipe): 竖屏左右滑动切换三种键盘模式 [Issue #29] signed=True
+  ✅ 8a7ea50e 2026-06-17 feat(factorial): add ! button to scientific mode (Issue #21) signed=True
+  ❌ 19ff4e21 2026-06-17 feat(result-display): 分数/小数显示自由切换 [Issue #27] signed=False
+  ❌ c7ba0fc6 2026-06-17 feat(memory-slots): M1-M6 long-press store + MR recall picke signed=False
+  ✅ 70664388 2026-06-17 docs(todo): mark git commit + gh_helper.py comment as done f signed=True
+  ✅ b8eeb2ba 2026-06-17 feat(plot-graph): Issue #26 函数图像绘制 — 输入 sin(x) 显示曲线 signed=True
+  ✅ 8e6555cf 2026-06-17 feat(programmer-mode): BIN/OCT/DEC/HEX 实时转换 + 模式切换动画 [Issue  signed=True
+  ❌ eec5ecc1 2026-06-17 feat(issue-25): extend unit conversion with area/time/speed  signed=False
+  ✅ efc24373 2026-06-17 docs(issue-24): re-dispatch fix per rev-01 feedback signed=True
+  ✅ 77335abc 2026-06-17 feat(history-search): Issue #24 历史搜索框 signed=True
+  ✅ a4f8f9ef 2026-06-17 fix(merge): resolve CalculatorPage.ets conflicts from #13/#1 signed=True
+  ✅ 7139e59b 2026-06-17 fix(merge): resolve CalculatorPage.ets conflicts from #13/#1 signed=True
+
+## AID 产物 (specs/changes/ 下)
+  - 20260626-bugfix-cron-poll-issues-retry: apply-report.md(8500B), delta-design.md(21226B), delta-spec.md(18959B), design-review.md(8327B), info.md(11557B), proposal.md(10993B), tasks.md(12585B), todo.md(3512B)
+  - 20260617-requirement-change-modify-aid-planning: apply-report.md(9665B), delta-design.md(16880B), delta-spec.md(9153B), design-review.md(5797B), info.md(8908B), proposal.md(4229B), tasks.md(8466B), todo.md(2539B)
+  - 20260617-requirement-add-中等模糊: apply-report.md(9038B), delta-design.md(17160B), delta-spec.md(16094B), design-review.md(7776B), info.md(11051B), proposal.md(10268B), tasks.md(11354B), todo.md(2870B)
+  - 20260617-requirement-add-result-display-toggle: apply-report.md(12201B), delta-design.md(15757B), delta-spec.md(8400B), design-review.md(4757B), info.md(9600B), proposal.md(3485B), tasks.md(9843B), todo.md(3062B)
+  - 20260617-requirement-add-programmer-mode: apply-report.md(6494B), delta-design.md(22260B), delta-spec.md(16903B), design-review.md(7978B), info.md(13573B), proposal.md(5448B), tasks.md(13947B), todo.md(3357B)
+  - 20260617-requirement-add-plot-graph: apply-report.md(9544B), delta-design.md(27156B), delta-spec.md(10299B), design-review.md(6761B), info.md(13276B), proposal.md(5808B), tasks.md(12033B), todo.md(2053B)
+  - 20260617-requirement-add-memory-slots: apply-report.md(11340B), delta-design.md(19708B), delta-spec.md(18059B), design-review.md(8308B), info.md(14888B), proposal.md(4540B), tasks.md(27846B), todo.md(3464B)
+  - 20260617-requirement-add-keyboard-swipe: apply-report.md(7814B), delta-design.md(15163B), delta-spec.md(15753B), design-review.md(6245B), info.md(11296B), proposal.md(4957B), tasks.md(14312B), todo.md(4852B)
+  - 20260617-requirement-add-factorial-button: apply-report.md(9290B), delta-spec.md(2028B), design.md(5652B), info.md(3667B), proposal.md(4164B), tasks.md(4765B), todo.md(1741B)
+  - 20260612-requirement-add-realtime-preview: apply-report.md(19617B), delta-spec.md(9465B), design.md(14987B), info.md(9173B), proposal.md(4496B), tasks.md(9359B), todo.md(2223B)
+  - 20260611-requirement-add-percent-button: apply-report.md(8724B), delta-spec.md(4251B), design.md(6340B), info.md(6547B), proposal.md(3281B), tasks.md(5258B), todo.md(2936B)
+
+## 截图证据
+  ❌ 无真实截图
+
+## 你的工作
+
+🤖 非交互模式 (claude -p), 全自动, 不允许问问题. 所有决策自己拍板.
+
+按以下检查表审查, **每项都必须勾完**:
+
+### 阻塞项 (任一 FAIL = REQUEST_CHANGES)
+1. [ ] AID 三阶段完整 (PLANNING+IMPLEMENTING+APPLYING 产出齐全)
+   - 需有: proposal.md / delta-spec.md / info.md / design.md / tasks.md / apply-report.md
+2. [ ] 真实跑了 harmonyos-ui-test (有截图 + uiautomator dump)
+3. [ ] commit 全部 signed-off (见上面的 signoff 状态)
+4. [ ] 无铁律 7 违规 (测试日志不能伪造)
+5. [ ] 在 feat/* 分支, 没直接推 main
+6. [ ] AID 产物存在 (specs/changes/ 下至少有 proposal.md + apply-report.md)
+
+### 建议项 (不阻塞但要列出)
+- commits 符合 conventional commits 规范
+- TDD 节奏 (test 与 feat 分开 commit)
+- 代码可读性 (命名, 重复, 复杂度)
+
+## 输出
+
+**严格**按下面格式写到一个 JSON 文件 (路径给你了, 不要 print 到 stdout):
+
+路径: `D:/huawei/Demo/calculatorHuawei/.claude/review-logs/2026-06-27/issue-30-review.json`
+
+格式:
+```json
+{
+  "verdict": "APPROVE" 或 "REQUEST_CHANGES",
+  "summary": "<一句话总结, 用中文, 25 字以内>",
+  "blocking": [
+    {"item": "<检查项名>", "evidence": "<具体证据, 文件:行号 或 commit SHA>"},
+    ...
+  ],
+  "suggestions": [
+    "<commit SHA>: <建议>",
+    ...
+  ],
+  "highlights": [
+    "<commit SHA>: <做得好的点>",
+    ...
+  ],
+  "comment": "<完整 markdown 评论, 用下面模板之一>"
+}
+```
+
+### 评论模板 (APPROVE)
+```
+[rev-01] APPROVED — <summary>
+
+## 审查结果
+| 检查项 | 状态 |
+|--------|------|
+| AID 三阶段 | OK |
+| harmonyos-ui-test | OK |
+| commit signoff | OK |
+| 分支规范 | OK |
+| 铁律 7 不伪造 | OK |
+
+## 主要亮点
+- <highlights 内容>
+
+## 决定
+已 close. 感谢 @littleleafccccc 的贡献.
+```
+
+### 评论模板 (REQUEST_CHANGES)
+```
+[rev-01] REQUEST CHANGES — <summary>
+
+## 审查结果
+| 检查项 | 状态 | 备注 |
+|--------|------|------|
+| AID 三阶段 | OK/FAIL | <备注> |
+| harmonyos-ui-test | OK/FAIL | <备注> |
+| commit signoff | OK/FAIL | <备注> |
+| 分支规范 | OK/FAIL | <备注> |
+| 铁律 7 不伪造 | OK/FAIL | <备注> |
+
+## 阻塞项 (必须修复)
+- `<文件路径>:<行号>` 或 `<commit SHA>` — <问题描述>
+  修复建议: <具体怎么改>
+
+## 建议项 (建议修复)
+- <commit SHA>: <建议>
+
+## 接下来
+@littleleafccccc 请修复阻塞项后再 assign rev-01.
+issue 保持 open, 不要关闭.
+```
+
+## 工作流步骤
+
+1. cd 到 worktree: `D:\huawei\Demo\worktrees\issue-30`
+2. 用 Read 工具读关键文件 (apply-report.md, spec 产物, 关键代码 diff)
+3. 用 Bash 跑 `git show <sha>` 看每个 commit 的实际改动
+4. 用 Bash 跑 `git diff origin/main..HEAD -- <file>` 看具体行
+5. 按检查表逐项判断
+6. 用 Write 工具写 JSON 到 `D:/huawei/Demo/calculatorHuawei/.claude/review-logs/2026-06-27/issue-30-review.json`
+7. **不要**发 GitHub 评论 (review_issues.py 会负责发)
+8. **不要** close/assign issue (review_issues.py 会负责)
+9. **不要** commit 任何改动 (审查者只读)
+
+如果 worktree 不存在 (D:/huawei/Demo/worktrees/issue-30 缺失), 写:
+```json
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "worktree 缺失",
+  "blocking": [{"item": "worktree 缺失", "evidence": "D:/huawei/Demo/worktrees/issue-30 不存在"}],
+  "suggestions": [],
+  "highlights": [],
+  "comment": "[rev-01] REQUEST CHANGES — worktree 缺失, dev-01 还没创建..."
+}
+```
+
+如果分支没 push 到 origin, 写:
+```json
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "分支未推送",
+  "blocking": [{"item": "分支未推送", "evidence": "feat/issue-30-cron-数据采集脚本连接失败-win 不在 origin 上"}],
+  ...
+}
+```

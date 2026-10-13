@@ -1,0 +1,12 @@
+{
+  "issue": 38,
+  "title": "[regression] skillopt-01/fix-issue-37-20260708",
+  "verdict": "APPROVE",
+  "priority": "LOW",
+  "target_skill": "aid-applying",
+  "phenomenon": "dev-02 (littleleafaaaaa) 用 skillopt-01 改后的 aid-applying skill (commit=008787588261) 跑 issue #37 的 AID-Workflow 回归:① BUILD SUCCESSFUL — hvigorw assembleHap 4s,0 编译错误 (hvigorw 6.24.2 / openjdk 21.0.8 JBR / DEVECO_SDK_HOME=D:\\Program Files\\Huawei\\DevEco Studio\\sdk);② Node 端口单元测试 14/14 PASS (12 percent + 2 回归,覆盖核心+边界+错误恢复,Expression.test.mjs pass 14 fail 0 duration_ms 7.6);③ 真机 UI 验证 1/1 PASS — 设备 127.0.0.1:5555 在线,装 HAP→启动 App→切 BASIC 模式(swipe ×2)→定位 % 按钮→点 50+10%= → dumpLayout 验证 result=55,截图取证 ui-tests/screenshot/pct_50plus10_result55.png (201 KB);④ 发现并修复 Expression.getPercentString 在 +/- 分支生成表达式时 base 没加括号的 bug — 100+10%+5% 算成 210.5 (错) 而非 115.5 (对),修复在 Expression.ets:241 + :260 加括号 (+7/-2 行);⑤ Sanity Check ok=True exit=0;⑥ hypium test@entry 因项目 entry/build-profile.json5 未声明 test target 降级为 Node 端口(非阻塞,框架已声明但不可执行)。Sanity Check 输出残留若干模板未替换警告 ({N} / {SPECS_FEATURE_ROOT} / {RETRY_DELAY}) 但整体 ok=True exit=0。",
+  "completed_at": "2026-07-08T17:10:24.816331",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-07-08\\issue-38.md"
+}

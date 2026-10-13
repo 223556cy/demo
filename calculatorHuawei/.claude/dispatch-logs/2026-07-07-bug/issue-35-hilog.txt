@@ -1,0 +1,64 @@
+# Issue #35 证据: hilog 采样日志 (rev-01 抓取)
+# 时间: 2026-07-07 20:14:12
+# 设备: DevEco Studio 模拟器 (127.0.0.1:5555)
+# HAP: opencalc/entry/build/default/outputs/default/entry-default-unsigned.hap (含 hilog 调试)
+# 表达式: sin(x), xMin=-6.28, xMax=6.28, samples=200
+
+# domain 0xCA1C = 51740 (我的调试 domain)
+# tag = CALCDBG
+
+# 关键发现: evaluateAt 收到的 deg=true (用户偏好是角度模式)
+# 导致 Math.sin(x * π/180) 在 x∈[-6.28, 6.28] 范围内几乎全是小角度
+# 小角近似 sin(x°) ≈ x * π/180 ≈ 0.01745 * x
+# 200 个采样点的 y 值全部满足 y = 0.01745 * x (单调线性) → 渲染成直线
+
+# 前 30 个采样点 (验证规律性):
+evalAt_in  x=-6.28000          deg=true
+fn_sin_out ret=-0.1093873465   ← y = -6.28 * 0.01745 = -0.1096 ✓
+evalAt_in  x=-6.21688          deg=true
+fn_sin_out ret=-0.1082923161   ← y = -6.21688 * 0.01745 = -0.1085 ✓
+evalAt_in  x=-6.15377          deg=true
+fn_sin_out ret=-0.1071971542   ← y = -6.15377 * 0.01745 = -0.1074 ✓
+evalAt_in  x=-6.09065          deg=true
+fn_sin_out ret=-0.1061018623
+evalAt_in  x=-6.02754          deg=true
+fn_sin_out ret=-0.1050064416
+evalAt_in  x=-5.96442          deg=true
+fn_sin_out ret=-0.1039108934
+...
+# 中间 x≈0 时 y≈0:
+evalAt_in  x=-0.06281          deg=true
+fn_sin_out ret=-0.0010958928   ← y ≈ -0.06281 * 0.01745 = -0.00110 ✓
+evalAt_in  x=+0.00000          deg=true
+fn_sin_out ret=+0.0000000000   ← y = 0 ✓
+evalAt_in  x=+0.06281          deg=true
+fn_sin_out ret=+0.0010958928   ← y ≈ +0.06281 * 0.01745 = +0.00110 ✓
+...
+# 最后几个点 (x=+6.28 附近):
+evalAt_in  x=+6.02754          deg=true
+fn_sin_out ret=+0.1050064416
+evalAt_in  x=+6.09065          deg=true
+fn_sin_out ret=+0.1061018623
+evalAt_in  x=+6.15377          deg=true
+fn_sin_out ret=+0.1071971542
+evalAt_in  x=+6.21688          deg=true
+fn_sin_out ret=+0.1082923161
+evalAt_in  x=+6.28000          deg=true
+fn_sin_out ret=+0.1093873465   ← y = +6.28 * 0.01745 = +0.1096 ✓
+
+# 结论:
+# 1. evaluateAt 返回的是 sin(x * π/180) 而不是 sin(x)
+# 2. 原因: GraphViewModel.isDegree = true (被 loadPrefs 微任务提前设置)
+# 3. 在 [-6.28, 6.28] 范围内, sin(x°) 在小角度近似下几乎线性
+# 4. 200 个采样点连起来画出一条 y = 0.01745*x 的直线
+
+# 修复 (dev-01 实施):
+# 把 GraphPage.ets 第 61 行 setTimeout(() => vm.compute(), 0) 移到
+# prefs.init().then(() => { loadPrefs(); vm.compute(); }) 内
+
+# 验证 (dev-01 实施后):
+# 重新跑 hilog,期望看到 deg=false 且 y 值在 [-1, 1] 范围正弦分布
+# 期望: x=π/2 ≈ 1.57 时 y ≈ 1.0
+#       x=π   ≈ 3.14 时 y ≈ 0.0 (sin π)
+#       x=3π/2 ≈ 4.71 时 y ≈ -1.0
+# 而不是当前的 y ≈ 1.57 * 0.01745 = 0.027 (角度模式)

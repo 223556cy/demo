@@ -1,0 +1,127 @@
+metadata:
+  generated_at: '2026-06-08 19:22:20'
+  stage: gateway-running
+  next_stage: issue-pending
+  updated_at: '2026-06-09 11:50:00'
+  gateway:
+    started_at: '2026-06-09 11:46:00'
+    pid: 31612
+    task_id: b6iutq36j
+    mode: foreground-background
+    active_cron_jobs: 3
+    cron_jobs:
+      - id: d10000000001
+        name: dev-01 Issue Worker (no-agent watch)
+        profile: dev-01
+        schedule: every 30m
+        mode: no-agent
+      - id: 03b7efc89fc1
+        name: dev-01 Issue Worker (LLM)
+        profile: dev-01
+        schedule: every 30m
+        mode: llm-thinking
+      - id: f4665c6a37a6
+        name: rev-01 Issue Reviewer (LLM)
+        profile: rev-01
+        schedule: every 30m
+        mode: llm-thinking
+      - id: 1ce1503e214f
+        name: pm-01 Issue Manager (LLM)
+        profile: pm-01
+        schedule: every 30m
+        mode: llm-thinking
+    notes:
+      - rev-01 / dev-01 / pm-01 都有每30min LLM 思考 cron，会主动处理分配的 Issue
+      - arch-01 也有 cron，但不在 1+N 团队
+      - dev-01 还有一个 no-agent 一次性 cron 残留（id: d10000000001），不影响工作
+  org_name_corrected: true
+  previous_org_name: oneplusn-team
+  github_push_commit: 8cb00944f3ae6f4cd64eeebe9eb0b736f43ca828
+organization:
+  name: calculatorHuawei
+  url: https://github.com/calculatorHuawei
+repository:
+  name: agent_workflow
+  url: https://github.com/calculatorHuawei/agent_workflow
+  issues_url: https://github.com/calculatorHuawei/agent_workflow/issues
+  status: created
+  created_at: '2026-06-08'
+  default_branch: main
+  pushed_at: '2026-06-08 20:05:00'
+  commit_sha: 8cb00944f3ae6f4cd64eeebe9eb0b736f43ca828
+boss:
+  github_username: 223556cy
+  email: 2690920195@qq.com
+souls_source:
+  base_path: D:\huawei\ai-native-org-guide\souls\
+  available:
+    - 01-评审大哥-SOUL.md
+    - 02-开发小哥-SOUL.md
+    - 03-测试小哥-SOUL.md
+    - 04-项目总管-SOUL.md
+    - 05-挑战大姐-SOUL.md
+agents:
+  dev-01:
+    name: dev-01
+    role: developer
+    agent_type: hermes
+    github_username: littleleafccccc
+    github_email: 2690920195+dev01@qq.com
+    gateway_port: 8100
+    status: active
+    onboarded_at: '2026-06-08 19:25:27'
+    token_status: filled
+    token_expires_at: '2026-09-06'
+    token_scopes: 'repo, workflow, delete:packages, write:packages'
+    soul_source: D:\huawei\ai-native-org-guide\souls\02-开发小哥-SOUL.md
+    soul_role: 开发小哥（资深鸿蒙开发工程师）
+    soul_injected_at: '2026-06-08 21:00:00'
+    upgrades:
+      - module: hindsight
+        enabled: true
+        upgraded_at: '2026-06-08 19:27:00'
+        install_cmd: "uv pip install --python ~/.hermes/hermes-agent/venv/bin/python hindsight-all"
+        config_path: "~/.hermes/hindsight/config.json"
+  rev-01:
+    name: rev-01
+    role: reviewer
+    agent_type: hermes
+    github_username: littleleafbbbbb
+    github_email: 2690920195+rev01@qq.com
+    gateway_port: 8101
+    status: active
+    onboarded_at: '2026-06-08 19:25:40'
+    token_status: filled
+    token_expires_at: '2026-09-06'
+    token_scopes: 'admin:org, admin:repo_hook, repo, workflow, delete:packages, write:packages'
+    soul_source: D:\huawei\ai-native-org-guide\souls\02-开发小哥-SOUL.md
+    soul_role: 代码审查员（技术型 — 共享开发技术栈 + 审查视角）
+    soul_injected_at: '2026-06-08 21:00:00'
+    soul_note: '本地无纯代码审查员模板，使用 02-开发小哥 的技术栈知识 + 审查视角标注'
+    upgrades:
+      - module: hindsight
+        enabled: true
+        upgraded_at: '2026-06-08 19:27:00'
+        install_cmd: "uv pip install --python ~/.hermes/hermes-agent/venv/bin/python hindsight-all"
+        config_path: "~/.hermes/hindsight/config.json"
+  pm-01:
+    name: pm-01
+    role: project-manager
+    agent_type: hermes
+    github_username: littleleafaaaaa
+    github_email: 2690920195+pm01@qq.com
+    gateway_port: 8102
+    status: active
+    onboarded_at: '2026-06-08 19:25:54'
+    token_status: filled
+    token_expires_at: '2026-09-06'
+    token_scopes: 'admin:org, admin:repo_hook, repo, workflow, delete:packages, write:packages'
+    soul_source: D:\huawei\ai-native-org-guide\souls\04-项目总管-SOUL.md
+    soul_role: 项目总管（知识库 + 文档管理 + 规范维护）
+    soul_injected_at: '2026-06-08 21:00:00'
+    upgrades:
+      - module: hindsight
+        enabled: true
+        upgraded_at: '2026-06-08 19:27:00'
+        install_cmd: "uv pip install --python ~/.hermes/hermes-agent/venv/bin/python hindsight-all"
+        config_path: "~/.hermes/hindsight/config.json"

@@ -1,0 +1,13 @@
+{
+  "issue_number": 37,
+  "branch": "skillopt-01/fix-issue-37-20260708",
+  "branch_url": "https://github.com/calculatorHuawei/aid-workflow-skills/tree/skillopt-01/fix-issue-37-20260708",
+  "aid_issue": {
+    "aid_issue_number": 6,
+    "aid_issue_url": "https://github.com/calculatorHuawei/aid-workflow-skills/issues/6",
+    "created_at": "2026-07-08T16:39:23.620456"
+  },
+  "target_skill": "aid-applying",
+  "regression_issue": 38,
+  "completed_at": "2026-07-08T16:39:50.359893"
+}

@@ -1,0 +1,160 @@
+# 首席诊断任务 (Issue #5)
+
+## Issue 上下文
+- Number: #5
+- Title: 简单需求
+- 最终结论: **REQUEST_CHANGES** — 代码实现正确，但缺少真实 UI 截图
+- URL: https://github.com/calculatorHuawei/agent_workflow/issues/5
+- 状态: closed
+- 标签: (无)
+
+## Issue 正文
+| 4 | **计算历史列表上加一个搜索框，能搜之前的算式** | 历史增强 | ⭐ | 搜索交互，数据管理 |
+
+## rev-01 完整审查评论 (最重要)
+[rev-01] REQUEST CHANGES — 代码实现正确，但缺少真实 UI 截图
+
+## 审查结果
+| 检查项 | 状态 | 备注 |
+|--------|------|------|
+| AID 三阶段 | OK | PLANNING + IMPLEMENTING + APPLYING 产出齐全 |
+| harmonyos-ui-test | **FAIL** | screenshots/ 目录只有 README.md，无真实截图 |
+| 铁律 7 不伪造 | OK | SDK 限制诚实记录，Node 测试日志真实 |
+| commit signoff | OK | 所有 commit 均有 Signed-off-by |
+| 分支规范 | OK | feat/issue-5-history-search 分支 |
+
+## 阻塞项 (必须修复)
+-  — 目录仅含 README.md，缺少 8 个 SC 场景的真实截图
+  
+  问题详情:
+  - SC-001 ~ SC-008 场景无任何 .png/.jpg 截图文件
+  - 仅有 README.md 说明 hdc list targets = [Empty]
+  - 使用 Node.js 逻辑等价测试不能替代 HarmonyOS UI 自动化测试
+  
+  修复建议:
+  1. 启动 DevEco Studio 模拟器或连接真机
+  2. 确认  返回设备列表
+  3. 按 harmonyos-ui-test skill 要求采集 8 个场景截图:
+     - sc-001-empty-history.png
+     - sc-002-search-sin.png
+     - sc-003-no-match.png
+     - sc-004-clear-x.png
+     - sc-005-case-insensitive.png
+     - sc-006-new-item-during-search.png
+     - sc-007-delete-during-search.png
+     - sc-008-landscape.png
+  4. 更新 apply-report.md 记录实际截图路径
+
+## 建议项 (建议修复)
+- commit : 建议补充更详细的 JSDoc 示例
+- commit : TextInput 降级 X 按钮可考虑使用 ArkUI 原生 cancelIcon API
+
+## 实现亮点 (值得肯定)
+- TDD 节奏良好：先写 10 个单元测试 (RED 10 fail → GREEN 10 pass)
+- filterHistory 纯函数设计优雅，4 条不变量文档清晰
+- @State searchQuery + getFilteredHistory() 派生 getter 符合 ArkUI 最佳实践
+- 无匹配记录 (SR-005) 降级路径处理完整
+
+## 接下来
+@littleleafccccc 请修复阻塞项后再 assign rev-01。
+issue 保持 open，不要关闭。
+
+## Worktree 信息
+- Path: `D:\huawei\Demo\worktrees\issue-5` (exists=True)
+- Branch: `feat/issue-5-history-search`
+- AID 产物 change_id: `20260611-requirement-add-history-search`
+- AID 产物列表: apply-report.md(15715B), delta-design.md(14469B), delta-spec.md(19297B), design-review.md(7741B), info.md(10370B), proposal.md(6318B), tasks.md(15146B), todo.md(8675B)
+
+## Session 对话文件路径 (核心证据)
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-5\2026-06-11\230e948d-6743-4266-a323-19f1ef3fec37.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-5\2026-06-11\25c56dc9-eedd-4d83-aa47-9e15c4a4cc15.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-5\2026-06-11\430a44c5-2014-4947-8a6f-1525bf9b40d1.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-5\2026-06-11\8fd303b4-6a8a-479c-a2de-c6b820c8ea5c.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-5\2026-06-11\d106311e-db61-448e-9918-a960383da940.jsonl`
+
+## 工作目录 (Claude 必须能读)
+- 项目根: `D:/huawei/Demo/calculatorHuawei`
+- Worktree: `D:/huawei/Demo/worktrees/issue-5`
+- Session 原始: `D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-5`
+
+## 你的工作 (法医式诊断 4 步链)
+
+🤖 非交互模式 (claude -p), 全自动, 不允许问问题. 所有决策自己拍板.
+
+### 步骤 A. 现象还原 (Phenomenon)
+1. 通读 session jsonl: 看 claude -p 调了几次 aid-planning / aid-implementing / aid-applying / tdd-enforcer skill
+2. 看每个 skill 内部怎么跑的: 有没有 step 跳过、有没有命令失败、产物缺什么
+3. 对比 AID 产物: proposal.md / delta-spec.md / design.md / tasks.md / apply-report.md 是否齐全
+4. 提取核心现象 (1 句话总结, 50-150 字)
+
+### 步骤 B. 根因剖析 (Root Cause) — 归类到以下 4 类之一
+- **A. 幻觉乱写** — claude 自己瞎写 (改了 prompt / 产物) 但 skill 没要求
+- **B. 漏掉步骤** — 流程里有一步没做 (要加 imperative 规则)
+- **C. 理解偏差** — skill 规则存在但歧义 (要改写措辞)
+- **D. 外部因素** — 不是 skill 的问题 (e.g. 网络、SDK 缺失、用户描述不清)
+  - 此时 target_skill_filename = 'N/A' (跳过 skill 优化)
+
+### 步骤 C. 精准定位靶点 (Target Skill)
+从以下候选里选**唯一**一个负责的 skill (必须**确切存在**于文件系统):
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-planning/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-implementing/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/tdd-enforcer/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-parse/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-clarify/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-codebase/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/mod-design/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-init/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-archiving/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-monitor/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-reviewing/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/dfr-fmea-harmony/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/harmonyos-ui-test/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/prd-generator/SKILL.md
+
+**唯一性铁律**: 同时指责多个 skill = 失职. 选**最直接**造成失败的那一个.
+
+**证据要求**: 引用 session jsonl 里的具体动作 (e.g. 'jsonl#3 assistant 调了 Skill aid-applying 但产物 apply-report.md 缺失').
+
+### 步骤 D. 优先级判定 (Priority)
+- **HIGH** — 阻塞发布 / 影响 30% 以上 issue / 安全相关
+- **MEDIUM** — 影响 10-30% issue / 体验问题
+- **LOW** — 偶发 / 边缘场景 / 文档改进
+
+## 输出格式 (严格 JSON, 不允许偏差)
+
+**严格**按下面格式写到指定 JSON 文件 (路径给你了, **不要** print 到 stdout):
+
+路径: `D:/huawei/Demo/calculatorHuawei/.claude/analysis-logs/2026-06-18/issue-5-diagnosis.json`
+
+```json
+{
+  "issue_ticket": {
+    "issue_number": 5,
+    "title": "<一句话总结 Bug>",
+    "verdict": "REQUEST_CHANGES",
+    "priority": "<HIGH | MEDIUM | LOW>",
+    "target_skill_filename": "<花名册中确切存在的文件名 不带 .md, 或 'N/A'>",
+    "target_skill_path": "<绝对路径 或 'N/A'>",
+    "phenomenon": "<客观描述 50-150 字>",
+    "root_cause_analysis": "<含 A/B/C/D 归类 100-300 字, 引用 session jsonl 具体动作>",
+    "optimization_direction": "<给 skillopt-01 的具体指导 30-100 字, 动词开头>",
+    "session_files_analyzed": ["<jsonl 路径>", ...],
+    "evidence_anchors": ["<session jsonl 里的关键 line 引用>", ...]
+  }
+}
+```
+
+**硬约束**:
+1. target_skill_filename 必须是上面花名册里**确切存在**的 SKILL.md 文件名 (e.g. "aid-applying"), 不带 .md
+2. 如果根因是 D 类 (外部因素), target_skill_filename = 'N/A'
+3. 不允许任何字段缺失或格式偏差
+4. optimization_direction 必须是动词开头的具体动作 (e.g. "在 step 5 末尾加 imperative: 必须 git add -A 后再 commit")
+
+## 收尾规则 (硬)
+1. **不要** 发 GitHub 评论 (dispatch_analysis.py 会基于 JSON 自动生成评论)
+2. **不要** close / reopen / assign issue
+3. **不要** commit / push
+4. **不要** 重写任何 skill 文件 (那是 skillopt-01 的工作)
+5. **不要** 改 worktree 任何文件
+6. **不要** 评价 dev-01 / rev-01 / 用户 (质疑规则, 不质疑人)

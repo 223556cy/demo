@@ -1,0 +1,31 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "缺 DCO sign-off + 无真实 UI 自动化跑测",
+  "blocking": [
+    {
+      "item": "commit signoff 缺失",
+      "evidence": "cf42ff9 feat(factorial) 提交消息无 Signed-off-by 尾行, 955eab5 fix(aid-init) 同; git log --format='%B' cf42ff9 -1 | grep -i sign 验证无任何 sign-off 痕迹; 阻塞铁律: 每次提交须有 DCO 签名"
+    },
+    {
+      "item": "harmonyos-ui-test 未真实跑通",
+      "evidence": "apply-report.md §5.2 显式承认 '当前 win11 自动化环境无 java/hvigorw', 截图证据标记 '❌ 无真实截图'; apply-report.md 内 grep 'uiautomator|uitest|截图|screenshot' 零命中; 仅靠 Node.js 端口 + 文本输出 test-output-green.txt, 缺 HAP 构建 + 模拟器真机跑 + 截图/dump 证据"
+    }
+  ],
+  "suggestions": [
+    "cf42ff9: 修复 sign-off 后建议把 'fix(calc): 改写 Expression.ets:154 修 5!! 连续阶乘畸形' 单独提交一个 commit, 因为这是已记录但未在 Issue #19 修复的预存 bug, 现在放 PR 里风险扩大",
+    "cf42ff9: F13 测试从 '5!! → factorial(factorial(5))' 弱化为 '5!! → malformed', 这虽然披露在 apply-report, 但本质是把 RED 转 GREEN 的方式, 建议下一个 issue 立即跟踪并修复 Expression.ets:154 内层 while 的 '!' 字符跳过逻辑",
+    "cf42ff9: TDD 节奏可强化 — 当前 1 个 commit 同时含 UI 改动 + 测试套件 + AID 产物, 建议拆为 test(red) → feat(green) → docs(apply-report) 三次提交, 便于回溯",
+    "cf42ff9: apply-report.md (280 行) 应单独成 commit 而非混在 feat 里, 符合 AID 阶段产物与代码分离的最佳实践",
+    "cf42ff9: CalculatorPage.ets:404 替换 'e' 为 '!' 是产品决策, 但删除 'e' 常量按钮可能影响已有用户, 建议在 PR description 明确这是 breaking UI change (科学模式 5 列布局里少 1 个常量)"
+  ],
+  "highlights": [
+    "cf42ff9: AID 三阶段制品全部齐全 — proposal.md (108) / delta-spec.md (173) / info.md (192) / design.md (191) / tasks.md (153) / todo.md (77) / apply-report.md (280), 共 7 件 1174 行, 文档完整度 ★5",
+    "cf42ff9: 端口策略 1:1 对照 Expression.ets, Factorial.port.mjs 318 行完整复刻 formatFactorial 算法, Node 端口 14/14 PASS + percent 回归 14/14 PASS 共 28/28 真实跑测",
+    "cf42ff9: 铁律 7 严格遵守 — RED 阶段输出真实捕获 (F5 + F13 失败), GREEN 阶段修复后真实跑测, test-output-green.txt 与 apply-report §3.4 一致, 未对失败用例如 '5!!' 伪造 PASS 而是诚实记录为 'malformed'",
+    "cf42ff9: 14 个 factorial 用例覆盖完整 — 基础 (F1-F4) + 括号 (F5) + 四则组合 (F6-F8) + 百分号回归 (F9) + 边界 (F10-F12) + 已知 bug 记录 (F13) + UI 占位 (F14), 含负数阶乘/极值/空输入",
+    "cf42ff9: 改动极简 — CalculatorPage.ets 仅 1 行修改 (BtnConst('e') → BtnOpPct('!')), 与 onOp 已有 '!' 字符处理链路 (Expression.ets:24 formatFactorial + :141 末字符判断) 完整打通",
+    "cf42ff9: apply-report §2.3 根因分析精准 — 定位到 Expression.ets:154 内层 while 跳过的字符集 '()*-/+^' 缺 '!', 导致 5!! 重复包裹, 深度足够便于后续 fix",
+    "cf42ff9: 复用 BtnOpPct 蓝色运算符模板, 与 (%) 按钮样式统一, 视觉一致性好, 零新增样式代码"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — 缺 DCO sign-off + 无真实 UI 自动化跑测\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | 7 件制品齐全 (proposal 108 / delta-spec 173 / info 192 / design 191 / tasks 153 / todo 77 / apply-report 280 = 1174 行) |\n| harmonyos-ui-test | **FAIL** | apply-report.md §5.2 显式承认 '当前 win11 自动化环境无 java/hvigorw', 缺 HAP 构建 + 模拟器真机跑 + 截图/dump 证据; 仅靠 Node.js 端口文本输出 |\n| commit signoff | **FAIL** | cf42ff9 + 955eab5 两条提交均无 Signed-off-by 尾行 (DCO 未通过) |\n| 分支规范 | OK | feat/issue-19-简单需求 已推 origin, 未动 main |\n| 铁律 7 不伪造 | OK | RED 阶段真实捕获 F5/F13 失败, GREEN 阶段 test-output-green.txt 与 apply-report §3.4 输出位级一致, F13 弱化为 'malformed' 诚实记录未改写为 PASS |\n\n## 阻塞项 (必须修复)\n\n### 1. `cf42ff9` 缺 DCO Signed-off-by\n- 当前 feat commit 消息只有 Co-Authored-By, 无 Signed-off-by\n- **修复建议**:\n  ```bash\n  git commit --amend -s -m 'feat(factorial): add factorial (!) button — Issue #19\n  \n  ...\n  \n  Signed-off-by: littleleafccccc <littleleafccccc@users.noreply.github.com>'\n  git push --force-with-lease origin feat/issue-19-简单需求\n  ```\n- 同样需补 955eab5 的 sign-off (或用 git rebase --exec 'git commit --amend --no-edit -s' 一次性补)\n\n### 2. `cf42ff9` 无真实 harmonyos-ui-test\n- apply-report.md §5.2 显式承认环境受限, 缺三件证据:\n  1. 真实 HAP 构建产物 (hvigorw assembleHap 成功)\n  2. 模拟器真机截图 (hdc shell screenCap 至少 1 张)\n  3. uiautomator dump (hdc shell uitest dumpLayout)\n- **修复建议**:\n  - 在有 Java/Hvigor 的环境 (开发机或 CI) 跑 `hvigorw test` + `hvigorw assembleHap`\n  - 启动模拟器, hdc install -r, aa start, uitest dumpLayout 拿 UI 树, screenCap 拿 PNG\n  - 在 apply-report.md 新增 'ui-tests/' 章节, 含 截图 + uidump.json + results.json\n  - 或者在 commit message 明确声明 '本次 PR 仅做单元测试 + UI 代码改动, UI 集成测试留待 dev-02 下一个 issue' 并申请豁免\n\n## 建议项 (建议修复)\n\n- `cf42ff9`: 修复 sign-off 后建议把 'fix(calc): 改写 Expression.ets:154 修 5!! 连续阶乘畸形' 单独提交一个 commit, 因为这是已记录但未在 Issue #19 修复的预存 bug, 现在放 PR 里风险扩大\n- `cf42ff9`: F13 测试从 '5!! → factorial(factorial(5))' 弱化为 '5!! → malformed', 这虽然披露在 apply-report, 但本质是把 RED 转 GREEN 的方式, 建议下一个 issue 立即跟踪并修复 Expression.ets:154 内层 while 的 '!' 字符跳过逻辑\n- `cf42ff9`: TDD 节奏可强化 — 当前 1 个 commit 同时含 UI 改动 + 测试套件 + AID 产物, 建议拆为 test(red) → feat(green) → docs(apply-report) 三次提交, 便于回溯\n- `cf42ff9`: apply-report.md (280 行) 应单独成 commit 而非混在 feat 里, 符合 AID 阶段产物与代码分离的最佳实践\n- `cf42ff9`: CalculatorPage.ets:404 替换 'e' 为 '!' 是产品决策, 但删除 'e' 常量按钮可能影响已有用户, 建议在 PR description 明确这是 breaking UI change (科学模式 5 列布局里少 1 个常量)\n\n## 接下来\n\n@littleleafccccc 请修复阻塞项后再 assign rev-01:\n1. 给 cf42ff9 + 955eab5 补 Signed-off-by (DCO)\n2. 补真实 harmonyos-ui-test 证据 (或声明豁免 + 申请接受 Node 端口测试)\n\nissue 保持 open, 不要关闭."
+}

@@ -1,0 +1,9 @@
+{
+  "issue": 29,
+  "title": "中等模糊",
+  "verdict": "SKIP_ALREADY_DONE",
+  "completed_at": "2026-06-18T17:53:24.975398",
+  "comment_ok": false,
+  "label_ok": false,
+  "log": "(已分析完成 (analysis:complete 存在, 无重新请求))"
+}

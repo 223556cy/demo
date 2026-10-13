@@ -1,0 +1,12 @@
+{
+  "issue": 29,
+  "title": "中等模糊",
+  "verdict": "REQUEST_CHANGES",
+  "priority": "HIGH",
+  "target_skill": "aid-applying",
+  "phenomenon": "dev-01 在 worktree D:/huawei/Demo/worktrees/issue-29 调用 aid-applying 跑完 28/28 单元测试与 hvigorw 编译,但 step3-2-2b-降级 强制检查块四要素全部缺失:apply-report.md:58-83 仅'诚实标注'hdc list targets=Empty / hdc tconn 失败 / AVD 不可用,但未调 harmonyos-ui-test skill、未获取用户书面同意、todo.md 无 ⏳+责任人+绝对日期、.claude/capabilities.json 的 ui_test.emulator_status 字段仍为 stale 的 'running'。这恰是 SKILL.md:312-317 显式列为'反模式示例 (禁止复刻)'的错例形态。",
+  "completed_at": "2026-07-07T10:33:33.626898",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-07-07\\issue-29.md"
+}

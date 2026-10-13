@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Skill Diff: Expected vs Actual</title>
+<style>
+    body{font-family:-apple-system,Segoe UI,sans-serif;margin:0;background:#fafafa;color:#222}
+    header{background:linear-gradient(135deg,#2a78d6,#1e5bb8);color:#fff;padding:20px 24px;box-shadow:0 2px 8px #0002}
+    h1{margin:0;font-size:22px}
+    .sub{font-size:13px;opacity:0.9;margin-top:6px;font-family:monospace}
+    .container{max-width:1400px;margin:0 auto;padding:16px}
+    .summary{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+    .kpi{background:#fff;padding:14px 18px;border-radius:8px;box-shadow:0 1px 4px #0001;min-width:140px}
+    .kpi-val{font-size:28px;font-weight:bold;color:#2a78d6}
+    .kpi-lbl{font-size:12px;color:#888;margin-top:4px}
+    .kpi-warn .kpi-val{color:#d97706}
+    .kpi-err .kpi-val{color:#dc2626}
+    .kpi-ok .kpi-val{color:#16a34a}
+    h2{margin:24px 0 12px;font-size:16px;color:#444;border-bottom:2px solid #e5e5e5;padding-bottom:6px}
+    .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .card{background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 4px #0001}
+    .card-title{font-size:15px;font-weight:600;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+    .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+    .badge-ok{background:#dcfce7;color:#15803d}
+    .badge-warn{background:#fef3c7;color:#a16207}
+    .badge-err{background:#fee2e2;color:#b91c1c}
+    .section-list{list-style:none;padding:0;margin:0}
+    .section-list li{padding:4px 8px;margin:2px 0;border-radius:4px;font-size:13px;display:flex;align-items:center;gap:6px}
+    .sec-mandatory{background:#fef9c3;color:#854d0e}
+    .sec-done{background:#dcfce7;color:#14532d}
+    .sec-missing{background:#fee2e2;color:#7f1d1d;text-decoration:line-through}
+    .sec-extra{background:#e0e7ff;color:#3730a3}
+    .sec-neutral{background:#f5f5f5;color:#525252}
+    .icon-must::before{content:"⚠";color:#a16207}
+    .icon-done::before{content:"✓";color:#15803d}
+    .icon-miss::before{content:"✗";color:#b91c1c}
+    .icon-neutral::before{content:"·";color:#999}
+    details{background:#fff;border-radius:6px;padding:8px 12px;margin:4px 0;font-size:13px;border:1px solid #e5e5e5}
+    summary{cursor:pointer;font-weight:500}
+    .timeline{margin-top:16px;padding:12px;background:#fff;border-radius:8px;box-shadow:0 1px 4px #0001}
+    .timeline-event{padding:6px 10px;margin:4px 0;border-left:3px solid #2a78d6;background:#f9fafb;border-radius:0 4px 4px 0;font-family:monospace;font-size:12px}
+    .timeline-event .line{color:#888;font-weight:bold;margin-right:8px}
+    .timeline-event .type{background:#2a78d6;color:#fff;padding:1px 6px;border-radius:3px;font-size:11px;margin-right:8px;font-family:sans-serif}
+    .timeline-event .subskill{color:#a16207;font-style:italic}
+    .timeline-event .product{color:#16a34a}
+    .timeline-event .bash{color:#6366f1}
+    .diff-table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px #0001}
+    .diff-table th{background:#f0f0f0;text-align:left;padding:10px;font-weight:600;border-bottom:2px solid #ccc}
+    .diff-table td{padding:8px 10px;border-bottom:1px solid #eee}
+    .diff-warn{background:#fffbeb}
+    .diff-info{background:#f0f9ff}
+    .diff-row{font-family:monospace;font-size:12px}
+    </style>
+</head>
+<body>
+<header>
+<h1>🔬 Skill Diff Viewer — Expected vs Actual</h1>
+<div class="sub">Session: 264c5a16-f4f1-48ff-9f40-d215e1cc2567 · 264c5a16 Issue #26 函数图像</div>
+</header>
+<div class="container">
+
+    <div class="summary">
+        <div class="kpi kpi-err"><div class="kpi-val">17</div><div class="kpi-lbl">总差异</div></div>
+        <div class="kpi kpi-warn"><div class="kpi-val">15</div><div class="kpi-lbl">⚠️ 警告</div></div>
+        <div class="kpi"><div class="kpi-val">2</div><div class="kpi-lbl">ℹ️ 信息</div></div>
+        <div class="kpi kpi-ok"><div class="kpi-val">7</div><div class="kpi-lbl">Skill 调用</div></div>
+        <div class="kpi kpi-ok"><div class="kpi-val">13</div><div class="kpi-lbl">产物文件</div></div>
+        <div class="kpi kpi-ok"><div class="kpi-val">20</div><div class="kpi-lbl">Timeline events</div></div>
+    </div>
+    
+<h2>🔍 关键违规 (warn)</h2><table class='diff-table'><thead><tr><th width='180'>类型</th><th width='200'>Skill</th><th width='200'>Section / Sub</th><th>详情</th></tr></thead><tbody><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_SKILL</span></td>
+                <td><b>aid-archiving</b></td>
+                <td>-</td>
+                <td class='diff-row'>SKILL.md 定义且本任务相关,但 agent 没调(4 段)</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_SKILL</span></td>
+                <td><b>aid-init</b></td>
+                <td>-</td>
+                <td class='diff-row'>SKILL.md 定义且本任务相关,但 agent 没调(9 段)</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_SKILL</span></td>
+                <td><b>aid-monitor</b></td>
+                <td>-</td>
+                <td class='diff-row'>SKILL.md 定义且本任务相关,但 agent 没调(7 段)</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_SKILL</span></td>
+                <td><b>harmonyos-ui-test</b></td>
+                <td>-</td>
+                <td class='diff-row'>SKILL.md 定义且本任务相关,但 agent 没调(9 段)</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_SKILL</span></td>
+                <td><b>tdd-enforcer</b></td>
+                <td>-</td>
+                <td class='diff-row'>SKILL.md 定义且本任务相关,但 agent 没调(4 段)</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_MANDATORY_SECTION</span></td>
+                <td><b>aid-planning</b></td>
+                <td>step3</td>
+                <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_MANDATORY_SECTION</span></td>
+                <td><b>aid-planning</b></td>
+                <td>step6</td>
+                <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_MANDATORY_SECTION</span></td>
+                <td><b>aid-planning</b></td>
+                <td>step9-4</td>
+                <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_MANDATORY_SECTION</span></td>
+                <td><b>aid-implementing</b></td>
+                <td>step2-2-1</td>
+                <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_MANDATORY_SECTION</span></td>
+                <td><b>aid-applying</b></td>
+                <td>step3-0-4</td>
+                <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_MANDATORY_SECTION</span></td>
+                <td><b>aid-applying</b></td>
+                <td>step3-0-5</td>
+                <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_MANDATORY_SECTION</span></td>
+                <td><b>aid-applying</b></td>
+                <td>step3-1-2</td>
+                <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_MANDATORY_SECTION</span></td>
+                <td><b>aid-applying</b></td>
+                <td>step3-2-1</td>
+                <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_MANDATORY_SECTION</span></td>
+                <td><b>aid-applying</b></td>
+                <td>step3-2-2b</td>
+                <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+            </tr><tr class='diff-warn'>
+                <td><span class='badge badge-warn'>MISSING_MANDATORY_SECTION</span></td>
+                <td><b>aid-applying</b></td>
+                <td>step3-2-2b-降级</td>
+                <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+            </tr></tbody></table>
+<h2>📊 Skill 维度对比 (预期 vs 实际)</h2><div class='skills-grid'><div class='card'>
+            <div class='card-title'>
+                <span>aid-planning</span>
+                <span>
+                    <span class="badge badge-err">违规</span>
+                </span>
+            </div><div style='font-size:12px;color:#888;margin:6px 0'>预期 mandatory 段:</div><ul class='section-list'><li class='sec-done'><span class='icon-done'></span>step2 — 需求理解</li><li class='sec-missing'><span class='icon-miss'></span>step3 — 需求澄清</li><li class='sec-done'><span class='icon-done'></span>step4 — 需求spec设计</li><li class='sec-done'><span class='icon-done'></span>step5 — 针对需求的代码仓理解</li><li class='sec-missing'><span class='icon-miss'></span>step6 — 需求复杂度评估</li><li class='sec-done'><span class='icon-done'></span>step8 — 组件设计</li><li class='sec-missing'><span class='icon-miss'></span>step9-4 — 产出审视报告</li></ul><div style='font-size:12px;color:#888;margin:10px 0 6px'>强制子 skill:</div><ul class='section-list'><li class='sec-done'><span class='icon-done'></span>skill('rq-clarify') <small>(parent: step3)</small></li><li class='sec-done'><span class='icon-done'></span>skill('rq-parse') <small>(parent: step2)</small></li><li class='sec-done'><span class='icon-done'></span>skill('rq-codebase') <small>(parent: step5)</small></li><li class='sec-done'><span class='icon-done'></span>skill('mod-design') <small>(parent: step8)</small></li></ul></div><div class='card'>
+            <div class='card-title'>
+                <span>rq-parse</span>
+                <span>
+                    <span class="badge badge-ok">合规</span>
+                </span>
+            </div><div style='font-size:12px;color:#888;margin:6px 0'>预期 mandatory 段:</div><ul class='section-list'></ul></div><div class='card'>
+            <div class='card-title'>
+                <span>rq-clarify</span>
+                <span>
+                    <span class="badge badge-ok">合规</span>
+                </span>
+            </div><div style='font-size:12px;color:#888;margin:6px 0'>预期 mandatory 段:</div><ul class='section-list'></ul></div><div class='card'>
+            <div class='card-title'>
+                <span>rq-codebase</span>
+                <span>
+                    <span class="badge badge-ok">合规</span>
+                </span>
+            </div><div style='font-size:12px;color:#888;margin:6px 0'>预期 mandatory 段:</div><ul class='section-list'></ul></div><div class='card'>
+            <div class='card-title'>
+                <span>mod-design</span>
+                <span>
+                    <span class="badge badge-ok">合规</span>
+                </span>
+            </div><div style='font-size:12px;color:#888;margin:6px 0'>预期 mandatory 段:</div><ul class='section-list'></ul></div><div class='card'>
+            <div class='card-title'>
+                <span>aid-implementing</span>
+                <span>
+                    <span class="badge badge-err">违规</span>
+                </span>
+            </div><div style='font-size:12px;color:#888;margin:6px 0'>预期 mandatory 段:</div><ul class='section-list'><li class='sec-missing'><span class='icon-miss'></span>step2-2-1 — 确定任务依赖关系</li></ul></div><div class='card'>
+            <div class='card-title'>
+                <span>aid-applying</span>
+                <span>
+                    <span class="badge badge-err">违规</span>
+                </span>
+            </div><div style='font-size:12px;color:#888;margin:6px 0'>预期 mandatory 段:</div><ul class='section-list'><li class='sec-missing'><span class='icon-miss'></span>step3-0-4 — 检查测试环境</li><li class='sec-missing'><span class='icon-miss'></span>step3-0-5 — 环境问题处理</li><li class='sec-missing'><span class='icon-miss'></span>step3-1-2 — 检查代码质量</li><li class='sec-missing'><span class='icon-miss'></span>step3-2-1 — 按照 tasks.md 执行代码生成/修改（TDD 模式）</li><li class='sec-missing'><span class='icon-miss'></span>step3-2-2b — HarmonyOS UI 测试（强制）</li><li class='sec-missing'><span class='icon-miss'></span>step3-2-2b-降级 — （铁律 7 兜底 — 强制 5 步 + 自检 + 反模式）</li><li class='sec-done'><span class='icon-done'></span>step3-4 — 产出应用报告</li></ul><div style='font-size:12px;color:#888;margin:10px 0 6px'>强制子 skill:</div><ul class='section-list'><li class='sec-missing'><span class='icon-miss'></span>skill('harmonyos-ui-test') <small>(parent: step3-0-4)</small></li><li class='sec-missing'><span class='icon-miss'></span>skill('tdd-enforcer') <small>(parent: step3-2-1)</small></li></ul></div></div>
+<h2>📜 实际执行 Timeline</h2><div class='timeline'><div class='timeline-event'><span class='line'>L40</span><span class='type'>Skill</span>调 <b>aid-planning</b></div><div class='timeline-event'><span class='line'>L52</span><span class='type'>产出</span><span class='product'>todo.md</span> (aid-planning:step1)</div><div class='timeline-event'><span class='line'>L54</span><span class='type'>Skill</span>调 <b>rq-parse</b> <span class='subskill'>(sub-skill)</span></div><div class='timeline-event'><span class='line'>L65</span><span class='type'>产出</span><span class='product'>proposal.md</span> (aid-planning:step2)</div><div class='timeline-event'><span class='line'>L70</span><span class='type'>Skill</span>调 <b>rq-clarify</b> <span class='subskill'>(sub-skill)</span></div><div class='timeline-event'><span class='line'>L77</span><span class='type'>产出</span><span class='product'>delta-spec.md</span> (aid-planning:step4)</div><div class='timeline-event'><span class='line'>L82</span><span class='type'>Skill</span>调 <b>rq-codebase</b> <span class='subskill'>(sub-skill)</span></div><div class='timeline-event'><span class='line'>L134</span><span class='type'>产出</span><span class='product'>info.md</span> (aid-planning:step5)</div><div class='timeline-event'><span class='line'>L146</span><span class='type'>Skill</span>调 <b>mod-design</b> <span class='subskill'>(sub-skill)</span></div><div class='timeline-event'><span class='line'>L153</span><span class='type'>产出</span><span class='product'>delta-design.md</span> (aid-planning:step8)</div><div class='timeline-event'><span class='line'>L160</span><span class='type'>产出</span><span class='product'>design-review.md</span> (aid-planning:step9)</div><div class='timeline-event'><span class='line'>L171</span><span class='type'>Skill</span>调 <b>aid-implementing</b> <span class='subskill'>(sub-skill)</span></div><div class='timeline-event'><span class='line'>L179</span><span class='type'>产出</span><span class='product'>tasks.md</span> (aid-implementing:step2-3)</div><div class='timeline-event'><span class='line'>L191</span><span class='type'>Skill</span>调 <b>aid-applying</b> <span class='subskill'>(sub-skill)</span></div><div class='timeline-event'><span class='line'>L216</span><span class='type'>产出</span><span class='product'>PlotUtils.test.ets</span> (aid-applying:step3-2)</div><div class='timeline-event'><span class='line'>L218</span><span class='type'>产出</span><span class='product'>PlotUtils.ets</span> (aid-applying:step3-2)</div><div class='timeline-event'><span class='line'>L247</span><span class='type'>产出</span><span class='product'>GraphViewModel.ets</span> (aid-applying:step3-2)</div><div class='timeline-event'><span class='line'>L260</span><span class='type'>产出</span><span class='product'>GraphPage.ets</span> (aid-applying:step3-2)</div><div class='timeline-event'><span class='line'>L343</span><span class='type'>产出</span><span class='product'>PlotUtils.test.mjs</span> (aid-applying:step3-2)</div><div class='timeline-event'><span class='line'>L610</span><span class='type'>产出</span><span class='product'>apply-report.md</span> (aid-applying:step3-4)</div></div>
+<h2>📋 完整 Diff 列表</h2><table class='diff-table'><thead><tr><th>类型</th><th>Severity</th><th>Skill</th><th>Section</th><th>详情</th></tr></thead><tbody><tr class='diff-warn'>
+            <td>MISSING_SKILL</td>
+            <td>warn</td>
+            <td><b>aid-archiving</b></td>
+            <td>-</td>
+            <td class='diff-row'>SKILL.md 定义且本任务相关,但 agent 没调(4 段)</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_SKILL</td>
+            <td>warn</td>
+            <td><b>aid-init</b></td>
+            <td>-</td>
+            <td class='diff-row'>SKILL.md 定义且本任务相关,但 agent 没调(9 段)</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_SKILL</td>
+            <td>warn</td>
+            <td><b>aid-monitor</b></td>
+            <td>-</td>
+            <td class='diff-row'>SKILL.md 定义且本任务相关,但 agent 没调(7 段)</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_SKILL</td>
+            <td>warn</td>
+            <td><b>harmonyos-ui-test</b></td>
+            <td>-</td>
+            <td class='diff-row'>SKILL.md 定义且本任务相关,但 agent 没调(9 段)</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_SKILL</td>
+            <td>warn</td>
+            <td><b>tdd-enforcer</b></td>
+            <td>-</td>
+            <td class='diff-row'>SKILL.md 定义且本任务相关,但 agent 没调(4 段)</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_MANDATORY_SECTION</td>
+            <td>warn</td>
+            <td><b>aid-planning</b></td>
+            <td>step3</td>
+            <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_MANDATORY_SECTION</td>
+            <td>warn</td>
+            <td><b>aid-planning</b></td>
+            <td>step6</td>
+            <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_MANDATORY_SECTION</td>
+            <td>warn</td>
+            <td><b>aid-planning</b></td>
+            <td>step9-4</td>
+            <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_MANDATORY_SECTION</td>
+            <td>warn</td>
+            <td><b>aid-implementing</b></td>
+            <td>step2-2-1</td>
+            <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_MANDATORY_SECTION</td>
+            <td>warn</td>
+            <td><b>aid-applying</b></td>
+            <td>step3-0-4</td>
+            <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_MANDATORY_SECTION</td>
+            <td>warn</td>
+            <td><b>aid-applying</b></td>
+            <td>step3-0-5</td>
+            <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_MANDATORY_SECTION</td>
+            <td>warn</td>
+            <td><b>aid-applying</b></td>
+            <td>step3-1-2</td>
+            <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_MANDATORY_SECTION</td>
+            <td>warn</td>
+            <td><b>aid-applying</b></td>
+            <td>step3-2-1</td>
+            <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_MANDATORY_SECTION</td>
+            <td>warn</td>
+            <td><b>aid-applying</b></td>
+            <td>step3-2-2b</td>
+            <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+        </tr><tr class='diff-warn'>
+            <td>MISSING_MANDATORY_SECTION</td>
+            <td>warn</td>
+            <td><b>aid-applying</b></td>
+            <td>step3-2-2b-降级</td>
+            <td class='diff-row'>SKILL.md 强制要求该段,但 agent 未做</td>
+        </tr><tr class='diff-info'>
+            <td>MISSING_MANDATORY_SUBSKILL_INLINE</td>
+            <td>info</td>
+            <td><b>aid-applying</b></td>
+            <td>harmonyos-ui-test</td>
+            <td class='diff-row'>SKILL.md 要求 aid-applying:step3-0-4 必须调 skill(&#x27;harmonyos-ui-test&#x27;),agent 没调 Skill tool,但行为痕迹显示 agent 内联了 harmonyos-ui-test 的工作(thinking 命中 2 个关键词,Bash 命中 3 个模式 — agent 内联了行为但没走 Skill 流程)</td>
+        </tr><tr class='diff-info'>
+            <td>MISSING_MANDATORY_SUBSKILL_INLINE</td>
+            <td>info</td>
+            <td><b>aid-applying</b></td>
+            <td>tdd-enforcer</td>
+            <td class='diff-row'>SKILL.md 要求 aid-applying:step3-2-1 必须调 skill(&#x27;tdd-enforcer&#x27;),agent 没调 Skill tool,但行为痕迹显示 agent 内联了 tdd-enforcer 的工作(thinking 命中 3 个关键词,Bash 命中 3 个模式 — agent 内联了行为但没走 Skill 流程)</td>
+        </tr></tbody></table>
+</div>
+</body></html>

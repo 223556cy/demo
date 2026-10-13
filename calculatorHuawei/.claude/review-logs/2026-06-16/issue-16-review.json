@@ -1,0 +1,22 @@
+{
+  "verdict": "APPROVE",
+  "summary": "长按菜单功能完整, 端口+UI双重验证",
+  "blocking": [],
+  "suggestions": [
+    "cdb8c78: 截图 02_after_arcsin_click.png 与 03_after_mask_click.png MD5 完全相同, UI 终态一致虽然合理, 但建议在 mask click 前后插入短暂 sleep 让 UI 完全重绘, 提升截图可辨识度",
+    "d4ea6e2: 02_pre_click.json 与 01_long_press_sin.json 大小/结构完全相同, 可去掉冗余 dump, 减少 worktree 体积",
+    "3243a39: trailing newline 修复应通过 pre-commit hook 而非单独 commit, 减少噪音 commit"
+  ],
+  "highlights": [
+    "d4ea6e2: TDD RED-GREEN-REFACTOR 完整执行, 16/16 端口单测 PASS, 与 issue #9/#11 复用同一模式",
+    "d4ea6e2: FMEA C1-C5 全部固化为代码注释 + 设计约束, 审查可追溯",
+    "d4ea6e2: Stack 遮罩 + 居中菜单的弹窗模式, 事件自然隔离, 避免 bindMenu 样式受限问题",
+    "d4ea6e2: Map<string, string[]> 静态注册表 + 复用 onFunc(), 零重复插入逻辑 (FR-7 可扩展性)",
+    "cdb8c78: re-dispatch v2 真实执行 UI 自动化, 8 张 1320x2856 真机截图 + 9 份 dumpLayout, results.json 6/6 PASS",
+    "cdb8c78: 关键发现 'uitest uiInput drag X Y X+1 Y+1 200' 稳定触发 LongPressGesture, 解决长按陷阱, 已写进 AID memory",
+    "678b411: apply-report.md 诚实记录 UI 自动化从 '已声明' 到 '已真实执行' 的修复过程, 不掩盖 re-dispatch 经历",
+    "3243a39: 响应 rev-01 上轮 lint 建议, 补 trailing newline 闭环",
+    "5 个 commits 全部 Signed-off-by 223556cy, conventional commits 规范 (feat/fix/test/docs 类型清晰)"
+  ],
+  "comment": "[rev-01] APPROVED — 长按菜单功能完整, 端口+UI双重验证\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | proposal/delta-spec/info/design/design-review/tasks/apply-report/todo 共 1726 行, 制品齐全 |\n| harmonyos-ui-test | OK | 8 张 1320x2856 真机截图 + 9 份 dumpLayout + results.json 6/6 PASS |\n| commit signoff | OK | 5 个 commits 全部 Signed-off-by: 223556cy |\n| 分支规范 | OK | feat/issue-16-中等需求, 未推 main, 已 push origin |\n| 铁律 7 不伪造 | OK | 端口 16/16 PASS 实际跑过, UI 截图/dump 时间戳与脚本一致 |\n\n## 单元测试 (Node.js 端口)\n- 16 tests, 16 pass, 0 fail — 实测执行确认\n\n## UI 自动化 (hdc 真实模拟器 127.0.0.1:5555)\n- run_ui_tests.py 366 行 Python 驱动脚本\n- results.json 6/6 PASS (AC-1~AC-6, 含 cos 扩展验证)\n- 关键: uitest uiInput drag X Y X+1 Y+1 200 稳定触发 LongPressGesture (longClick/swipe 均不可靠)\n\n## 主要亮点\n- TDD 严谨: RED(6 fail) → GREEN(16/16) → REFACTOR(常量提取) → UI 验证(6/6), 与 issue #9/#11 模式一致\n- FMEA 追溯: C1(500ms默认)/C2(状态独立)/C3(复用onFunc)/C4(ln不映射)/C5(Stack层级) 全部固化为代码注释\n- 真实 UI 证据: 截图/dump 真实生成, 模拟器 hdc 链路完整, results.json 结构化输出\n- 诚实 re-dispatch: 完整记录从 '已声明 UI 测试' 到 '补做真实验证' 的修复过程, 不掩盖问题\n- 可扩展性: Map<string, string[]> 注册表 + 复用 onFunc(), 新增长按映射只需 1 行\n\n## 决定\nissue #16 可 close. @littleleafccccc 谢谢贡献."
+}

@@ -1,0 +1,14 @@
+metadata:
+  generated_at: '2026-06-05 15:01:28'
+  stage: org-setup-complete
+  next_stage: agent-onboarding
+organization:
+  name: my-ai-team
+  url: https://github.com/my-ai-team
+repository:
+  name: agent_workflow
+  url: https://github.com/my-ai-team/agent_workflow
+  issues_url: https://github.com/my-ai-team/agent_workflow/issues
+boss:
+  github_username: 223556cy
+  email: 2690920195@qq.com

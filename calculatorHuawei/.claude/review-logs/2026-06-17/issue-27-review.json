@@ -1,0 +1,28 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "commit 未签名 + 无 UI 自动化证据",
+  "blocking": [
+    {
+      "item": "commit signoff",
+      "evidence": "19ff4e21a60c4f0935b274d1b183b5d461809b45 提交信息中无 Signed-off-by 行, 需 git commit --amend -s 补签"
+    },
+    {
+      "item": "harmonyos-ui-test 真实跑测",
+      "evidence": "specs/changes/20260617-requirement-add-result-display-toggle/ui-tests/ 目录为空, 无任何截图或 uiautomator dump; apply-report.md §UI 自动化测试 (Deferred — 诚实披露) 将 Task 5.3 标记为 deferred, 阻塞项 #2 要求有截图 + uiautomator dump 未满足"
+    }
+  ],
+  "suggestions": [
+    "19ff4e2: 单个 feat commit 混合了功能代码 + hypium 测试 + Node 端口测试, 建议按 TDD 节奏拆成 test(commit) → feat(commit) 两步, 便于评审与回滚",
+    "19ff4e2: opencalc/entry/src/main/ets/common/FractionUtil.ets:40 中 1e15 是魔数, 建议提取为常量 SCALE = 1e15 并写注释说明 (1e15 ≈ 15 位有效数字, 覆盖 ArkTS Number 双精度)",
+    "19ff4e2: opencalc/entry/src/main/ets/pages/CalculatorPage.ets:611 切换按钮内联了完整 Text+border+padding+onClick 链, 建议提取为独立 @Builder toggleButton() 提升可读性",
+    "19ff4e2: opencalc/entry/src/test/ets/common/FractionUtil.test.ets 已注册但 hypium test 因模拟器未连接未跑, 等下次有模拟器时必须实跑一遍确认, 不能仅依赖 Node 端口等效覆盖"
+  ],
+  "highlights": [
+    "19ff4e2: FractionUtil 设计良好, 用 1e15 截断 + GCD 化简 + 9999 分母阈值三重防御, 浮点精度问题考虑周全",
+    "19ff4e2: 缓存 lastRawResult 而非从 result 字符串反解, 避免千分位格式带来的精度损失, 这是非常专业的决策",
+    "19ff4e2: 历史记录(this.result)保持小数, formatResultForDisplay 仅在 UI 层按模式二次格式化, 历史与显示模式解耦, 避免历史条目切换时闪烁",
+    "19ff4e2: 横屏隐藏切换按钮 + 错误态/无结果态短路, 三种边界条件都做了处理",
+    "19ff4e2: AID 三阶段产物完整 (proposal/delta-spec/info/delta-design/design-review/tasks/todo/apply-report), Node 端口 26/26 PASS, hvigorw BUILD SUCCESSFUL, 无新增 ERROR/WARN"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — commit 未签名 + 无 UI 自动化证据\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | proposal/delta-spec/info/delta-design/design-review/tasks/todo/apply-report 齐全 |\n| harmonyos-ui-test | FAIL | ui-tests/ 目录为空, 无截图无 dump, 模拟器未连接被 defer |\n| commit signoff | FAIL | 19ff4e2 提交信息无 Signed-off-by 行 |\n| 分支规范 | OK | feat/issue-27-进阶, 未直推 main |\n| 铁律 7 不伪造 | OK | Node 26/26 + hvigorw BUILD 输出为真实跑测结果 |\n\n## 阻塞项 (必须修复)\n- `19ff4e21a60c4f0935b274d1b183b5d461809b45` — commit 19ff4e2 缺 Signed-off-by trailer\n  修复建议: `git commit --amend -s -m \"feat(result-display): 分数/小数显示自由切换 [Issue #27]\"`, 需保留原 author + date\n- `specs/changes/20260617-requirement-add-result-display-toggle/ui-tests/` — ui-tests 目录为空, 无任何截图/dump\n  修复建议: 等模拟器上线后按 harmonyos-ui-test skill 跑 AC-1~5 截图序列 (1÷2=0.5 → 切换 → 显示 1/2 → 切换 → 显示回 0.5 → 启动后模式保留), 至少 5 张截图 + 1 份 uiautomator dump 提交到 ui-tests/\n\n## 建议项 (建议修复)\n- 19ff4e2: 单 commit 混合功能 + 测试, 建议拆 test(commit) → feat(commit) 两步, 符合 TDD 节奏\n- 19ff4e2: `FractionUtil.ets:40` 1e15 建议提取为 SCALE 常量并加注释\n- 19ff4e2: `CalculatorPage.ets:611` 切换按钮的 Text+border+onClick 链建议提取为 @Builder\n- 19ff4e2: hypium 测试 (FractionUtil.test.ets) 已注册但未实跑, 等模拟器可用时必须补跑\n\n## 主要亮点\n- FractionUtil 设计专业: 1e15 截断 + GCD 化简 + 9999 分母阈值三重防御\n- lastRawResult 缓存避免字符串反解丢精度, 优于常见做法\n- 历史记录与显示模式解耦, this.result 始终小数, formatResultForDisplay 仅 UI 层格式化\n- 横屏隐藏 / 错误态短路 / 无结果态短路 三种边界条件都处理\n- AID 三阶段产物完整, Node 测试 26/26 PASS, hvigorw 编译通过无新增 WARN\n\n## 接下来\n@littleleafccccc 请修复阻塞项后再 assign rev-01.\nissue 保持 open, 不要关闭."
+}

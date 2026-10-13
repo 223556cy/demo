@@ -1,0 +1,12 @@
+{
+  "issue": 28,
+  "title": "简单需求",
+  "verdict": "REQUEST_CHANGES",
+  "priority": "HIGH",
+  "target_skill": "aid-applying",
+  "phenomenon": "Issue #28 走完整 AID, rev-01 双阻塞: c7ba0fc 主 commit 缺 Signed-off-by; apply-report T21 标 Deferred 但 ui-tests/ 目录未创建, 未走 step3-2-2b 降级 4 要素。",
+  "completed_at": "2026-07-07T15:44:47.836085",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-07-07\\issue-28.md"
+}

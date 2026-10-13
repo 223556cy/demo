@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python)",
+      "Bash(python \"C:/Users/26909/AppData/Local/Temp/edit_soul.py\")",
+      "Bash(python \"C:/Users/26909/AppData/Local/Temp/edit_soul_v2.py\")",
+      "Bash(grep -n \"D:\\\\\\\\\\\\\\\\huawei\\\\\\\\\\\\\\\\Demo\\\\\\\\\\\\\\\\calculatorHuawei\\\\\\\\\\\\\\\\.claude\" \"C:/Users/26909/AppData/Local/hermes/profiles/dev-01/SOUL.md\")",
+      "Bash(python \"C:/Users/26909/AppData/Local/Temp/fix_l13.py\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\26909\\AppData\\Local\\hermes\\profiles\\dev-01",
+      "C:\\Users\\26909\\AppData\\Local\\Temp"
+    ]
+  }
+}

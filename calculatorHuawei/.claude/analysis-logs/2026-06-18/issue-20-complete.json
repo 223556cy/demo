@@ -1,0 +1,12 @@
+{
+  "issue": 20,
+  "title": "简单需求",
+  "verdict": "UNKNOWN",
+  "priority": "MEDIUM",
+  "target_skill": "aid-applying",
+  "phenomenon": "dev-01 (claude -p) 在 worktree issue-20 手工拼装 AID 三阶段产出 (e5465ca8.jsonl 全程 0 次 Skill 工具调用: L108 Write proposal.md / L110 Write delta-spec.md / L115 Write info.md / L117 Write design.md / L129 Write todo.md / L137 Write tasks.md / L218 Write apply-report.md, 自报 16/16 Node port 测试 PASS + 12/12 hvigorw factorial 测试 PASS + BUILD SUCCESSFUL), commit 582ffba feat(factorial) 至 feat/issue-20-简单需求 分支, L604 自写 post_issue20_comment.py 走 gh issue comment 20 发 @littleleafccccc claude -p 跑完,worktree 在 D:/huawei/Demo/worktrees/issue-20 等 push. 46c50e67.jsonl 是第二次 dev-01 会话 (检测到产物已存在, 仅补发 gh issue comment). Issue 最终被关闭但全程未触发 rev-01 审查 — rev-01 cron 6月17日共跑 70 次, L0 cron prompt REPO block 仅含 #12/#13 (assignees: ['littleleafccccc']), 70 个 session 扫到的 10-30 号 issue 集合 = {#12, #13}, #20 从未进入 rev-01 视野, 因 rev-01 铁律 'littleleafbbbbb 在 assignees → 必须审查' 正确跳过 (issue 始终只 assign 给 littleleafccccc, 未 reassign 给 rev-01).",
+  "completed_at": "2026-06-18T18:04:18.595621",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-06-18\\issue-20.md"
+}

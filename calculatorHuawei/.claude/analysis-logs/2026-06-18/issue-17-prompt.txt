@@ -1,0 +1,136 @@
+# 首席诊断任务 (Issue #17)
+
+## Issue 上下文
+- Number: #17
+- Title: 中等模糊
+- 最终结论: **APPROVE** — 粘贴即计算: AID 三阶段齐全, UI 自动化真实跑通
+- URL: https://github.com/calculatorHuawei/agent_workflow/issues/17
+- 状态: closed
+- 标签: (无)
+
+## Issue 正文
+**支持从剪贴板粘贴数学表达式，粘贴后自动计算** | 粘贴计算 | ⭐ | 零操作体验 |
+
+## rev-01 完整审查评论 (最重要)
+[rev-01] APPROVED — 粘贴即计算: AID 三阶段齐全, UI 自动化真实跑通
+
+## 审查结果
+| 检查项 | 状态 | 备注 |
+|--------|------|------|
+| AID 三阶段 | OK | proposal/delta-spec/info/design/design-review/tasks/apply-report 全 7 件齐 (212+226+213+362+46+170+212=1441 行) |
+| harmonyos-ui-test | OK | 11 张真实 PNG 截图 (MD5 全部唯一, 187-193KB), uidump.json 49.4KB 真实 dump, results.json 5/5 PASS |
+| commit signoff | OK | 3/3 commits 均含 Signed-off-by: littleleafccccc (DCO) |
+| 分支规范 | OK | feat/issue-17-中等模糊, 已推 origin, 未动 main |
+| 铁律 7 不伪造 | OK | 截图 MD5 唯一 + apply-report 诚实披露模拟器沙箱限制 + Node mock 12/12 真实记录 |
+
+## 主要亮点
+- **f9932c1**: re-dispatch v2 修复了 v1 的 3 个阻塞项 — async pasteboard.getData() (HarmonyOS 4.0+ 异步 API 编译错)、补 design.md (362 行, 组件图/状态机/数据契约/FMEA/D1-D7 决策)、UI 自动化 v2 (改用 uitest uiInput + dumpLayout + screenCap, 解决 v1 用 hdc input text 实际是模拟按键的 false negative)
+- **f9932c1**: 诚实披露 v2 已知限制 (HarmonyOS 模拟器 shell 沙箱无法 set 剪贴板, 端到端由 12 个 Node mock 测试覆盖 FMEA-1/2/4/5/6 全部路径)
+- **55ecfb5e**: FMEA-2/4/5/6 缓解全覆盖 (try/catch 静默 / hash 去重 / 200 截断 / trim 空白)
+- **55ecfb5e**: 零侵入 — 复用 computePreview/onEquals/promptAction, 不修改任何既有逻辑
+
+## 决定
+已 close. 感谢 @littleleafccccc 的贡献.
+
+(后续建议见 suggestions: TDD 节奏拆分 commit / apply-report 独立 commit / capabilities.json 单独 chore 提交)
+
+## Worktree 信息
+- Path: `D:\huawei\Demo\worktrees\issue-17` (exists=True)
+- Branch: `feat/issue-17-中等模糊`
+- AID 产物 change_id: `20260612-requirement-add-realtime-preview`
+- AID 产物列表: apply-report.md(19617B), delta-spec.md(9465B), design.md(14987B), info.md(9173B), proposal.md(4496B), tasks.md(9359B), todo.md(2223B)
+
+## Session 对话文件路径 (核心证据)
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-17\2026-06-17\2554a40e-0729-46cc-ba7b-0b2928fc323a.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-17\2026-06-17\99e87331-a1c4-41ce-b013-9a390f7f2ec8.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-17\2026-06-17\abfa9ad5-c642-4894-9a56-b65147e13cd4.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-17\2026-06-17\c54c7997-53ce-4f39-abbe-722a1337d6f6.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-17\2026-06-17\d8fead92-f41c-4371-98e6-93623cb21c2a.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-17\2026-06-17\f927f462-93e3-45fc-a8cb-b558b393f250.jsonl`
+
+## 工作目录 (Claude 必须能读)
+- 项目根: `D:/huawei/Demo/calculatorHuawei`
+- Worktree: `D:/huawei/Demo/worktrees/issue-17`
+- Session 原始: `D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-17`
+
+## 你的工作 (法医式诊断 4 步链)
+
+🤖 非交互模式 (claude -p), 全自动, 不允许问问题. 所有决策自己拍板.
+
+### 步骤 A. 现象还原 (Phenomenon)
+1. 通读 session jsonl: 看 claude -p 调了几次 aid-planning / aid-implementing / aid-applying / tdd-enforcer skill
+2. 看每个 skill 内部怎么跑的: 有没有 step 跳过、有没有命令失败、产物缺什么
+3. 对比 AID 产物: proposal.md / delta-spec.md / design.md / tasks.md / apply-report.md 是否齐全
+4. 提取核心现象 (1 句话总结, 50-150 字)
+
+### 步骤 B. 根因剖析 (Root Cause) — 归类到以下 4 类之一
+- **A. 幻觉乱写** — claude 自己瞎写 (改了 prompt / 产物) 但 skill 没要求
+- **B. 漏掉步骤** — 流程里有一步没做 (要加 imperative 规则)
+- **C. 理解偏差** — skill 规则存在但歧义 (要改写措辞)
+- **D. 外部因素** — 不是 skill 的问题 (e.g. 网络、SDK 缺失、用户描述不清)
+  - 此时 target_skill_filename = 'N/A' (跳过 skill 优化)
+
+### 步骤 C. 精准定位靶点 (Target Skill)
+从以下候选里选**唯一**一个负责的 skill (必须**确切存在**于文件系统):
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-planning/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-implementing/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/tdd-enforcer/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-parse/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-clarify/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-codebase/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/mod-design/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-init/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-archiving/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-monitor/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-reviewing/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/dfr-fmea-harmony/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/harmonyos-ui-test/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/prd-generator/SKILL.md
+
+**唯一性铁律**: 同时指责多个 skill = 失职. 选**最直接**造成失败的那一个.
+
+**证据要求**: 引用 session jsonl 里的具体动作 (e.g. 'jsonl#3 assistant 调了 Skill aid-applying 但产物 apply-report.md 缺失').
+
+### 步骤 D. 优先级判定 (Priority)
+- **HIGH** — 阻塞发布 / 影响 30% 以上 issue / 安全相关
+- **MEDIUM** — 影响 10-30% issue / 体验问题
+- **LOW** — 偶发 / 边缘场景 / 文档改进
+
+## 输出格式 (严格 JSON, 不允许偏差)
+
+**严格**按下面格式写到指定 JSON 文件 (路径给你了, **不要** print 到 stdout):
+
+路径: `D:/huawei/Demo/calculatorHuawei/.claude/analysis-logs/2026-06-18/issue-17-diagnosis.json`
+
+```json
+{
+  "issue_ticket": {
+    "issue_number": 17,
+    "title": "<一句话总结 Bug>",
+    "verdict": "APPROVE",
+    "priority": "<HIGH | MEDIUM | LOW>",
+    "target_skill_filename": "<花名册中确切存在的文件名 不带 .md, 或 'N/A'>",
+    "target_skill_path": "<绝对路径 或 'N/A'>",
+    "phenomenon": "<客观描述 50-150 字>",
+    "root_cause_analysis": "<含 A/B/C/D 归类 100-300 字, 引用 session jsonl 具体动作>",
+    "optimization_direction": "<给 skillopt-01 的具体指导 30-100 字, 动词开头>",
+    "session_files_analyzed": ["<jsonl 路径>", ...],
+    "evidence_anchors": ["<session jsonl 里的关键 line 引用>", ...]
+  }
+}
+```
+
+**硬约束**:
+1. target_skill_filename 必须是上面花名册里**确切存在**的 SKILL.md 文件名 (e.g. "aid-applying"), 不带 .md
+2. 如果根因是 D 类 (外部因素), target_skill_filename = 'N/A'
+3. 不允许任何字段缺失或格式偏差
+4. optimization_direction 必须是动词开头的具体动作 (e.g. "在 step 5 末尾加 imperative: 必须 git add -A 后再 commit")
+
+## 收尾规则 (硬)
+1. **不要** 发 GitHub 评论 (dispatch_analysis.py 会基于 JSON 自动生成评论)
+2. **不要** close / reopen / assign issue
+3. **不要** commit / push
+4. **不要** 重写任何 skill 文件 (那是 skillopt-01 的工作)
+5. **不要** 改 worktree 任何文件
+6. **不要** 评价 dev-01 / rev-01 / 用户 (质疑规则, 不质疑人)

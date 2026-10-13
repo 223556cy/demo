@@ -1,0 +1,114 @@
+# .github/workflows/test-skill-branch.yml
+# =============================================================================
+# 触发条件：push 到非 main 分支
+# 作用：跑 12 个历史 issue 的回归测试，生成报告
+# 报告输出：reports/branches/<branch-name>/report.md
+# =============================================================================
+name: test-skill-branch
+
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# 防止 PR 同时多跑
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regression:
+    # ★ 关键：自托管 runner，因为需要 DevEco Studio / hvigorw / hdc / Java 17
+    runs-on: [self-hosted, windows, dev]
+    timeout-minutes: 360  # 6h, 12 issue × 30 min/issue 留余量
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 拿完整 git 历史（diff 用）
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verify environment
+        shell: pwsh
+        run: |
+          Write-Host "==== 环境检查 ===="
+          python --version
+          Write-Host "hvigorw:" (Get-Command hvigorw -ErrorAction SilentlyContinue)
+          Write-Host "hdc:" (Get-Command hdc -ErrorAction SilentlyContinue)
+          Write-Host "JAVA_HOME: $env:JAVA_HOME"
+          Write-Host "DEVECO_SDK_HOME: $env:DEVECO_SDK_HOME"
+          $hdc_targets = hdc list targets 2>&1
+          Write-Host "hdc targets: $hdc_targets"
+          if (-not (Test-Path "D:\huawei\Demo\aid-workflow-skills\tests\regression\cases\index.json")) {
+            Write-Error "fixtures 不存在，请先跑 build_fixtures.py"
+            exit 1
+          }
+
+      - name: Run regression (compile + unit tests)
+        shell: pwsh
+        run: |
+          cd D:\huawei\Demo\aid-workflow-skills
+          python tests/regression/run_regression.py `
+            --branch "${{ github.head_ref || github.ref_name }}" `
+            --no-ui `
+            --max-time 1500
+
+      - name: Run UI tests (if emulator available)
+        shell: pwsh
+        continue-on-error: true  # 模拟器不可用时跳过
+        run: |
+          cd D:\huawei\Demo\aid-workflow-skills
+          python tests/regression/run_regression.py `
+            --branch "${{ github.head_ref || github.ref_name }}-ui" `
+            --max-time 1500
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-report-${{ github.head_ref || github.ref_name }}
+          path: |
+            D:/huawei/Demo/aid-workflow-skills/reports/branches/${{ github.head_ref || github.ref_name }}/report.md
+            D:/huawei/Demo/aid-workflow-skills/reports/branches/${{ github.head_ref || github.ref_name }}/results.json
+            D:/huawei/Demo/aid-workflow-skills/reports/branches/${{ github.head_ref || github.ref_name }}-ui/report.md
+          if-no-files-found: warn
+
+      - name: Post PR comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = `D:/huawei/Demo/aid-workflow-skills/reports/branches/${{ github.head_ref }}/report.md`;
+            if (!fs.existsSync(path)) {
+              console.log(`Report not found: ${path}`);
+              return;
+            }
+            const report = fs.readFileSync(path, 'utf8');
+            const body = [
+              '## 🤖 回归测试结果',
+              '',
+              report,
+              '',
+              '---',
+              '**Next step**: rev-01 + 老板 review 后决定 merge',
+            ].join('\n');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body,
+            });
+
+      - name: Annotate failures
+        if: failure()
+        run: |
+          echo "❌ 回归测试失败。详细报告见 artifacts。"
+          exit 1

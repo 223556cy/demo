@@ -1,0 +1,24 @@
+{
+  "id": "issue-24",
+  "issue": {
+    "number": 24,
+    "title": "#24 历史搜索",
+    "category": "历史增强",
+    "requirement_id": 4,
+    "rev_01_rounds": 1
+  },
+  "paths": {
+    "baseline_worktree": "D:\\huawei\\Demo\\worktrees\\issue-24",
+    "opencalc_subpath": "opencalc"
+  },
+  "spec_dir": "D:\\huawei\\Demo\\aid-workflow-skills\\tests\\regression\\cases\\issue-24\\spec",
+  "expected": {
+    "diff_file": "D:\\huawei\\Demo\\aid-workflow-skills\\tests\\regression\\cases\\issue-24\\expected\\expected.diff",
+    "compile_exit": 0,
+    "test_pass": true
+  },
+  "ui_test": {
+    "required": true,
+    "fixture_path": null
+  }
+}

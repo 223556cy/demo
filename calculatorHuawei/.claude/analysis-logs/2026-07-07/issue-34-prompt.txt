@@ -1,0 +1,212 @@
+# 首席诊断任务 (Issue #34)
+
+## Issue 上下文
+- Number: #34
+- Title: [regression] skillopt-01/fix-issue-29-20260707
+- 最终结论: **REGRESSION_DELEGATED** — (无 summary)
+- URL: https://github.com/calculatorHuawei/agent_workflow/issues/34
+- 状态: open
+- 标签: analysis:pending, regression-done
+
+## Issue 正文
+## dev-02 回归测试任务
+
+**触发源**: Issue #29 (analysis 诊断 → skillopt-01 改 skill)
+**skill 改动分支**: [`skillopt-01/fix-issue-29-20260707`](https://github.com/calculatorHuawei/aid-workflow-skills/tree/skillopt-01/fix-issue-29-20260707)
+**目标 skill**: `aid-applying`
+
+## dev-02 你需要做
+
+**只测 issue #29** (与本次 skill 改动强相关), **不要跑 12-issue 全套** (耗时 + 跟本次改动无关)。
+
+1. **拉新 skill**:
+   ```bash
+   python D:/huawei/Demo/aid-workflow-skills/scripts/dev02_pull_skills.py --ref skillopt-01/fix-issue-29-20260707
+   ```
+   (这会从 aid-workflow-skills 仓库的 `skillopt-01/fix-issue-29-20260707` 分支拉取所有 skills 到你 profile)
+
+2. **跑 AID-Workflow 验证 (只跑 issue #29)**:
+   ```bash
+   python D:/huawei/Demo/aid-workflow-skills/scripts/dev02_run_and_report.py \
+     --issue 29 --commit-sha <branch HEAD> --only issue-29
+   ```
+   报告会贴到本 issue comment + 自动转交 analysis
+
+3. **期望产出**:
+   - 完整 AID-Workflow 制品 (proposal/delta-spec/info/design/tasks/apply-report)
+   - 真实代码改动
+   - 编译/测试 evidence
+   - 与历史制品对比 (看新 skill 是否让产出更符合 diagnosis)
+
+## 期望
+
+- 用新 skill 跑 AID-Workflow, 产出**完整制品** (spec/code/test 报告)
+- 报告里**不 judge** (那是 analysis 的事)
+
+## 关键约束
+
+- ❌ **不要**跑 12-issue 全套 (只测本 issue)
+- ❌ 不要改 `skillopt-01/fix-issue-29-20260707` 分支
+- ❌ 不要 commit 到 aid-workflow-skills
+- ✅ 用 `littleleafaaaaa` 身份 (**不要**用 dev-01 的 PAT 顶替)
+- ✅ 跑完转交 `littleleafAnalysis`
+
+---
+🤖 此 issue 由 skillopt-01 自动创建, 用于触发 dev-02 闭环验证
+
+
+## rev-01 完整审查评论 (最重要)
+## dev-02 回归测试结果
+
+**Issue**: #34 - [regression] skillopt-01/fix-issue-29-20260707
+**时间**: 2026-07-07 19:41
+
+### 1. Skill 拉取
+- 分支: [`skillopt-01/fix-issue-29-20260707`](https://github.com/calculatorHuawei/aid-workflow-skills/tree/skillopt-01/fix-issue-29-20260707)
+- 结果: 已同步 skills@skillopt-01/fix-issue-29-20260707 (commit=eae9e4422a71)
+
+### 2. AID-Workflow 执行（claude code 调用）
+
+```
+# dev-02 报告 — Issue #29 竖屏手势滑动切换三种键盘模式
+
+## 编译
+✅ **BUILD SUCCESSFUL** (7s 重建, 0 新增 warning, 仅预先存在的 `showToast` deprecation 警告)
+
+## 测试
+- **单元测试**: hypium `test@entry` 不可用 (`@ohos/hypium` 模块未解析, 预先存在环境问题) → 改用 **Node 端口 7/7 通过** (`tests/KeyboardMode.node.test.mjs`, 覆盖 AC-1~AC-6 全部)
+- **UI 自动化测试** (hdc + uitest, 沙箱 127.0.0.1:5555): 5/5 数据/状态验证通过
+  - ✅ 初始持久化恢复 PROGRAMMER (3-dot indicator 第 3 颗高亮 + HEX/AND/OR 网格)
+  - ✅ cycleMode 按钮 click 触发了 mode 切换 (重启后从 PROGRAMMER 变成 BASIC + 第 1 颗 dot 高亮)
+  - ✅ Swiper 三页节点 dump 验证
+  - ⚠ `uiInput swipe` 未能触发 Swiper.onChange — uitest 合成手势限制, **非代码缺陷**
+- **Lint**: 项目无 `hvigorw lint` task, 由 BUILD SUCCESSFUL + 0 新增 warning 替代
+
+## 遇到的问题 + 修复
+1. **hypium 不可用**: 改 Node 端口 (符合 `aid-applying` 异常处理规范)
+2. **Swiper 单向绑定 bug**: 写完代码后跑 UI 测试发现 `cycleMode()` 改了 `@State` 但 Swiper 不响应。`Swiper.index(this.currentMode)` 是单向绑定, 改 `.index($$this.currentMode)` 双向绑定后验证通过 (manifest 在 apply-report "关键修复" 段)
+
+## 关键 Skill 引用
+- `aid-applying` step3-0~3-4 全流程; step3-2-1 TDD RED→GREEN 循环; step3-2-2 全量测试异常处理; step3-2-2b HarmonyOS UI 强制 5 步检查
+- `harmonyos-ui-test`: `uitest screenCap -p` / `uitest dumpLayout -p` / `uiInput click|swipe|fling` 调用模式
+- 沙箱隔离: 用 `/d/Demo/tmp/.../screenshot/` + `hdc -t 127.0.0.1:5555` 拉制品, 不碰 production worktree
+
+## 制品位置
+`D:/Demo/tmp/opencalc/spec/changes/20260617-requirement-add-vertical-swipe-modes/` — 含 proposal/info/todo/apply-report + tests/ + ui-tests/(9 张截图 + 5 份 dump)
+
+移交: 等 analysis review (我不 close issue)
+```
+
+### 3. Sanity Check
+- ok: `False`
+- exit: `1`
+
+```
+
+```
+
+### 4. 结论
+
+- ✅ Skill 改动**语法正确**（package_skills.py 通过）
+- ✅ claude -p **成功**调用跑 AID-Workflow
+- 📋 报告交 analysis review
+
+---
+🤖 dev-02 (littleleafaaaaa) 自动生成
+
+
+## Worktree 信息
+- Path: `D:\huawei\Demo\worktrees\issue-34` (exists=False)
+- Branch: `(无)`
+- AID 产物 change_id: `(无)`
+- AID 产物列表: (无)
+
+## Session 对话文件路径 (核心证据)
+  ❌ 无 session jsonl 文件 (issue 可能没经过 dev-01 claude -p)
+
+## 工作目录 (Claude 必须能读)
+- 项目根: `D:/huawei/Demo/calculatorHuawei`
+- Worktree: `D:/huawei/Demo/worktrees/issue-34`
+- Session 原始: `D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-34`
+
+## 你的工作 (法医式诊断 4 步链)
+
+🤖 非交互模式 (claude -p), 全自动, 不允许问问题. 所有决策自己拍板.
+
+### 步骤 A. 现象还原 (Phenomenon)
+1. 通读 session jsonl: 看 claude -p 调了几次 aid-planning / aid-implementing / aid-applying / tdd-enforcer skill
+2. 看每个 skill 内部怎么跑的: 有没有 step 跳过、有没有命令失败、产物缺什么
+3. 对比 AID 产物: proposal.md / delta-spec.md / design.md / tasks.md / apply-report.md 是否齐全
+4. 提取核心现象 (1 句话总结, 50-150 字)
+
+### 步骤 B. 根因剖析 (Root Cause) — 归类到以下 4 类之一
+- **A. 幻觉乱写** — claude 自己瞎写 (改了 prompt / 产物) 但 skill 没要求
+- **B. 漏掉步骤** — 流程里有一步没做 (要加 imperative 规则)
+- **C. 理解偏差** — skill 规则存在但歧义 (要改写措辞)
+- **D. 外部因素** — 不是 skill 的问题 (e.g. 网络、SDK 缺失、用户描述不清)
+  - 此时 target_skill_filename = 'N/A' (跳过 skill 优化)
+
+### 步骤 C. 精准定位靶点 (Target Skill)
+从以下候选里选**唯一**一个负责的 skill (必须**确切存在**于文件系统):
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-planning/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-implementing/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/tdd-enforcer/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-parse/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-clarify/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-codebase/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/mod-design/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-init/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-archiving/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-monitor/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-reviewing/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/dfr-fmea-harmony/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/harmonyos-ui-test/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/prd-generator/SKILL.md
+
+**唯一性铁律**: 同时指责多个 skill = 失职. 选**最直接**造成失败的那一个.
+
+**证据要求**: 引用 session jsonl 里的具体动作 (e.g. 'jsonl#3 assistant 调了 Skill aid-applying 但产物 apply-report.md 缺失').
+
+### 步骤 D. 优先级判定 (Priority)
+- **HIGH** — 阻塞发布 / 影响 30% 以上 issue / 安全相关
+- **MEDIUM** — 影响 10-30% issue / 体验问题
+- **LOW** — 偶发 / 边缘场景 / 文档改进
+
+## 输出格式 (严格 JSON, 不允许偏差)
+
+**严格**按下面格式写到指定 JSON 文件 (路径给你了, **不要** print 到 stdout):
+
+路径: `D:/huawei/Demo/calculatorHuawei/.claude/analysis-logs/2026-07-07/issue-34-diagnosis.json`
+
+```json
+{
+  "issue_ticket": {
+    "issue_number": 34,
+    "title": "<一句话总结 Bug>",
+    "verdict": "REGRESSION_DELEGATED",
+    "priority": "<HIGH | MEDIUM | LOW>",
+    "target_skill_filename": "<花名册中确切存在的文件名 不带 .md, 或 'N/A'>",
+    "target_skill_path": "<绝对路径 或 'N/A'>",
+    "phenomenon": "<客观描述 50-150 字>",
+    "root_cause_analysis": "<含 A/B/C/D 归类 100-300 字, 引用 session jsonl 具体动作>",
+    "optimization_direction": "<给 skillopt-01 的具体指导 30-100 字, 动词开头>",
+    "session_files_analyzed": ["<jsonl 路径>", ...],
+    "evidence_anchors": ["<session jsonl 里的关键 line 引用>", ...]
+  }
+}
+```
+
+**硬约束**:
+1. target_skill_filename 必须是上面花名册里**确切存在**的 SKILL.md 文件名 (e.g. "aid-applying"), 不带 .md
+2. 如果根因是 D 类 (外部因素), target_skill_filename = 'N/A'
+3. 不允许任何字段缺失或格式偏差
+4. optimization_direction 必须是动词开头的具体动作 (e.g. "在 step 5 末尾加 imperative: 必须 git add -A 后再 commit")
+
+## 收尾规则 (硬)
+1. **不要** 发 GitHub 评论 (dispatch_analysis.py 会基于 JSON 自动生成评论)
+2. **不要** close / reopen / assign issue
+3. **不要** commit / push
+4. **不要** 重写任何 skill 文件 (那是 skillopt-01 的工作)
+5. **不要** 改 worktree 任何文件
+6. **不要** 评价 dev-01 / rev-01 / 用户 (质疑规则, 不质疑人)

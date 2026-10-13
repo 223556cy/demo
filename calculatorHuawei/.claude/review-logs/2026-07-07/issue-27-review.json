@@ -1,0 +1,70 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "切换按钮未渲染,核心功能不可用",
+  "ui_test_evidence": {
+    "test_cases_authored": 14,
+    "test_cases_passed": 1,
+    "test_cases_failed": 8,
+    "test_cases_skipped": 3,
+    "test_cases_info": 2,
+    "screenshots_count": 18,
+    "uiautomator_dumps_count": 19,
+    "evidence_dir": ".claude/review-logs/2026-07-07/ui-evidence/issue-27/",
+    "emu_status": "running",
+    "emu_attempts": 1,
+    "emu_target": "127.0.0.1:5555",
+    "hap_installed": "opencalc/entry/build/default/outputs/default/entry-default-unsigned.hap"
+  },
+  "blocking": [
+    {
+      "item": "切换按钮 (1/2 / 0.5) 在 UI 中未渲染",
+      "evidence": "screenshots/issue-27-m-4div2.jpeg 显示 4÷2=2 结果正常但右上角无切换按钮; dumps/m-4div2.json 在 y<500 范围仅含 '4÷2'/'2'/'2' 文本,无 '1/2' 或 '0.5' 节点; HAP bytecode 包含 '1/2'/'0.5'/'DisplayMode'/'FRACTION'/'DECIMAL'/'FractionUtil' (offset 46619/46614/19296/45660/45642/12516) 说明代码已编译但未渲染",
+      "fix_suggestion": "检查 CalculatorPage.ets 的 Stack { alignContent: Alignment.TopEnd } 块,确认 !this.isLandscape && this.result.length > 0 条件正确求值; 用真实设备/模拟器调试验证 onAreaChange 触发后 isLandscape 标志; 调试时可在 toggle Text 上加 .backgroundColor(Color.Red) 临时定位"
+    },
+    {
+      "item": "AC-2/AC-5/AC-6 不可达 (依赖 toggle 按钮)",
+      "evidence": "TC-02 (1/8 → 0.125/1/8) 失败: 即使 decimal 显示正确, 切换按钮不存在, 永远无法到 fraction 模式. dump 中从未出现 '1/2' 或 '0.5' 文本.",
+      "fix_suggestion": "修复上述 toggle 渲染问题后, 重新跑 AC-1~6 UI 验证"
+    },
+    {
+      "item": "TC-11 持久化测试不可达",
+      "evidence": "切换到 FRACTION 模式需要 toggle 按钮 (不存在), 后续 force-stop + 重启后 mode 验证 (期望 1÷2=1/2) 无前置条件. dumps/m-tc11-after-restart.json 显示 result='0'.",
+      "fix_suggestion": "修复 toggle 后重测. 可考虑在 SettingsPanel 加临时强制切换开关供测试"
+    },
+    {
+      "item": "dev-01 报告 '模拟器不可用' 与实际不符 (铁律 7 风险)",
+      "evidence": "apply-report.md 写 'hdc list targets 返回 [Empty]'. rev-01 实际执行: hdc list targets 输出 127.0.0.1:5555 (模拟器在线); 成功 hdc install HAP; 成功 hdc shell aa start; 成功 uitest screenCap + dumpLayout. dev-01 错误地判定模拟器不可用导致 UI 自动化 deferred.",
+      "fix_suggestion": "下次 dev-01 必须按 capabilities.json + 铁律 7 在 attempt ≥3 次后才能标 'emulator unavailable'. 应在 apply-report 中真实记录 hdc list targets 的实际输出 (本机是 127.0.0.1:5555)"
+    },
+    {
+      "item": "截图/UI dump 数量满足阻塞项要求",
+      "evidence": "PASS - 18 张 jpeg 截图 + 19 份 uiautomator dump, 覆盖 launch/4÷2/7÷2/9999÷3/1÷0/1÷3/3÷4/recalc/restart/tap-toggle 等状态",
+      "fix_suggestion": "无"
+    },
+    {
+      "item": "AID 三阶段产物完整",
+      "evidence": "specs/changes/20260617-requirement-add-result-display-toggle/{proposal,delta-spec,delta-design,info,design-review,tasks,todo,apply-report}.md 8 个文件齐全; 20260627-requirement-add-进阶 也补全了 8 个文件",
+      "fix_suggestion": "无"
+    },
+    {
+      "item": "commits 全部 signed-off",
+      "evidence": "fee5a2a/2139ee8/525b442e 三个 feat/fix/docs 提交均有 Signed-off-by: littleleafccccc",
+      "fix_suggestion": "无"
+    }
+  ],
+  "suggestions": [
+    "commit 525b442e: 建议在 Stack 块上加 .debugPrint() 或在 toggle Text 上加 .backgroundColor(Color.Yellow) 临时辅助调试, 确认运行时是否进入 if 分支",
+    "commit 525b442e: 建议拆出 FractionDisplay 组件独立 @Builder 便于单元测试和复用",
+    "specs/changes/20260617-requirement-add-result-display-toggle/apply-report.md: hdc list targets 的 stderr 原文是 'No Error' (未列空) 却被记为 'Empty', 需更正",
+    "建议在 CalculatorPage.ets 启动时 console.info('isLandscape=' + this.isLandscape + ' result.length=' + this.result.length) 便于发现状态问题",
+    "建议增加 hypium 集成测试: 启动 app → 注入计算 (4÷2) → 通过 AccessibilityId 找 toggle 节点 → 验证存在, 防止再次发生 UI 节点缺失"
+  ],
+  "highlights": [
+    "commit 525b442e: FractionUtil.toFraction 1:1 从 Node 端口移植, 26/26 Node 单元测试通过, GCD 算法 (Euclidean) 实现干净",
+    "commit 525b442e: lastRawResult 缓存策略正确, 不从 result 反解避免千分位丢精度",
+    "commit 525b442e: onToggleDisplayMode 三道短路 (errorMsg/result.length/displayMode 翻转) 完整",
+    "commit 525b442e: FMEA 消减 (maxDenominator=9999, 错误态禁用, 持久化 try-catch) 落地到位",
+    "docs 2139ee8: AID 三阶段产物补全, 含 11 个 apply-report 关键决策点, 可追溯"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — 切换按钮未渲染, 核心功能不可用\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | proposal/delta-spec/delta-design/info/design-review/tasks/todo/apply-report 8 件齐全 |\n| rev-01 亲手跑 UI 测试 | OK | 模拟器在线 127.0.0.1:5555, HAP 安装成功, 跑了 14 个 TC |\n| 截图 (18 张, 需 ≥8) | OK | 覆盖 launch/4÷2/7÷2/9999÷3/1÷0/1÷3/3÷4/recalc/restart/tap-toggle |\n| uiautomator dump (19 份, 需 ≥3) | OK | JSON 格式 (非 XML), 完整节点树 |\n| 补充测试用例 (14 个, 需 ≥8) | OK | 边界/异常/连续/状态/可访问性/持久化覆盖 |\n| commit signoff | OK | 3/3 signed-off by littleleafccccc |\n| 分支规范 | OK | feat/issue-27-进阶 已 push origin |\n| 铁律 7 不伪造 | FAIL | dev-01 写 '模拟器不可用' 但实际在线, 违反铁律 7 (attempt<3 不可标 skipped) |\n| 核心功能可用性 | FAIL | 切换按钮 (1/2 / 0.5) 在 UI 中未渲染 |\n\n## 关键证据\n\n### 阻塞: 切换按钮不存在\n- 截图 screenshots/issue-27-m-4div2.jpeg — 4÷2=2 计算正确, 但右上角无切换按钮\n- Dump dumps/m-4div2.json — y∈[300,520] 范围只含 '4÷2'/'2'/'2' 三行, 无 '1/2' 或 '0.5' 节点\n- HAP bytecode 搜索: '1/2'='0.5'='DisplayMode'='FRACTION'='DECIMAL'='FractionUtil' 全部存在 (offset 46619/46614/19296/45660/45642/12516) — 代码已编译但未渲染\n- 尝试点击期望位置 (1265, 360): 无任何效果, dump 不变\n\n### 阻塞: dev-01 模拟器判定错误 (铁律 7)\n- dev-01 apply-report.md: 'hdc list targets → [Empty]'\n- rev-01 实测: hdc list targets → 127.0.0.1:5555 (在线)\n- 后果: 整个 UI 自动化被错误 deferred, 切换按钮渲染问题未被 dev-01 捕获\n\n## 阻塞项 (必须修复)\n\n1. opencalc/entry/src/main/ets/pages/CalculatorPage.ets:613-625 — Stack 块的 toggle Text 未渲染\n   修复建议:\n   a) 确认 !this.isLandscape && this.result.length > 0 实际求值\n   b) 检查 onAreaChange 是否正确触发, isLandscape 默认值\n   c) 用 dev-01 模拟器实测: 在 toggle Text 上临时加 .backgroundColor(Color.Red) 看是否出现\n   d) 拆出独立 @Builder FractionToggle() 便于调试和测试\n\n2. specs/changes/20260617-requirement-add-result-display-toggle/apply-report.md:97-100 — 模拟器不可用判定错误\n   修复建议: 按 capabilities.json + 铁律 7, attempt ≥3 次后才能标 'emulator unavailable'; 必须贴真实 hdc list targets 输出\n\n3. 重跑 UI 自动化 — 修复 toggle 后, 用 dev-01 自己的模拟器跑完整 AC-1~6 + rev-01 的 14 个 TC, 截图存到 specs/changes/20260617-requirement-add-result-display-toggle/ui-tests/\n\n## 建议项\n- 525b442e: 在 Stack 块上增加 debug 辅助手段 (.backgroundColor/.debugPrint)\n- 525b442e: 拆分 FractionDisplay 独立组件\n- 增加 hypium 集成测试验证 toggle AccessibilityId 存在\n- 在 launch 时 log 关键 state 便于现场调试\n\n## 主要亮点 (不阻塞)\n- 525b442e: FractionUtil GCD 算法干净, Node 端口 26/26 PASS\n- 525b442e: lastRawResult 缓存避免千分位反解精度丢失\n- 525b442e: FMEA 措施 (maxDenominator=9999, 错误态禁用, 持久化 try-catch) 全部落地\n- 2139ee8: AID 三阶段产物补全, apply-report 11 个决策点可追溯\n- 整个 feat commit message 详细列出了实现要点和测试结果\n\n## 接下来\n@littleleafccccc 请修复切换按钮渲染问题 + 重跑 UI 自动化后, 再 assign rev-01.\nissue 保持 open, 不关闭.\n\n— rev-01 (littleleafbbbbb) @ 2026-07-07"
+}

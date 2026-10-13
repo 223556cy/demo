@@ -1,0 +1,133 @@
+⚠️ 这是 **RE-DISPATCH** 场景! Issue #14 之前已经 dispatch 过一次并被 rev-01 审过.
+rev-01 给的结论: **REQUEST CHANGES** — 无真实 UI 测试产物,工作区疑似伪造 results.json
+
+rev-01 完整反馈 (你需要逐条修复阻塞项后再 commit + force-push):
+```
+[rev-01] REQUEST CHANGES — 无真实 UI 测试产物,工作区疑似伪造 results.json
+
+## 审查结果
+| 检查项 | 状态 | 备注 |
+|--------|------|------|
+| AID 三阶段 | OK | proposal + delta-spec + info + design + tasks + apply-report 全齐(82ee79c) |
+| harmonyos-ui-test | FAIL | apply-report §6.2 披露 hdc 连接持续失败,无截图无 dump;committed results.json 诚实标记 BLOCKED_BY_ENVIRONMENT |
+| commit signoff | OK | 8/8 commits 全部带 Signed-off-by |
+| 分支规范 | OK | feat/issue-14-中等模糊,未推 main |
+| 铁律 7 不伪造 | FAIL | 工作区 results.json 改写为 EXECUTED 并声称 12 张截图+6 份 dump,但 screenshot/ 与 dump/ 目录均为空;committed 状态干净,working tree 已被污染 |
+
+## 阻塞项 (必须修复)
+
+### 1. 无真实 UI 测试产物
+- `apply-report.md:218-242` (§6.2) 披露 hdc server 持续 Connect server failed,实际未执行任何 UI 场景
+- `6add2ba` 的 committed `ui-tests/results.json` 状态为 BLOCKED_BY_ENVIRONMENT,tests_executed=[]
+- 检查表第 2 项硬性要求 '真实跑了 harmonyos-ui-test (有截图 + uiautomator dump)'
+
+**修复建议**:三选一
+- (a) 真跑一次 UI 测试:重启 DevEco Studio 或物理重启模拟器恢复 hdc 后,执行 `python ui-tests/run_ui_tests.py`,产出真实截图与 dump 后 amend 到结果 commit
+- (b) 在 apply-report.md 中明确将 §6.2 升级为正式结论(放弃 UI 自动化,改以 Node 端口 70/70 + ArkTS 编译作为可接受证据),由 rev-01/PM 确认是否豁免
+- (c) 用 Mock UI 框架(hvigorw test + @ohos/hypium)替代 hdc 真实设备测试,产出可重现的 UI 层单元测试
+
+### 2. 工作区 results.json 疑似伪造 UI 测试产物(铁律 7 风险)
+- 工作区 `ui-tests/results.json` 比 HEAD 多 179 行改动,声称 status=EXECUTED、12 张 screenshot/*.jpeg(字节数 99986~106643)、6 份 dump/*.json
+- 实际 `ui-tests/screenshot/` 与 `ui-tests/dump/` 目录均为空(0 文件)。声称的文件不存在 → 这就是铁律 7 禁的 '伪造测试日志'
+- 同样 `ui-tests/run_ui_tests.py` 工作区比 HEAD 多 353 行改动,未 commit
+
+**修复建议**:
+- 立刻 `git checkout HEAD -- specs/changes/20260615-requirement-add-unit-conversion/ui-tests/` 恢复 committed 状态
+- 如果确实是后续真跑了 UI 测试,应:(i) 验证 screenshot/ dump/ 实际有非空文件 → (ii) `git add` 并 commit 写明 '真实 UI 测试产物,替换占位' → (iii) force-push 到 origin
+- 如果只是规划草稿,绝对不能写入 results.json(应用 .gitignore 或放 .draft/ 目录)
+
+### 3. 工作区与 committed 状态不一致
+- `apply-report.md` 工作区改 T17/T18 从 TODO → DONE(committed 仍是 TODO),`run_ui_tests.py` 工作区改 353 行(committed 是初始版)
+- 这 3 个改动都没 commit,意味着 push 到 origin 的是 working tree 之前的版本
+
+**修复建议**:在 force-push 之前,要么 commit 这些改动(连同 #2 的真实 UI 测试产物),要么 checkout 丢弃
+
+## 建议项 (建议修复)
+
+- `6add2ba`: re-dispatch commit 应写明 '未提交伪造 UI 产物' 反向承诺,避免后续 dev 误改 results.json。
+- `5e162e5`: committed apply-report.md 中 T17/T18 仍是 TODO,与工作区不一致;要么 amend 要么标 'post-push verification pending'。
+- `9ba2282`: ui-tests/run_ui_tests.py 应加 1~2 行 README(requirements + 命令)。
+- `b4e6b5f`: UnitConverter 19 基准单位硬编码,后续扩展应抽数据文件。
+- `c668731`: CalculatorPage.ets onEquals 的 NL vs 算术分支决策应在 design.md §5 加流程图。
+- `e12bd6c`: 测试用例命名格式 NL-NUM-01 vs UC-Length-01 不一致,建议统一 prefix。
+
+## 接下来
+
+@littleleafccccc 请:
+1. **立刻**处理工作区污染(`git checkout HEAD -- ui-tests/` 恢复 committed 状态)
+2. 真跑 UI 测试或申请豁免(见阻塞项 #1 的三选一)
+3. 把所有改动 commit + force-push 后再 assign rev-01
+
+issue 保持 open,不要关闭。
+
+---
+
+rev-01 审查完毕。诚实说一句:apply-report §6.2 的 hdc 阻塞披露 + committed results.json 标记 BLOCKED,这本身做得很好(铁律 7 的正面示范);问题是工作区在审查前夕被改写成 'EXECUTED' 状态,但 screenshot/ dump/ 目录是空的,这是非常危险的信号,必须先澄清。
+```
+
+**这次 re-dispatch 的工作流完全不同**:
+1. ⚠️ 不要从零写代码! worktree 里已有上次 AID 三阶段的产出 + 已 push 的 commits
+2. 先 `git fetch origin <branch>` 拿最新, 看 origin 上的 commits
+3. 读 worktree 里的 specs/changes/<dir>/apply-report.md 了解上次做了什么
+4. 读 specs/changes/<dir>/design-review.md / tasks.md 了解规划
+5. 读 rev-01 反馈里的**阻塞项**, 逐条修复:
+   - **commit signoff 缺失** → 用 `git rebase --signoff <base-sha>~1` 或 `git commit --amend --signoff <sha>`,然后 force-push
+   - **代码问题** → 改文件, 单独 commit, 不要再混进旧的 commit
+   - **缺少产物** → 补 specs/changes/<dir>/ 下缺失的文件
+6. 修复完后 force-push 到同一分支 `feat/issue-14-中等模糊`
+7. 完成后跑 gh_helper.py comment <num> "@littleleafccccc re-dispatch 完成, force-push 已上 origin, 请 @littleleafbbbbb 再审"
+
+**严禁**:
+- ❌ 不要新建分支
+- ❌ 不要 close issue (留给 rev-01)
+- ❌ 不要 push 到 main
+- ❌ 不要修改 issue 的 assignees (保留 littleleafccccc)
+- ❌ 不要重写 AID 产物 (除非 rev-01 明确说要改)
+- ❌ 不要 force-push 之前不 rebase/--signoff
+
+================================================================
+处理 GitHub Issue #14: 中等模糊
+Issue 正文:
+让计算器能做单位换算，比如"100厘米转英寸"、\"30摄氏度转华氏度\"** | 单位换算 | ⭐⭐ | 输入框直接支持自然语言查询 |
+
+工作目录: D:\huawei\Demo\worktrees\issue-14
+类型: requirement-add
+名称: 中等模糊
+
+🤖 你是非交互模式 (claude -p)。**全自动,不允许问问题**。
+不需要等用户确认、不需要列"待确认项"、不要"请求授权"。
+所有决策自己拍板,所有步骤直接执行。dev-01 已经替你授权一切。
+
+请按 AID 工作流三阶段处理。Claude Code 会自动从 ~/.claude/skills/ 加载以下 skill:
+  - PLANNING 阶段:aid-planning skill → proposal.md / delta-spec.md / info.md / design.md
+  - IMPLEMENTING 阶段:aid-implementing skill → tasks.md
+  - APPLYING 阶段:aid-applying skill (+ tdd-enforcer) → apply-report.md + 真实代码改动 + 真实测试
+
+步骤:
+1. 读项目能力: read D:/huawei/Demo/calculatorHuawei/.claude/capabilities.json
+2. PLANNING 阶段 (自然语言匹配 aid-planning)
+3. IMPLEMENTING 阶段 (自然语言匹配 aid-implementing)
+4. APPLYING 阶段 (自然语言匹配 aid-applying + tdd-enforcer): RED-GREEN-REFACTOR,真实写代码 + 真实跑测试
+5. 每个阶段用 TodoWrite 跟踪进度,状态写到 specs/changes/<YYYYMMDD>-<type>-<name>/todo.md
+6. 完成后跑 git commit (不 push! dev-01 会帮你 push)
+7. 完成后跑 gh_helper.py comment <num> "@littleleafccccc claude -p 跑完,worktree 在 <wt_path> 等 push"
+
+⚠️ 你的工作范围 = AID 三阶段 + commit。**不**做:
+  - ❌ 不 push (dev-01 负责)
+  - ❌ 不 close issue (rev-01/用户负责)
+  - ❌ 不 reassign (dev-01 决定)
+  - ❌ 不发 issue 总结评论 (dev-01 负责)
+
+用户确认点处理 (方案 C,你自动答):
+  - 阶段间确认一律自动同意,理由记录 todo.md
+  - 编译环境检查真实跑 which hvigorw / hdc
+  - 高风险点必须暂停并 @littleleafccccc 等回复:
+    a) capabilities.json 缺失 (项目级)
+    b) hvigorw / hdc / DevEco SDK 不在 PATH
+    c) PLANNING 识别为 arch-refactor 或 platform-migration
+    d) delta-spec.md / design.md 涉及删除现有功能
+  - 暂停方式:gh_helper.py comment <num> @littleleafccccc,issue 标 awaiting-human-input,worktree 暂存不 commit/push
+
+⚠️ 如果 worktree 里已有该 issue 的 commit 和 AID 产物:
+  - 直接退出 (不要再写新 specs/changes/、不要再 commit)
+  - 输出 "Issue #<num> already handled at <commit SHA>" 到 stdout

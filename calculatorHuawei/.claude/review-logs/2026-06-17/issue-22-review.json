@@ -1,0 +1,29 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "程序员模式 UI 自动化测试未跑,核心交互无证据",
+  "blocking": [
+    {
+      "item": "harmonyos-ui-test 未真实执行",
+      "evidence": "apply-report.md L71-93 明确标注 'Task 5.3 UI 自动化 — ⏸ 降级',capabilities.json ui_test.available=true 但未跑 hdc/dump/screenshot; 8 个 UI AC (AC-U1~AC-U8) 仅列为'待 dev-01/rev-01 验证',无任何截图或 uiautomator dump 证据 (D:/huawei/Demo/calculatorHuawei/ai_auto_test/ 下无 2026-06-17_issue22_* 目录)"
+    },
+    {
+      "item": "模式切换动画/键盘交互/activeBase 高亮未端到端验证",
+      "evidence": "commit 8e6555c 新增了 animateTo 220ms 过渡、5×4 程序员键盘、activeBase 2vp 边框高亮、onProgrammerBaseTap 反解析等纯 UI 行为,但 BaseConverter 22 个 AC 单测仅覆盖纯逻辑 (toBase/fromBase/getRepresentations),未覆盖上述交互"
+    }
+  ],
+  "suggestions": [
+    "8e6555c: apply-report.md 'Task 5.3 UI 自动化' 不应降级 — capabilities.json 明确 ui_test.available=true 且 dispatcher 应保证 8 UI AC 全部 PASS 才能 merge",
+    "8e6555c: apply-report.md L69 提到的预存在 AC-11_should_handle_nested_parens_percent 失败应单独开 issue 跟踪,与 #22 程序员模式隔离",
+    "8e6555c: onProgrammerRecompute 用 regex 过滤 HEX 字符,在 HEX 之外的所有模式下都可能误吞运算符字符(如 +/×),需评估是否应在非 programmer 模式调用",
+    "8e6555c: setMode 的 animateTo 回调里同时写 prefs (异步) 与同步 setMode,模式切换 UX 上 prefs 失败应不影响 UI 切换,现状可接受但建议注释"
+  ],
+  "highlights": [
+    "8e6555c: AID 三阶段制品齐全 (proposal/delta-spec/info/delta-design/design-review/tasks/apply-report 共 8 件),PLANNING+IMPLEMENTING+APPLYING 全流程留痕",
+    "8e6555c: BaseConverter 22 个单元测试覆盖 toBase/fromBase/getRepresentations/isValidChar/maxCharsFor 全部 API,RED-GREEN 节奏清晰",
+    "8e6555c: 分层干净 — ModeModel (数据) / BaseConverter (纯逻辑) / ProgrammerPanel (UI 组件) / CalculatorPage (编排),无 ArkUI 与计算逻辑耦合",
+    "8e6555c: 编译器零错误,BaseConverter.toBase 用 Math.abs/Math.trunc 显式处理负数和小数,与 proposal §6 模糊点 #2 决策一致",
+    "a4f8f9e: 冲突修复 commit 描述详尽,列出 8 个未解决 git merge conflict 标记 + 修复方案 + 在真实模拟器跑通历史/科学/长按/计算四个回归用例",
+    "8e6555c + a4f8f9e: 两个 commit 均 Signed-off-by littleleafccccc 且带 Co-Authored-By,符合 DCO 规范"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — 程序员模式 UI 自动化测试未跑,核心交互无证据\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | proposal/delta-spec/info/delta-design/design-review/tasks/apply-report 8 件齐全 |\n| harmonyos-ui-test | FAIL | capabilities.json 声明 ui_test.available=true,apply-report §Task 5.3 标注 '⏸ 降级',无截图/dump 证据 |\n| commit signoff | OK | 8e6555c + a4f8f9e 均 Signed-off-by |\n| 分支规范 | OK | feat/issue-22-简单需求,未直接推 main |\n| 铁律 7 不伪造 | OK | apply-report 诚实标注 1 个预存在单测失败 (AC-11) 与本次无关,未编造数据 |\n| AID 产物存在 | OK | specs/changes/20260617-requirement-add-programmer-mode/ 含 proposal+apply-report |\n\n## 阻塞项 (必须修复)\n\n- `apply-report.md:L71-93` — UI 自动化整体降级,8 个 UI AC (AC-U1 启动默认标准 / AC-U2 切换程序员 / AC-U3 220ms 动画 / AC-U4 BIN='1010' OCT='12' DEC='10' HEX='A' / AC-U5 点击 HEX 行 / AC-U6 HEX 按 F / AC-U7 BIN 按 2 弹 Toast / AC-U8 重启保留) 全部未跑\n  修复建议: dev-01/rev-01 在 127.0.0.1:5555/5557 模拟器上跑 harmonyos-ui-test skill,把 8 张截图 + dump 落到 ai_auto_test/2026-06-17_issue22_programmer/ 目录后重新申请 review\n\n- `commit 8e6555c:ProgrammerSection/ProgrammerKeyboard/activeBase 高亮` — 全部为 ArkUI 状态驱动渲染,仅 BaseConverter 单测覆盖纯逻辑,模式切换的端到端体验 (键盘布局、activeBase 边框、模式持久化) 无证据\n  修复建议: 与上一条合并,UI 验证同时覆盖: (1) 切到程序员模式后 ToggleRow 出现'标准/程序员'按钮 (2) BIN/OCT/DEC/HEX 四行实时刷新 (3) HEX 模式按 G 弹 Toast (4) 重启 App 进入程序员模式\n\n## 建议项 (建议修复)\n- commit 8e6555c: apply-report.md L69 提到预存在 AC-11_should_handle_nested_parens_percent 在 Expression.test.ets 失败,应单开 issue 跟踪,与程序员模式解耦\n- commit 8e6555c: onProgrammerRecompute 用正则过滤 HEX 字符,会吞掉所有运算符,在非 programmer 模式被误调会破坏 expression;建议加 if (this.mode === PROGRAMMER) 守卫\n- commit 8e6555c: setMode 在 animateTo 回调里同步写 prefs (setProgrammerModeDefault),prefs 失败时 UI 已切换,行为可接受但建议加注释说明 fire-and-forget 意图\n\n## 接下来\n@littleleafccccc 请在真实模拟器上跑完 8 个 UI AC 并附截图/dump 后再 assign rev-01.\nissue 保持 open, 不要关闭."
+}

@@ -1,0 +1,64 @@
+# AID Skill Bank - Initialization Flag
+
+## Init Date
+2026-07-02 14:35
+
+## Project Configuration
+PROJECT_ROOT: D:/huawei/Demo/calculatorHuawei/opencalc
+CHANGES_ROOT: specs/changes
+SPECS_FEATURE_ROOT: specs/specs
+TEST_ROOT: entry/src/test
+
+## Build Configuration
+Build Tool: hvigorw
+Build Version: 6.24.2
+Build Command: hvigorw assembleHap
+Build Status: success
+
+## Test Configuration
+Test Command: Not configured in hvigor (test framework not integrated)
+Test Available: fallback
+Test Framework: HarmonyOS ArkTS (manual test execution)
+Test Skills:
+  - harmony-ui-test: skipped (requires skill load)
+Test Paths:
+  Primary: entry/src/test
+  Alternative: None
+Test Notes: Test files exist at entry/src/test/ but hvigorw test task is not available. Tests need to be run manually or with DevEco Studio IDE.
+
+## SDK Configuration
+SDK_HOME: D:/Program Files/Huawei/DevEco Studio/sdk
+SDK Version: default/openharmony (API 22)
+hvigorw Path: D:/Program Files/Huawei/DevEco Studio/tools/hvigor/bin/hvigorw
+hvigorw Version: 6.24.2
+Java Path: D:/Program Files/Huawei/DevEco Studio/jbr/bin/java
+Java Version: OpenJDK 21.0.8
+Platform: Windows
+Project Type: HarmonyOS
+
+## User Provided Paths
+SDK: D:/Program Files/Huawei/DevEco Studio/sdk
+hvigorw: D:/Program Files/Huawei/DevEco Studio/tools/hvigor/bin/hvigorw
+Java: D:/Program Files/Huawei/DevEco Studio/jbr/bin/java
+
+## Directories
+- [x] PROJECT_ROOT exists
+- [x] specs/changes/ exists
+- [x] specs/guidelines/ exists
+- [x] specs/archives/ exists
+- [x] TEST_ROOT exists
+
+## Git State
+Status: dirty (uncommitted changes)
+Branch: demo/integration-all
+
+## Session Recovery
+Unfinished Sessions:
+  - specs/changes/20260612-requirement-add-history-search/ (waiting user confirmation)
+  - specs/changes/20260612-requirement-programmer-mode/ (waiting user confirmation)
+  - specs/changes/20260617-requirement-add-factorial-button/ (IMPLEMENTING phase)
+  - specs/changes/20260617-requirement-add-中等模糊/ (waiting aid-implementing)
+  - specs/changes/20260627-requirement-add-进阶/ (waiting git commit)
+
+## Environment Notes
+DEVECO_SDK_HOME must be set to "D:/Program Files/Huawei/DevEco Studio/sdk" for builds to work.

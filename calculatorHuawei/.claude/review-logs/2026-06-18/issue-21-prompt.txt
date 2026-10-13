@@ -1,0 +1,385 @@
+处理 GitHub Issue #21 的代码审查
+
+你是 rev-01 (代码审查员), GitHub 账号 = littleleafbbbbb.
+审查仓库: calculatorHuawei/agent_workflow
+
+## Issue 信息
+- Number: #21
+- Title: 测试噪声-aid-planning
+- URL: https://github.com/calculatorHuawei/agent_workflow/issues/21
+
+## Issue 正文
+请为当前的计算器应用追加一个‘阶乘（!）’运算按钮。”
+
+## 审查上下文 (已为你收集好, 不要重新 fetch)
+- Worktree: `D:\huawei\Demo\worktrees\issue-21`
+- 分支: `feat/issue-21-测试噪声-aid-planning`
+- 分支已 push 到 origin: True
+- 修改文件 stat:
+```
+docs/screenshots/issue-13/qrcode-share-panel.png   | Bin 208397 -> 0 bytes
+ .../src/main/ets/common/NaturalLanguageParser.ets  | 176 ------
+ .../entry/src/main/ets/common/UnitConverter.ets    |  97 ---
+ .../entry/src/main/ets/history/HistoryGroup.ets    |  63 --
+ .../entry/src/main/ets/pages/CalculatorPage.ets    | 308 +--------
+ .../entry/src/main/ets/pages/LongPressMenu.ets     |  37 --
+ .../entry/src/main/ets/qrcode/QrCodeBuilder.ets    |  55 --
+ .../src/main/resources/base/element/color.json     |   8 -
+ .../src/main/resources/base/element/string.json    |   8 -
+ .../src/main/resources/base/media/app_icon.png     | Bin 83 -> 0 bytes
+ .../main/resources/base/profile/main_pages.json    |   6 -
+ opencalc/entry/src/test/List.test.ets              |  12 -
+ .../src/test/ets/calculator/Expression.test.ets    |  68 ++
+ .../test/ets/calculator/PasteAndCalculate.test.ets |  49 --
+ .../test/ets/common/NaturalLanguageParser.test.ets | 159 -----
+ .../src/test/ets/common/UnitConverter.test.ets     | 161 -----
+ .../src/test/ets/history/HistoryGroup.test.ets     | 205 ------
+ .../src/test/ets/qrcode/QrCodeBuilder.test.ets     |  88 ---
+ .../apply-report.md                                | 120 ----
+ .../archive-report.md                              |  38 --
+ .../delta-spec.md                                  | 158 -----
+ .../design-review.md                               |  72 ---
+ .../design.md                                      | 336 ----------
+ .../20260615-requirement-add-qrcode-share/info.md  | 261 --------
+ .../proposal.md                                    |  96 ---
+ .../20260615-requirement-add-qrcode-share/tasks.md | 256 --------
+ .../tests/QrCodeBuilder.port.mjs                   |  21 -
+ .../tests/QrCodeBuilder.source.mjs                 |  36 --
+ .../tests/QrCodeBuilder.test.mjs                   | 123 ----
+ .../20260615-requirement-add-qrcode-share/todo.md  |  63 --
+ .../ui-tests/dump/ac01_after_equals.json           |   1 -
+ .../ui-tests/dump/ac02_empty.json                  |   1 -
+ .../ui-tests/dump/ac03_after_div0.json             |   1 -
+ .../ui-tests/dump/ac04_share_open.json             |   1 -
+ .../ui-tests/dump/ac05_pre_close.json              |   1 -
+ .../ui-tests/dump/ac05_share_panel.json            |   1 -
+ .../ui-tests/dump/ac06_after_close.json            |   1 -
+ .../ui-tests/dump/ac06_share_open.json             |   1 -
+ .../ui-tests/dump/t01a.json                        |   1 -
+ .../ui-tests/dump/t01b.json                        |   1 -
+ .../ui-tests/dump/t01c.json                        |   1 -
+ .../ui-tests/dump/t02a.json                        |   1 -
+ .../ui-tests/dump/t03a.json                        |   1 -
+ .../ui-tests/dump/t03b.json                        |   1 -
+ .../ui-tests/dump/t03c.json                        |   1 -
+ .../ui-tests/dump/t04a.json                        |   1 -
+ .../ui-tests/dump/t04b.json                        |   1 -
+ .../ui-tests/dump/t04c.json                        |   1 -
+ .../ui-tests/dump/t04d.json                        |   1 -
+ .../ui-tests/dump/t05a.json                        |   1 -
+ .../ui-tests/dump/t05b.json                        |   1 -
+ .../ui-tests/dump/t05c.json                        |   1 -
+ .../ui-tests/dump/t05d.json                        |   1 -
+ .../ui-tests/dump/t06a.json                        |   1 -
+ .../ui-tests/results.json                          |  65 --
+ .../ui-tests/run_tests.py                          | 302 ---------
+ .../ui-tests/screenshot/00_startup.png             | Bin 191220 -> 0 bytes
+ .../ui-tests/screenshot/ac01_after_equals.png      | Bin 189872 -> 0 bytes
+ .../ui-tests/screenshot/ac02_empty.png             | Bin 187273 -> 0 bytes
+ .../ui-tests/screenshot/ac03_after_div0.png        | Bin 208397 -> 0 bytes
+ .../ui-tests/screenshot/ac04_share_open.png        | Bin 208397 -> 0 bytes
+ .../ui-tests/screenshot/ac05_share_panel.png       | Bin 208397 -> 0 bytes
+ .../ui-tests/screenshot/ac06_after_close.png       | Bin 208363 -> 0 bytes
+ .../apply-report.md                                | 287 ---------
+ .../archive-report.md                              |  39 --
+ .../delta-spec.md                                  | 229 -------
+ .../design.md                                      | 533 ----------------
+ .../info.md                                        | 254 --------
+ .../proposal.md                                    | 123 ----
+ .../tasks.md                                       | 685 ---------------------
+ .../tests/NaturalLanguageParser.port.mjs           | 151 -----
+ .../tests/NaturalLanguageParser.test.mjs           | 170 -----
+ .../tests/UnitConverter.port.mjs                   |  60 --
+ .../tests/UnitConverter.test.mjs                   | 167 -----
+ .../tests/test-output-green.txt                    |  78 ---
+ .../todo.md                                        | 117 ----
+ .../ui-tests/dump/ac_uc_10.json                    |  14 -
+ .../ui-tests/dump/ac_uc_10b.json                   |  14 -
+ .../ui-tests/dump/ac_uc_10c.json                   |  14 -
+ .../ui-tests/dump/ac_uc_10d.json                   |  14 -
+ .../ui-tests/dump/ac_uc_10e.json                   |  14 -
+ .../ui-tests/dump/ac_uc_10f.json                   |  14 -
+ .../ui-tests/results.json                          | 147 -----
+ .../ui-tests/run_ui_tests.py                       | 345 -----------
+ .../ui-tests/screenshot/ac_uc_10_00_initial.jpeg   | Bin 97653 -> 0 bytes
+ .../screenshot/ac_uc_10_01_after_sequence.jpeg     | Bin 98829 -> 0 bytes
+ .../ui-tests/screenshot/ac_uc_10b_00_initial.jpeg  | Bin 97653 -> 0 bytes
+ .../screenshot/ac_uc_10b_01_after_sequence.jpeg    | Bin 100352 -> 0 bytes
+ .../ui-tests/screenshot/ac_uc_10c_00_initial.jpeg  | Bin 97653 -> 0 bytes
+ .../screenshot/ac_uc_10c_01_after_sequence.jpeg    | Bin 103217 -> 0 bytes
+ .../ui-tests/screenshot/ac_uc_10d_00_initial.jpeg  | Bin 97653 -> 0 bytes
+ .../screenshot/ac_uc_10d_01_after_sequence.jpeg    | Bin 98937 -> 0 bytes
+ .../ui-tests/screenshot/ac_uc_10e_00_initial.jpeg  | Bin 97653 -> 0 bytes
+ .../screenshot/ac_uc_10e_01_after_sequence.jpeg    | Bin 99004 -> 0 bytes
+ .../ui-tests/screenshot/ac_uc_10f_00_initial.jpeg  | Bin 97653 -> 0 bytes
+ .../screenshot/ac_uc_10f_01_after_sequence.jpeg    | Bin 97653 -> 0 bytes
+ ...1\350\264\245-skill\345\210\206\346\236\220.md" | 481 ---------------
+ .../\350\257\212\346\226\255\345\215\225.md"       | 563 -----------------
+ .../apply-report.md                                | 242 --------
+ .../archive-report.md                              |  38 --
+ .../delta-spec.md                                  | 140 -----
+ .../design-review.md                               |  91 ---
+ .../design.md                                      | 502 ---------------
+ .../info.md                                        | 198 ------
+ .../proposal.md                                    |  55 --
+ .../tasks.md                                       | 424 -------------
+ .../tests/LongPressMenu.port.mjs                   |  36 --
+ .../tests/LongPressMenu.test.mjs                   |  82 ---
+ .../todo.md                                        |  82 ---
+ .../ui-tests/dump/00_app_launched.json             |   1 -
+ .../ui-tests/dump/01_long_press_sin.json           |   1 -
+ .../ui-tests/dump/02_after_arcsin_click.json       |   1 -
+ .../ui-tests/dump/02_pre_click.json                |   1 -
+ .../ui-tests/dump/03_after_mask_click.json         |   1 -
+ .../ui-tests/dump/03_menu_reopen_for_mask.json     |   1 -
+ .../ui-tests/dump/04_after_short_press_sin.json    |   1 -
+ .../ui-tests/dump/05_after_long_press_7.json       |   1 -
+ .../ui-tests/dump/06_long_press_cos.json           |   1 -
+ .../ui-tests/results.json                          |  66 --
+ .../ui-tests/run_ui_tests.py                       | 366 -----------
+ .../screenshot/00_app_launched_scientific.png      | Bin 213680 -> 0 bytes
+ .../screenshot/01_long_press_sin_menu_opened.png   | Bin 204009 -> 0 bytes
+ .../ui-tests/screenshot/02_after_arcsin_click.png  | Bin 219064 -> 0 bytes
+ .../ui-tests/screenshot/03_after_mask_click.png    | Bin 219064 -> 0 bytes
+ .../screenshot/03_menu_open_for_mask_test.png      | Bin 208850 -> 0 bytes
+ .../screenshot/04_after_short_press_sin.png        | Bin 216708 -> 0 bytes
+ .../ui-tests/screenshot/05_after_long_press_7.png  | Bin 215095 -> 0 bytes
+ .../ui-tests/screenshot/06_long_press_cos.png      | Bin 204009 -> 0 bytes
+ .../apply-report.md"                               | 345 -----------
+ .../archive-report.md"                             |  38 --
+ .../delta-design.md"                               | 293 ---------
+ .../delta-spec.md"                                 | 142 -----
+ .../design-review.md"                              |  67 --
+ .../info.md"                                       | 176 ------
+ .../proposal.md"                                   |  92 ---
+ .../tasks.md"                                      | 164 -----
+ .../tests/HistoryGroup.port.mjs"                   |  41 --
+ .../tests/HistoryGroup.test.mjs"                   | 180 ------
+ .../tests/test-output-green.txt"                   |  62 --
+ .../todo.md"                                       | 110 ----
+ .../ui-tests/screenshot/home-after-click.jpeg"     | Bin 97976 -> 0 bytes
+ .../ui-tests/screenshot/layout-3sections.json"     |   1 -
+ .../ui-tests/screenshot/layout-after-click.json"   |   1 -
+ .../ui-tests/screenshot/layout-home.json"          |   1 -
+ .../ui-tests/screenshot/opencalc-home.jpeg"        | Bin 97855 -> 0 bytes
+ .../ui-tests/screenshot/ss-after-3calcs.jpeg"      | Bin 108532 -> 0 bytes
+ .../ui-tests/screenshot/ss-after-calc.jpeg"        | Bin 100959 -> 0 bytes
+ .../ui-tests/screenshot/ss-history-3sections.jpeg" | Bin 89871 -> 0 bytes
+ .../ui-tests/screenshot/ss-history-today.jpeg"     | Bin 99563 -> 0 bytes
+ .../ui-tests/screenshot/ss-home-new.jpeg"          | Bin 99964 -> 0 bytes
+ .../apply-report.md                                | 212 -------
+ .../archive-report.md                              |  38 --
+ .../delta-spec.md                                  | 226 -------
+ .../design-review.md                               |  46 --
+ .../design.md                                      | 362 -----------
+ .../info.md                                        | 213 -------
+ .../proposal.md                                    | 116 ----
+ .../tasks.md                                       | 170 -----
+ .../tests/PasteAndCalculate.test.mjs               | 335 ----------
+ .../todo.md                                        |  62 --
+ .../ui-tests/parse_ui.py                           |  77 ---
+ .../ui-tests/results.json                          | 218 -------
+ .../ui-tests/run_paste_tests.py                    | 440 -------------
+ .../ui-tests/screenshot/00_initial.png             | Bin 187642 -> 0 bytes
+ .../screenshot/01_paste_button_visible.png         | Bin 187601 -> 0 bytes
+ .../ui-tests/screenshot/02_after_2_plus_3.png      | Bin 191518 -> 0 bytes
+ .../ui-tests/screenshot/03_after_equals.png        | Bin 190943 -> 0 bytes
+ .../ui-tests/screenshot/04_state_before_paste.png  | Bin 188760 -> 0 bytes
+ .../05_after_paste_btn_tap_then_state_change.png   | Bin 188291 -> 0 bytes
+ .../ui-tests/screenshot/06_expression_is_5.png     | Bin 189982 -> 0 bytes
+ .../screenshot/07_after_longpress_copy.png         | Bin 191845 -> 0 bytes
+ .../08_after_paste_with_5_in_clipboard.png         | Bin 190803 -> 0 bytes
+ .../screenshot/09_state_9_before_clear.png         | Bin 193402 -> 0 bytes
+ .../ui-tests/screenshot/10_after_clear.png         | Bin 187528 -> 0 bytes
+ .../ui-tests/uidump.json                           |   1 -
+ .../apply-report.md                                | 159 -----
+ .../archive-report.md                              |  38 --
+ .../delta-spec.md                                  | 244 --------
+ .../design-review.md                               |  92 ---
+ .../design.md                                      | 306 ---------
+ .../info.md                                        | 228 -------
+ .../proposal.md                                    | 124 ----
+ .../tasks.md                                       | 174 ------
+ .../tests/.hvigor/outputs/build-logs/build.log     |   0
+ .../tests/NaturalLanguageParser.port.mjs           | 110 ----
+ .../tests/NaturalLanguageParser.test.mjs           |  71 ---
+ .../tests/UnitConverter.port.mjs                   | 103 ----
+ .../tests/UnitConverter.test.mjs                   |  91 ---
+ .../todo.md                                        |  80 ---
+ .../ui-tests/01_ui_test_report.md                  |  83 ---
+ .../ui-tests/dump/00_initial.json                  |   1 -
+ .../ui-tests/dump/02_after_text.json               |   1 -
+ .../ui-tests/screenshot/00_initial.png             | Bin 184071 -> 0 bytes
+ .../ui-tests/screenshot/02_after_text.png          | Bin 184380 -> 0 bytes
+ .../ui-tests/screenshot/03_1plus2_result.png       | Bin 187520 -> 0 bytes
+ .../apply-report.md                                | 208 +++++++
+ .../delta-spec.md                                  |  62 ++
+ .../design.md                                      | 114 ++++
+ .../info.md                                        |  65 ++
+ .../proposal.md                                    |  85 +++
+ .../tasks.md                                       | 122 ++++
+ .../tests/Expression.port.mjs                      | 321 ++++++++++
+ .../tests/Expression.test.mjs                      | 112 ++++
+ .../tests/expression-eval.mjs                      |  37 ++
+ .../todo.md                                        |  33 +
+ specs/initialized.flag                             |   4 -
+ 206 files changed, 1251 insertions(+), 16361 deletions(-)
+```
+
+## 最近 1 个 commits
+```
+d3b5ae4 feat(factorial): add ! button to scientific mode (Issue #21)
+955eab5 fix(aid-init): update capabilities.json to point to main repo
+fe169f2 Merge feat/issue-11-realtime-preview: 实时预览功能
+5990336 Merge branch 'main' of https://github.com/calculatorHuawei/agent_workflow
+66b0937 feat(realtime-preview): add real-time preview with bug fix for consecutive operators
+dee5118 Merge pull request #10 from calculatorHuawei/feat/issue-9-percent-button
+d8dfeec Merge feat/issue-9-percent-button: 百分号按钮增强
+644e0d1 feat(percent): add 3 edge case detections for percent button
+59218f0 feat(percent): 添加百分号按钮功能及测试
+9ea6ac5 chore: update team config — gateway running state + iron rule 7
+01b3773 feat: import OpenCalc HarmonyOS port as opencalc/ subfolder
+b346ea2 docs: 添加 3 员工邀请到仓库的手工操作指南
+718a1db feat: 注入 3 个员工 SOUL.md 灵魂定义
+8cb0094 chore: 填入 3 个员工 GitHub Token + 更新用户名引用
+5faa73c chore: 更新 handoff.yaml 标记仓库已推送至 GitHub
+c886a61 feat: 初始化 1+N 数字员工团队配置
+9ab1159 Initial commit
+```
+
+## commit signoff 状态
+  ❌ d3b5ae41 2026-06-17 feat(factorial): add ! button to scientific mode (Issue #21) signed=False
+
+## AID 产物 (specs/changes/ 下)
+  - 20260617-requirement-add-factorial-button: apply-report.md(9082B), delta-spec.md(1966B), design.md(5538B), info.md(3602B), proposal.md(4079B), tasks.md(4643B), todo.md(1708B)
+  - 20260612-requirement-add-realtime-preview: apply-report.md(19617B), delta-spec.md(9465B), design.md(14987B), info.md(9173B), proposal.md(4496B), tasks.md(9359B), todo.md(2223B)
+  - 20260611-requirement-add-percent-button: apply-report.md(8724B), delta-spec.md(4251B), design.md(6340B), info.md(6547B), proposal.md(3281B), tasks.md(5258B), todo.md(2936B)
+
+## 截图证据
+  ❌ 无真实截图
+
+## 你的工作
+
+🤖 非交互模式 (claude -p), 全自动, 不允许问问题. 所有决策自己拍板.
+
+按以下检查表审查, **每项都必须勾完**:
+
+### 阻塞项 (任一 FAIL = REQUEST_CHANGES)
+1. [ ] AID 三阶段完整 (PLANNING+IMPLEMENTING+APPLYING 产出齐全)
+   - 需有: proposal.md / delta-spec.md / info.md / design.md / tasks.md / apply-report.md
+2. [ ] 真实跑了 harmonyos-ui-test (有截图 + uiautomator dump)
+3. [ ] commit 全部 signed-off (见上面的 signoff 状态)
+4. [ ] 无铁律 7 违规 (测试日志不能伪造)
+5. [ ] 在 feat/* 分支, 没直接推 main
+6. [ ] AID 产物存在 (specs/changes/ 下至少有 proposal.md + apply-report.md)
+
+### 建议项 (不阻塞但要列出)
+- commits 符合 conventional commits 规范
+- TDD 节奏 (test 与 feat 分开 commit)
+- 代码可读性 (命名, 重复, 复杂度)
+
+## 输出
+
+**严格**按下面格式写到一个 JSON 文件 (路径给你了, 不要 print 到 stdout):
+
+路径: `D:/huawei/Demo/calculatorHuawei/.claude/review-logs/2026-06-18/issue-21-review.json`
+
+格式:
+```json
+{
+  "verdict": "APPROVE" 或 "REQUEST_CHANGES",
+  "summary": "<一句话总结, 用中文, 25 字以内>",
+  "blocking": [
+    {"item": "<检查项名>", "evidence": "<具体证据, 文件:行号 或 commit SHA>"},
+    ...
+  ],
+  "suggestions": [
+    "<commit SHA>: <建议>",
+    ...
+  ],
+  "highlights": [
+    "<commit SHA>: <做得好的点>",
+    ...
+  ],
+  "comment": "<完整 markdown 评论, 用下面模板之一>"
+}
+```
+
+### 评论模板 (APPROVE)
+```
+[rev-01] APPROVED — <summary>
+
+## 审查结果
+| 检查项 | 状态 |
+|--------|------|
+| AID 三阶段 | OK |
+| harmonyos-ui-test | OK |
+| commit signoff | OK |
+| 分支规范 | OK |
+| 铁律 7 不伪造 | OK |
+
+## 主要亮点
+- <highlights 内容>
+
+## 决定
+已 close. 感谢 @littleleafccccc 的贡献.
+```
+
+### 评论模板 (REQUEST_CHANGES)
+```
+[rev-01] REQUEST CHANGES — <summary>
+
+## 审查结果
+| 检查项 | 状态 | 备注 |
+|--------|------|------|
+| AID 三阶段 | OK/FAIL | <备注> |
+| harmonyos-ui-test | OK/FAIL | <备注> |
+| commit signoff | OK/FAIL | <备注> |
+| 分支规范 | OK/FAIL | <备注> |
+| 铁律 7 不伪造 | OK/FAIL | <备注> |
+
+## 阻塞项 (必须修复)
+- `<文件路径>:<行号>` 或 `<commit SHA>` — <问题描述>
+  修复建议: <具体怎么改>
+
+## 建议项 (建议修复)
+- <commit SHA>: <建议>
+
+## 接下来
+@littleleafccccc 请修复阻塞项后再 assign rev-01.
+issue 保持 open, 不要关闭.
+```
+
+## 工作流步骤
+
+1. cd 到 worktree: `D:\huawei\Demo\worktrees\issue-21`
+2. 用 Read 工具读关键文件 (apply-report.md, spec 产物, 关键代码 diff)
+3. 用 Bash 跑 `git show <sha>` 看每个 commit 的实际改动
+4. 用 Bash 跑 `git diff origin/main..HEAD -- <file>` 看具体行
+5. 按检查表逐项判断
+6. 用 Write 工具写 JSON 到 `D:/huawei/Demo/calculatorHuawei/.claude/review-logs/2026-06-18/issue-21-review.json`
+7. **不要**发 GitHub 评论 (review_issues.py 会负责发)
+8. **不要** close/assign issue (review_issues.py 会负责)
+9. **不要** commit 任何改动 (审查者只读)
+
+如果 worktree 不存在 (D:/huawei/Demo/worktrees/issue-21 缺失), 写:
+```json
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "worktree 缺失",
+  "blocking": [{"item": "worktree 缺失", "evidence": "D:/huawei/Demo/worktrees/issue-21 不存在"}],
+  "suggestions": [],
+  "highlights": [],
+  "comment": "[rev-01] REQUEST CHANGES — worktree 缺失, dev-01 还没创建..."
+}
+```
+
+如果分支没 push 到 origin, 写:
+```json
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "分支未推送",
+  "blocking": [{"item": "分支未推送", "evidence": "feat/issue-21-测试噪声-aid-planning 不在 origin 上"}],
+  ...
+}
+```

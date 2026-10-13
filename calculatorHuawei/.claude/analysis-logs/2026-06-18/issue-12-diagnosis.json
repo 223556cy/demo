@@ -1,0 +1,34 @@
+{
+  "issue_ticket": {
+    "issue_number": 12,
+    "title": "程序员模式 aid-applying 流程跑完但未创建 PR/触发 rev-01 审查, Issue 被外部 dispatcher 以 COMPLETED 关闭, 分支从未合入 main, feature 实际不可用",
+    "verdict": "CLOSED",
+    "priority": "HIGH",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "Issue #12 (程序员模式) AID 三阶段 (planning/implementing/applying) 全跑完: 9 项 AID 产物齐全 (proposal 10867B / delta-spec 8828B / design 20689B / design-review 2451B / tasks 10499B / apply-report 9855B / todo 3048B / info 10251B / tests 28 用例), 28/28 Node 端口单测 PASS, 代码 commit b2c6286 'feat(programmer-mode): add DEC/BIN/OCT/HEX conversion and mode toggle (Issue #12)' 推送到 feat/issue-12-简单需求 分支。但 PR 未创建 (gh pr list --repo calculatorHuawei/agent_workflow 仅返回 3 个 PR, 无 #12), rev-01 审查未触发, 分支从未合入 main (main 最新为 7139e59 fix-merge-conflict, 不含 b2c6286)。Issue #12 在 2026-06-18T09:01:52Z 被外部 dispatcher 以 stateReason=COMPLETED 关闭, closedByPullRequestsReferences=[] (无合并 PR 引用)。apply-report.md 自承『集成测试未执行』『真实设备验证未执行』, 但 AID 流程已 self-declare DONE。",
+    "root_cause_analysis": "归类: B — 漏掉步骤 (流程里有一步没做)。证据: (1) c68a0766.jsonl (12:52-12:59) assistant 调 Skill aid-planning / rq-parse / rq-codebase / mod-design / aid-implementing / aid-applying / tdd-enforcer 7 个 Skill 全套流程, apply-report.md 在 12:59 生成, 全程无 gh pr create / 无 aid-reviewing / 无 rev-01 触发; (2) 0dc2ed68.jsonl (12:42-12:57) assistant 同样跑完 aid-planning → aid-implementing → aid-applying → mod-design 4 个 Skill, 只到 step3-4 apply-report 为止; (3) aid-applying/SKILL.md L410-425 'Git Commit & Push (推荐)' 只到 'git push -u origin $(git branch --show-current)' 即戛然而止, 后面无 step3-5 '创建 PR + 触发 rev-01 审查' 的 imperative 步骤; (4) aid-archiving/SKILL.md L229-253 'Git Merge (推荐)' 是向用户的可选推荐 (3 选项: 直接合并/创建 PR/跳过), 未强制执行 PR + rev-01 流程, 而 aid-archiving 本身在 issue #12 中从未被调起; (5) gh issue view 12 返回 closedAt=2026-06-18T09:01:52Z / stateReason=COMPLETED / closedByPullRequestsReferences=[] — 由外部 dispatcher 在没有任何 PR 合入的情况下强制关闭; (6) git log main..feat/issue-12-简单需求 = b2c6286 (1 commit ahead), 分支孤立未合并。唯一指责 aid-applying: 该 skill v1 在 step3-4 (apply-report) 后缺失 step3-5 'PR + 审查' 强制步骤, 导致 apply-report 自我宣告 DONE 即代表流程结束, 跳过 PR 创建与 rev-01, 给外部 dispatcher 留下『代码 commit 即完成』的误判空间。",
+    "optimization_direction": "在 aid-applying SKILL.md step3-4 (apply-report) 后新增 step3-5「PR 与审查」(imperative): (a) 必须执行 gh pr create --base main --head feat/issue-12-简单需求 --title 'feat(programmer-mode): ... [Issue #12]', PR body 必须引用本 issue; (b) PR 创建后必须触发 aid-reviewing 或调用 rev-01, 等待 reviewDecision=APPROVED 才进 step3-6; (c) step3-6 归档前置条件: PR merged=true 才允许 aid-archiving 执行 git merge --no-ff; (d) apply-report.md 模板新增 §7『PR 与审查』必填章节 (PR URL / reviewer / reviewDecision / mergedAt), 缺则 abort APPLYING; (e) todo.md APPLYING 区块的 DONE 状态机改为『DONE = apply-report ✓ + PR ✓ + rev-01 APPROVED ✓ + PR merged ✓』四阶段联动。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-12/2026-06-15/c68a0766-8a1e-4445-be99-887f7714668b.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-12/2026-06-15/0dc2ed68-b4ca-4af7-b8ac-922950342e59.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-12/2026-06-15/218a2c40-b2e6-4bff-82df-a2f45e84cc76.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-12/2026-06-15/a39dbe18-6535-4450-81f8-629c535488a0.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-12/2026-06-15/40c19a0b-f659-40b2-898e-1914d6af4011.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-12/2026-06-15/287204cc-2cb1-495b-b287-e192afa14e6c.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-12/2026-06-15/62238b83-2a08-4f4a-ba9c-261cd0e4ee1e.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-12/2026-06-15/ecc9d633-06f8-41c9-8d8f-58f0963c603a.jsonl"
+    ],
+    "evidence_anchors": [
+      "c68a0766.jsonl:assistant Skill aid-planning / rq-parse / rq-codebase / mod-design / aid-implementing / aid-applying / tdd-enforcer 7 次连续调用 (12:52-12:59), 流程结束于 apply-report.md 生成, 无 gh pr create",
+      "0dc2ed68.jsonl:assistant Skill aid-planning / aid-implementing / aid-applying / mod-design 4 次调用 (12:42-12:57), 同样在 apply-report 后停止, 无 PR 步骤",
+      "apply-report.md line 174-175 '集成测试未执行: hvigorw compile 需在 calculatorHuawei 主仓库执行' + '真实设备验证未执行: UI 自动化测试 (hdc + harmonyos-ui-test) 需在 HAP 安装后跑' — AID 流程自承未完成关键验证步骤却已 self-declare DONE",
+      "apply-report.md line 177 '数据层 100% 完成' / line 178 '视图层 100% 完成' / line 179 '测试覆盖 100% 通过' / line 180 '集成测试未执行' / line 181 '真实设备验证未执行' — 矛盾状态: 50% 未真正完成却被宣告完成",
+      "aid-applying/SKILL.md L410-425 'Git Commit & Push (推荐)' 只到 'git push -u origin $(git branch --show-current)' 后戛然而止, 缺失 step3-5 PR/审查步骤",
+      "aid-archiving/SKILL.md L229-253 'Git Merge (推荐)' 3 选项 (直接合并/创建 PR/跳过) 均是向用户的可选推荐, 无 imperative 强制; 且 aid-archiving 在 issue #12 中从未被调起",
+      "git log main..feat/issue-12-简单需求 = 'b2c6286 feat(programmer-mode): add DEC/BIN/OCT/HEX conversion and mode toggle (Issue #12)' — 1 commit ahead, 分支孤立未合并",
+      "gh issue view 12 --json state,closedAt,stateReason,closedByPullRequestsReferences = state=CLOSED / closedAt=2026-06-18T09:01:52Z / stateReason=COMPLETED / closedByPullRequestsReferences=[] — 无 PR 引用却被标 COMPLETED",
+      "gh pr list --repo calculatorHuawei/agent_workflow --state all --limit 50 = [PR#23 OPEN fix-merge-conflict / PR#10 MERGED feat-percent / PR#2 CLOSED feat-percent] — 无 issue #12 对应 PR, 验证 gh pr create 从未执行"
+    ]
+  }
+}

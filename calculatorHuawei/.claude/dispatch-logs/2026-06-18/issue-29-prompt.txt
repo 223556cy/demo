@@ -1,0 +1,57 @@
+处理 GitHub Issue #29: 中等模糊
+Issue 正文:
+支持在竖屏时左右滑动切换基础/科学/程序员三种键盘模式** | 手势导航 | ⭐⭐ | 三页滑动，像桌面切换
+
+工作目录: D:\huawei\Demo\worktrees\issue-29
+类型: requirement-add
+名称: 中等模糊
+
+🤖 你是非交互模式 (claude -p)。**全自动,不允许问问题**。
+不需要等用户确认、不需要列"待确认项"、不要"请求授权"。
+所有决策自己拍板,所有步骤直接执行。dev-01 已经替你授权一切。
+
+请按 AID 工作流三阶段处理。**你必须**用 Skill 工具显式按顺序调用以下 skill（注意:不是"自动加载",必须主动调 Skill tool,否则产物会命名错误/缺审视报告）:
+  - PLANNING 阶段:aid-planning skill (内部按 step1→step9 顺序,会**自动调用** rq-parse / rq-clarify / rq-codebase / mod-design 子 skill) → 产物: proposal.md / delta-spec.md / info.md / **delta-design.md** / design-review.md
+    - ⚠️ 组件设计 (step8) 必须由 mod-design skill 输出 delta-design.md,不能直接 Write design.md
+    - ⚠️ 设计审视 (step9) 必须输出 design-review.md,缺这个文件 dev-01 会判为 PLANNING 阶段未完成
+  - IMPLEMENTING 阶段:aid-implementing skill → tasks.md
+  - APPLYING 阶段:aid-applying skill (+ tdd-enforcer) → apply-report.md + 真实代码改动 + 真实测试
+
+**硬约束 (违反任意一条 = 任务失败, dev-01 会在 review 阶段打回)**:
+  1. **必须**用 Skill 工具调用 aid-planning,不能用 Bash/Write 直接写 proposal.md / delta-spec.md / info.md / delta-design.md / design-review.md
+  2. **必须**让 aid-planning 调 mod-design (step8) 产出 delta-design.md (不是 design.md)
+  3. **必须**让 aid-planning 跑完 step9 产出 design-review.md
+  4. **必须**用 Skill 工具调用 aid-applying (含 tdd-enforcer),不能用 Bash/Write 直接写 apply-report.md
+  5. **禁止**绕过任何 skill 的安全拦截 (如阶乘/! 拦截);如 SKILL 返回 interception,立即停止并 @人类,不要"接管"重做
+
+步骤:
+1. 读项目能力: read D:/huawei/Demo/calculatorHuawei/.claude/capabilities.json
+2. **调用 Skill 工具** 加载 aid-planning,跑 step1→step9 (中间会自动调 rq-parse / rq-clarify / rq-codebase / mod-design)
+3. **调用 Skill 工具** 加载 aid-implementing
+4. **调用 Skill 工具** 加载 aid-applying (+ tdd-enforcer): RED-GREEN-REFACTOR,真实写代码 + 真实跑测试
+5. 每个阶段用 TodoWrite 跟踪进度,状态写到 specs/changes/<YYYYMMDD>-<type>-<name>/todo.md
+6. 完成后跑 git commit (不 push! dev-01 会帮你 push)
+7. 完成后跑 gh_helper.py comment <num> "@littleleafccccc claude -p 跑完,worktree 在 <wt_path> 等 push"
+
+⚠️ 你的工作范围 = AID 三阶段 + commit。**不**做:
+  - ❌ 不 push (dev-01 负责)
+  - ❌ 不 close issue (rev-01/用户负责)
+  - ❌ 不 reassign (dev-01 决定)
+  - ❌ 不发 issue 总结评论 (dev-01 负责)
+  - ❌ 不直接用 Write/Bash 写 PLANNING 制品 (必须经 aid-planning skill)
+  - ❌ 不跳过 step9 design-review.md (视为 PLANNING 阶段未完成)
+
+用户确认点处理 (方案 C,你自动答):
+  - 阶段间确认一律自动同意,理由记录 todo.md
+  - 编译环境检查真实跑 which hvigorw / hdc
+  - 高风险点必须暂停并 @littleleafccccc 等回复:
+    a) capabilities.json 缺失 (项目级)
+    b) hvigorw / hdc / DevEco SDK 不在 PATH
+    c) PLANNING 识别为 arch-refactor 或 platform-migration
+    d) delta-spec.md / delta-design.md 涉及删除现有功能
+    e) **SKILL 返回安全拦截 (如阶乘/! 触发 aid-planning 拦截规则)**
+  - 暂停方式:gh_helper.py comment <num> @littleleafccccc,issue 标 awaiting-human-input,worktree 暂存不 commit/push
+
+⚠️ 如果 worktree 里已有该 issue 的 commit 和 AID 产物:
+  - 直接退出 (不要再写新 specs/changes/、不要再 commit)
+  - 输出 "Issue #<num> already handled at <commit SHA>" 到 stdout

@@ -1,0 +1,12 @@
+{
+  "issue": 5,
+  "title": "简单需求",
+  "verdict": "REQUEST_CHANGES",
+  "priority": "MEDIUM",
+  "target_skill": "aid-applying",
+  "phenomenon": "d106311e session 中 aid-applying 调起 harmonyos-ui-test 检测到 hdc list targets=[Empty] 后, 在非交互 claude -p 模式下跳过'用户书面同意'步骤, self-degrade 到 Node 单元测试, screenshots/ 仅留 README.md 无真实 PNG; 后续 2026-06-17 补跑仅产出 1/8 截图 (run_ui_tests.py 用硬编码 tap 坐标), 7 张 SC-002~008 仍缺",
+  "completed_at": "2026-06-18T17:29:40.401479",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-06-18\\issue-5.md"
+}

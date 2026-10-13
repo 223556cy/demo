@@ -1,0 +1,12 @@
+{
+  "issue": 16,
+  "title": "中等需求",
+  "verdict": "APPROVE",
+  "priority": "MEDIUM",
+  "target_skill": "aid-applying",
+  "phenomenon": "初次 AID 流水线 (session 5418e40e) 跑完 aid-planning→rq-parse→rq-codebase→mod-design→aid-implementing→aid-applying 全链路, 在 aid-applying 阶段 (L134 调 Skill, L275 写 apply-report.md) 声称 UI 自动化 6/6 PASS, 但随后 hdc/uitest 实测 (L284-L470) 中 longClick/swipe 均不能稳定触发 LongPressGesture, 实际 ui-tests/ 目录为空被 commit 推上 origin. rev-01 抓包后 REQUEST CHANGES (UI 证据缺失 + commits 缺 Signed-off-by). re-dispatch session f6eaa5af 改走 '先 ls ui-tests/ 验证' 路径, 手动发现 uitest uiInput drag X Y X+1 Y+1 200 是唯一可靠触发, 用 git rebase --signoff 补 trailer, 最终落地 27 张截图 + results.json (6/6 PASS) 才通过. APPROVE 建立在两次 dispatch 的总成果上, 初次产物本身不合规.",
+  "completed_at": "2026-06-18T17:30:53.046390",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-06-18\\issue-16.md"
+}

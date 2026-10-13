@@ -1,0 +1,151 @@
+{
+  "schema_version": "1.0",
+  "description": "Skill 段级识别字典,用于从 JSONL 推断每个事件属于 skill 的哪一段。字段命名:camelCase,沿用 Claude Code 原生约定。每个 skill 配置段模式 + 关键词 + 工具模式。",
+  "global_method_confidence": {
+    "P0_explicit_skill_call": 1.0,
+    "P1_skill_body_injection": 0.95,
+    "P2_step_literal_match": 0.9,
+    "P3_section_keyword": 0.7,
+    "P4_iron_law_or_mandatory": 0.5,
+    "P5_bash_tool_pattern": 0.4,
+    "P6_time_gap": 0.3,
+    "fallback_unknown": 0.0
+  },
+  "skills": {
+    "aid-applying": {
+      "naming_style": "step3-X-Y-Z",
+      "sections": [
+        {"section_id": "step3-0", "title": "环境检查", "keywords": ["环境检查", "environment check", "env check", "env check", "compile env", "test env", "compile environment", "test environment", "hvigorw version", "node version", "gradle version", "hdc version", "java version", "DEVECO_SDK", "JAVA_HOME"], "step_patterns": ["step3-0\\b", "step3-0-1", "step3-0-2", "step3-0-3", "step3-0-4", "step3-0-5", "Step 3-0", "step 3-0"], "iron_laws": [], "tool_patterns": ["hvigorw --version", "node --version", "gradlew --version", "mvn --version", "cargo --version", "make --version", "hdc version", "build_hap.bat"]},
+        {"section_id": "step3-1", "title": "确认应用条件", "keywords": ["应用条件", "code complete", "code quality", "lint check", "syntax check"], "step_patterns": ["step3-1\\b", "step3-1-1", "step3-1-2", "Step 3-1", "step 3-1"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step3-2", "title": "代码应用 (TDD)", "keywords": ["代码应用", "code application", "TDD", "RED", "GREEN", "REFACTOR", "test", "task", "edit", "GraphPage", "Canvas", "PlotUtils", "test.ets", "write code", "modify code", "create file", "implement", "code change"], "step_patterns": ["step3-2\\b", "step3-2-1", "step3-2-2", "step3-2-2b", "step3-2-3", "step3-2-4", "Step 3-2", "step 3-2"], "iron_laws": ["铁律 7"], "tool_patterns": ["hvigorw test", "jest", "pytest", "npm test", "gradlew test", "mvn test", "cargo test", "node mock", "node test", "mock_test", "find opencalc", "grep -r", "Grep ", "Edit ", "Write ", "Read .test", "Read .ets"]},
+        {"section_id": "step3-2-2b", "title": "HarmonyOS UI 测试", "keywords": ["HarmonyOS UI", "hdc", "emulator", "真机", "AVD", "ui-test", "ui test", "harmonyos-ui-test", "ui-tests", "ui automation"], "step_patterns": ["step3-2-2b\\b", "step3-2-2b-降级", "Step 3-2-2b", "step 3-2-2b"], "iron_laws": ["铁律 7"], "tool_patterns": ["hdc list", "hdc tconn", "hdc shell", "hdc install", "hdc hilog", "hdc file", "hdc snapshot", "hdc screenshot", "harmonyos-ui-test", "ui-tests/"]},
+        {"section_id": "step3-3", "title": "更新任务状态", "keywords": ["更新任务", "task status", "todo.md", "mark task", "complete task", "task complete", "task done", "mark complete", "更新todo"], "step_patterns": ["step3-3\\b", "Step 3-3", "step 3-3"], "iron_laws": [], "tool_patterns": ["todo.md"]},
+        {"section_id": "step3-4", "title": "产出应用报告", "keywords": ["应用报告", "apply-report", "apply report", "test results", "test pass", "test fail"], "step_patterns": ["step3-4\\b", "Step 3-4", "step 3-4"], "iron_laws": [], "tool_patterns": ["apply-report"]}
+      ]
+    },
+    "aid-implementing": {
+      "naming_style": "step2-X-Y",
+      "sections": [
+        {"section_id": "step2-1", "title": "任务分解", "keywords": ["任务分解", "阅读设计文档", "识别代码组件", "DAO", "Service", "ViewModel"], "step_patterns": ["step2-1\\b", "step2-1-1", "step2-1-2", "step2-1-3"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step2-2", "title": "任务排序", "keywords": ["任务排序", "依赖关系", "开发顺序", "关键路径"], "step_patterns": ["step2-2\\b", "step2-2-1", "step2-2-2"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step2-3", "title": "产出 tasks.md", "keywords": ["tasks.md", "任务颗粒度", "验收标准"], "step_patterns": ["step2-3\\b"], "iron_laws": [], "tool_patterns": ["tasks.md"]}
+      ]
+    },
+    "aid-planning": {
+      "naming_style": "stepX / stepX.Y / stepX-Y",
+      "sections": [
+        {"section_id": "step1", "title": "用户意图理解", "keywords": ["用户意图", "变更意图", "requirement-add", "requirement-change", "bugfix", "arch-refactor", "platform-migration"], "step_patterns": ["step1\\b", "step1\\.1\\b", "step1-1\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step1.1", "title": "Git 分支检查", "keywords": ["git branch", "分支检查", "feat/", "git checkout -b"], "step_patterns": ["step1\\.1\\b"], "iron_laws": [], "tool_patterns": ["git branch", "git checkout"]},
+        {"section_id": "step2", "title": "需求理解", "keywords": ["需求理解", "proposal.md", "结构化解析"], "step_patterns": ["step2\\b"], "iron_laws": [], "tool_patterns": ["rq-parse"]},
+        {"section_id": "step3", "title": "需求澄清", "keywords": ["需求澄清", "blocker", "important", "模糊点"], "step_patterns": ["step3\\b"], "iron_laws": [], "tool_patterns": ["rq-clarify"]},
+        {"section_id": "step4", "title": "需求spec设计", "keywords": ["spec设计", "delta-spec.md", "FMEA", "可靠性"], "step_patterns": ["step4\\b"], "iron_laws": [], "tool_patterns": ["delta-spec.md"]},
+        {"section_id": "step5", "title": "代码仓理解", "keywords": ["代码仓", "info.md", "架构分析"], "step_patterns": ["step5\\b"], "iron_laws": [], "tool_patterns": ["rq-codebase", "info.md"]},
+        {"section_id": "step6", "title": "需求复杂度评估", "keywords": ["复杂度评估", "简单需求", "复杂需求", "跳过策略"], "step_patterns": ["step6\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step7", "title": "架构设计", "keywords": ["架构设计", "new-arch.md", "架构变更"], "step_patterns": ["step7\\b"], "iron_laws": [], "tool_patterns": ["new-arch.md"]},
+        {"section_id": "step8", "title": "组件设计", "keywords": ["组件设计", "delta-design.md", "D1", "D10"], "step_patterns": ["step8\\b"], "iron_laws": [], "tool_patterns": ["mod-design", "delta-design.md"]},
+        {"section_id": "step9", "title": "设计审视", "keywords": ["设计审视", "design-review.md", "完整性检查", "一致性检查"], "step_patterns": ["step9\\b", "step9-1", "step9-2", "step9-3", "step9-4"], "iron_laws": [], "tool_patterns": ["design-review.md"]}
+      ]
+    },
+    "rq-parse": {
+      "naming_style": "工作流子段(无数字)",
+      "sections": [
+        {"section_id": "intent_classification", "title": "意图分类", "keywords": ["意图分类", "新增功能", "功能变更", "缺陷修复", "优化或重构", "平台迁移"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "domain_mapping", "title": "领域映射", "keywords": ["领域映射", "UI/交互", "数据管理", "网络通信", "媒体播放", "导航路由", "状态管理", "系统能力", "国际化", "WebView"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "impact_layer", "title": "影响层次分析", "keywords": ["影响层次", "View", "ViewModel", "Model", "数据层", "基础设施", "MVVM"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "key_entities", "title": "关键实体提取", "keywords": ["关键实体", "数据实体", "页面实体", "接口实体", "事件实体"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "ambiguity_detection", "title": "模糊点检测", "keywords": ["模糊点", "blocker", "important", "nice-to-have", "范围模糊", "行为模糊", "交互模糊", "数据模糊", "约束模糊", "兼容模糊"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "complexity_evaluation", "title": "复杂度评估", "keywords": ["复杂度", "S", "M", "L", "XL", "工作量"], "step_patterns": [], "iron_laws": [], "tool_patterns": []}
+      ]
+    },
+    "rq-clarify": {
+      "naming_style": "提问模板(无数字)",
+      "sections": [
+        {"section_id": "question_strategy", "title": "澄清策略", "keywords": ["提问优先级", "blocker", "提问批次", "提问模板"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "scope_template", "title": "范围模糊-边界界定", "keywords": ["范围模糊", "边界界定法", "包含", "不包含"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "behavior_template", "title": "行为模糊-场景还原", "keywords": ["行为模糊", "场景还原法"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "interaction_template", "title": "交互模糊-原型描述", "keywords": ["交互模糊", "原型描述法"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "data_template", "title": "数据模糊-字段枚举", "keywords": ["数据模糊", "字段枚举法"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "constraint_template", "title": "约束模糊-量化锚定", "keywords": ["约束模糊", "量化锚定法"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "compatibility_template", "title": "兼容模糊-影响枚举", "keywords": ["兼容模糊", "影响枚举法"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "harmonyos_specific", "title": "HarmonyOS ArkTS 专项澄清", "keywords": ["HarmonyOS ArkTS", "数据存储方案", "Preferences", "RelationalStore", "后台行为", "权限"], "step_patterns": [], "iron_laws": [], "tool_patterns": []}
+      ]
+    },
+    "rq-codebase": {
+      "naming_style": "Step X",
+      "sections": [
+        {"section_id": "step1", "title": "需求类别分析", "keywords": ["需求类别", "新增功能", "功能变更", "缺陷修复", "架构优化", "平台迁移"], "step_patterns": ["Step 1\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step2", "title": "确定重点分析类别", "keywords": ["重点分析", "侧重点匹配"], "step_patterns": ["Step 2\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step3", "title": "架构分析", "keywords": ["架构分析", "模块结构", "依赖关系", "扩展机制"], "step_patterns": ["Step 3\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step4", "title": "接口/契约识别", "keywords": ["接口", "契约", "API", "协议"], "step_patterns": ["Step 4\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step5", "title": "公共组件或函数识别", "keywords": ["公共组件", "工具类", "复用"], "step_patterns": ["Step 5\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step6", "title": "影响范围分析", "keywords": ["影响范围", "调用链", "修复方案"], "step_patterns": ["Step 6\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step7", "title": "现有代码分析", "keywords": ["现有代码", "代码逻辑", "边界条件"], "step_patterns": ["Step 7\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step8", "title": "风险识别", "keywords": ["风险", "技术难点", "风险缓解"], "step_patterns": ["Step 8\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step9", "title": "测试验证策略", "keywords": ["测试策略", "测试场景", "回归范围"], "step_patterns": ["Step 9\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step10", "title": "监控运维支持", "keywords": ["监控", "运维", "配置项", "日志记录"], "step_patterns": ["Step 10\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step11", "title": "生成 info.md", "keywords": ["info.md", "代码仓理解"], "step_patterns": ["Step 11\\b"], "iron_laws": [], "tool_patterns": ["info.md"]}
+      ]
+    },
+    "mod-design": {
+      "naming_style": "Step X + D1..D10",
+      "sections": [
+        {"section_id": "step0", "title": "确定输出类型", "keywords": ["delta-design", "design.md", "增量变更", "全新项目"], "step_patterns": ["Step 0\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step1", "title": "理解需求与现有架构", "keywords": ["理解需求", "现有架构", "task-lessons"], "step_patterns": ["Step 1\\b", "Step 1\\.1", "Step 1\\.2"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step2", "title": "生成设计文档", "keywords": ["D1", "D10", "设计文档章节"], "step_patterns": ["Step 2\\b", "D1\\b", "D2\\b", "D3\\b", "D4\\b", "D5\\b", "D6\\b", "D7\\b", "D8\\b", "D9\\b", "D10\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "D1", "title": "D1: 概述", "keywords": ["D1 概述", "应用定位", "技术栈概览"], "step_patterns": ["D1\\b", "D1\\.\\d+"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "D2", "title": "D2: 功能清单", "keywords": ["D2 功能清单", "P0", "P1", "P2", "优先级"], "step_patterns": ["D2\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "D3", "title": "D3: 实现模型", "keywords": ["D3 实现模型", "上下文视图", "总体架构", "HAP", "HAR", "HSP", "PlantUML"], "step_patterns": ["D3\\b", "D3\\.\\d+"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "D4", "title": "D4: 接口设计", "keywords": ["D4 接口设计", "API", "Want", "IPC"], "step_patterns": ["D4\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "D5", "title": "D5: 数据模型", "keywords": ["D5 数据模型", "RDB", "ER 图", "Preferences"], "step_patterns": ["D5\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "D6", "title": "D6: UI 设计系统", "keywords": ["D6 UI", "色彩系统", "排版", "间距"], "step_patterns": ["D6\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "D7", "title": "D7: 页面清单与导航", "keywords": ["D7 页面", "导航图", "Deep Link"], "step_patterns": ["D7\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "D8", "title": "D8: 用户交互规格", "keywords": ["D8 用户交互", "手势", "弹窗", "剪贴板"], "step_patterns": ["D8\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "D9", "title": "D9: 平台集成", "keywords": ["D9 平台集成", "权限", "Kits", "Extension"], "step_patterns": ["D9\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "D10", "title": "D10: 偏好设置目录", "keywords": ["D10 偏好", "偏好设置"], "step_patterns": ["D10\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step3", "title": "自验证", "keywords": ["自验证", "一致性检查"], "step_patterns": ["Step 3\\b"], "iron_laws": [], "tool_patterns": []}
+      ]
+    },
+    "aid-init": {
+      "naming_style": "Step X / X-Y",
+      "sections": [
+        {"section_id": "step1", "title": "检查初始化状态", "keywords": ["初始化", "已初始化"], "step_patterns": ["Step 1\\b"], "iron_laws": [], "tool_patterns": ["specs/initialized.flag"]},
+        {"section_id": "step2", "title": "验证项目路径", "keywords": ["项目路径", "检测项目类型"], "step_patterns": ["Step 2\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step3", "title": "检查环境", "keywords": ["环境检查", "构建工具版本", "TEST_ROOT"], "step_patterns": ["Step 3\\b", "Step 3-1", "Step 3-2", "Step 3-3", "Step 3-4"], "iron_laws": [], "tool_patterns": ["hvigorw --version", "node --version", "gradlew --version"]},
+        {"section_id": "step4", "title": "创建目录结构", "keywords": ["目录结构", "specs/"], "step_patterns": ["Step 4\\b"], "iron_laws": [], "tool_patterns": ["mkdir"]},
+        {"section_id": "step5", "title": "用户确认目录配置", "keywords": ["用户确认", "目录配置"], "step_patterns": ["Step 5\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step6", "title": "Git 状态检查", "keywords": ["Git 状态", "git status"], "step_patterns": ["Step 6\\b"], "iron_laws": [], "tool_patterns": ["git status"]},
+        {"section_id": "step7", "title": "会话恢复检查", "keywords": ["会话恢复"], "step_patterns": ["Step 7\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step8", "title": "写入初始化标记", "keywords": ["initialized.flag", "README.md"], "step_patterns": ["Step 8\\b"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step9", "title": "初始化完成", "keywords": ["初始化完成"], "step_patterns": ["Step 9\\b"], "iron_laws": [], "tool_patterns": []}
+      ]
+    },
+    "aid-archiving": {
+      "naming_style": "Step X.Y",
+      "sections": [
+        {"section_id": "step1", "title": "查找待归档变更", "keywords": ["查找待归档", "变更目录"], "step_patterns": ["Step 1\\b", "1\\.1", "1\\.2"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step2", "title": "检查归档条件", "keywords": ["归档条件", "任务完成"], "step_patterns": ["Step 2\\b", "2\\.1", "2\\.2"], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "step3", "title": "执行归档操作", "keywords": ["归档", "xcopy", "cp -r", "复制变更"], "step_patterns": ["Step 3\\b", "3\\.1", "3\\.2", "3\\.3", "3\\.4", "3\\.5"], "iron_laws": [], "tool_patterns": ["xcopy", "cp -r", "Remove-Item", "rm -rf"]},
+        {"section_id": "step4", "title": "更新索引和完成", "keywords": ["更新索引", "归档报告"], "step_patterns": ["Step 4\\b", "4\\.1", "4\\.2"], "iron_laws": [], "tool_patterns": ["archive-report"]}
+      ]
+    },
+    "tdd-enforcer": {
+      "naming_style": "RED/GREEN/REFACTOR(颜色)",
+      "sections": [
+        {"section_id": "RED", "title": "RED - 写失败测试", "keywords": ["RED", "写失败测试", "写 test", "验证失败", "test fail", "Iron Law", "iron law", "test first"], "step_patterns": [], "iron_laws": ["铁律", "Iron Law"], "tool_patterns": ["Write ", "node mock", "mock_test"]},
+        {"section_id": "GREEN", "title": "GREEN - 最小代码通过", "keywords": ["GREEN", "最小代码", "verify pass", "test pass", "implement"], "step_patterns": [], "iron_laws": [], "tool_patterns": ["Edit ", "Write .ets"]},
+        {"section_id": "REFACTOR", "title": "REFACTOR - 重构", "keywords": ["REFACTOR", "重构", "refactor", "保持测试绿色"], "step_patterns": [], "iron_laws": [], "tool_patterns": []}
+      ]
+    },
+    "harmonyos-ui-test": {
+      "naming_style": "阶段 X",
+      "sections": [
+        {"section_id": "stage0", "title": "用例分析与规划", "keywords": ["用例分析", "test case analysis", "plan", "stage 0", "阶段零"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "stage1", "title": "环境准备", "keywords": ["环境准备", "env prepare", "hdc list targets", "hdc tconn", "device"], "step_patterns": [], "iron_laws": [], "tool_patterns": ["hdc list targets", "hdc tconn", "hdc version"]},
+        {"section_id": "stage2", "title": "逐行执行测试", "keywords": ["逐行执行", "execute test", "stage 2", "hdc shell", "uitest", "dump_main", "screenCap"], "step_patterns": [], "iron_laws": [], "tool_patterns": ["hdc shell", "hdc file recv", "hdc snapshot", "hdc screenshot", "screenCap", "uitest"]},
+        {"section_id": "stage3", "title": "截图处理", "keywords": ["截图处理", "screenshot", "stage 3"], "step_patterns": [], "iron_laws": [], "tool_patterns": [".png", "hdc file recv"]},
+        {"section_id": "stage4", "title": "持续保存", "keywords": ["持续保存", "stage 4", "save"], "step_patterns": [], "iron_laws": [], "tool_patterns": []},
+        {"section_id": "stage5", "title": "生成测试报告", "keywords": ["测试报告", "test report", "03_测试报告.md", "stage 5"], "step_patterns": [], "iron_laws": [], "tool_patterns": ["03_测试报告"]}
+      ]
+    }
+  }
+}

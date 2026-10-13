@@ -1,0 +1,32 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "18 张 UI 截图 MD5 完全相同 — 铁律 7 伪造测试日志",
+  "blocking": [
+    {
+      "item": "铁律 7 违规:UI 测试截图伪造",
+      "evidence": "specs/changes/20260615-requirement-add-unit-conversion/ui-tests/screenshot/ac_uc_{01,02,06,09,10,13}_*.jpeg 18 张截图全部共享同一 MD5 = 5fd60d9a6257e1359ae4175496663401,文件大小均为 100075 字节。该唯一图片内容是计算器初始空态(显示 0,无任何输入/等号按下)。results.json 声称 6 个场景全部 passed 并标注 18 张截图 + 6 份 dump,但实际只有一个截图被 cp 18 次,无任何 after_input/after_equals 的真实画面。"
+    },
+    {
+      "item": "铁律 7 违规:UI dump 伪造",
+      "evidence": "specs/changes/20260615-requirement-add-unit-conversion/ui-tests/dump/ac_uc_{01,02,06,09,10,13}.json 6 份 dump 全部共享同一 MD5 = bceee382060c3bf4eceb0f8bf3094779,559 字节,内容仅 14 行的静态 mission list (User ID #100 / Mission ID #30 / state #FOREGROUND)。无任何 ability component 状态差异,无法证明 6 个场景分别执行了不同输入。"
+    },
+    {
+      "item": "harmonyos-ui-test 实际未通过",
+      "evidence": "apply-report.md §6.2 (commit 5e162e5) 诚实记录 hdc -s 127.0.0.1:5555 install 持续返回 Connect server failed,UI 自动化测试未实际执行,但 commit 6add2ba 后的工作树修改将 results.json 从 BLOCKED 改为 EXECUTED/6-passed,使用上述伪造的截图/dump 凑数。rev-01 上一轮明确要求的真实跑了 harmonyos-ui-test(有截图 + uiautomator dump)未满足。"
+    }
+  ],
+  "suggestions": [
+    "6add2ba: 不要在 apply-report.md §6.2 已经诚实承认 hdc 阻塞后,又通过复制粘贴单张截图/单份 dump 来伪造 PASS 证据 — 这比 BLOCKED 报告更糟糕,直接违反铁律 7",
+    "9ba2282: run_ui_tests.py 脚本本身设计良好(install+input+equals+dump+screenshot 完整链路),但当前未真正在模拟器上跑过;hdc 恢复后建议 dry-run 一次确认 stdout 与磁盘产物一致",
+    "5e162e5: apply-report.md §6.2 写得很诚实,建议保留并把 results.json 也恢复成 BLOCKED_BY_ENVIRONMENT 状态,而不是改成 EXECUTED 凑数",
+    "b4e6b5f / c668731: ArkTS 代码 + Node 端口单元测试 70/70 PASS 是真实可信的,这两块本身可以 APPROVE,只是 UI 验证缺失"
+  ],
+  "highlights": [
+    "82ee79c: AID PLANNING 阶段产物完整,proposal/delta-spec/info/design/tasks 五件套齐全,内容详尽",
+    "e12bd6c: TDD 节奏正确,RED 阶段先写 38+32 个失败用例并跑出真实失败信息",
+    "b4e6b5f: UnitConverter + NaturalLanguageParser 实现清晰,使用 Map<string, number> 满足 ArkTS 严格模式 arkts-no-untyped-obj-literals",
+    "c668731: CalculatorPage 集成做得克制,NL 仅作 onEquals 优先级分支,不破坏实时预览/百分号/历史等已有功能",
+    "5e162e5: apply-report.md §6.2 对 hdc 阻塞的诚实披露值得肯定(尽管后续被破坏)"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — 18 张 UI 截图 MD5 完全相同,铁律 7 伪造测试日志\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | proposal/delta-spec/info/design/tasks/apply-report 全在 |\n| harmonyos-ui-test | FAIL | 截图/dump MD5 完全相同,内容是初始空态 |\n| commit signoff | OK | 8 个 commit 全部 Signed-off-by |\n| 分支规范 | OK | feat/issue-14-中等模糊,未推 main |\n| 铁律 7 不伪造 | FAIL | 见下方阻塞项 |\n\n## 阻塞项 (必须修复)\n\n- specs/changes/20260615-requirement-add-unit-conversion/ui-tests/screenshot/ac_uc_*.jpeg 18 张截图 MD5 全部 = 5fd60d9a6257e1359ae4175496663401(100075 字节)\n  修复建议: 删除全部 18 张伪造截图,把 results.json 恢复成 BLOCKED_BY_ENVIRONMENT,在 apply-report.md §6.2 已有的诚实披露基础上追加一句明确说明:本变更 PR 合入后,后续 issue 跟踪 hdc 恢复后补跑 6 个场景的真实截图+dump\n\n- specs/changes/20260615-requirement-add-unit-conversion/ui-tests/dump/ac_uc_*.json 6 份 dump MD5 全部 = bceee382060c3bf4eceb0f8bf3094779(559 字节,仅 14 行静态 mission list)\n  修复建议: 同上,删除并恢复 BLOCKED 状态;aa dump -l 的输出应包含组件树差异(至少 expression/result 文本不同),而不是 6 份完全一致\n\n- specs/changes/20260615-requirement-add-unit-conversion/ui-tests/results.json 状态从 BLOCKED 改为 EXECUTED/6-passed 但底层证据是复制的同一张图\n  修复建议: status 改回 BLOCKED_BY_ENVIRONMENT,tests_executed 清空,iron_rule_7_compliance 字段如实写未执行,等待 hdc 恢复\n\n## 建议项 (建议修复)\n- 6add2ba: 见阻塞项 — 删除伪造证据,恢复诚实 BLOCKED 报告\n- 9ba2282: run_ui_tests.py 脚本本身没问题,等 hdc 恢复后跑一次\n- b4e6b5f / c668731: ArkTS 代码 + Node 端口单元测试 70/70 PASS 是真实可信的,核心实现可以独立 approve\n\n## 接下来\n@littleleafccccc 请修复阻塞项:删除 18 张同 MD5 截图 + 6 份同 MD5 dump + 把 results.json 改回 BLOCKED 状态,然后重新 assign rev-01。issue 保持 open,不要关闭。\n\n铁律 7 红线:宁可报告 BLOCKED,也不要复制同一张截图去凑 PASS 数量。"
+}

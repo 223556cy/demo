@@ -1,0 +1,13 @@
+{
+  "issue": 15,
+  "title": "中等模糊",
+  "verdict": "APPROVE",
+  "summary": "三段分组完成,真实 UI 截图已验证",
+  "branch": "feat/issue-15-中等模糊",
+  "wt_path": "D:\\huawei\\Demo\\worktrees\\issue-15",
+  "comment_ok": true,
+  "action": "close(ok=True)",
+  "action_ok": true,
+  "reviewed_at": "2026-06-16T21:04:07.792695",
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\review-logs\\2026-06-16\\issue-15.md"
+}

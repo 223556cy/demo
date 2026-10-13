@@ -1,0 +1,29 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "主 commit 缺 signoff + 未跑 UI 自动化",
+  "blocking": [
+    {
+      "item": "commit signoff 缺失",
+      "evidence": "eec5ecc feat(issue-25): extend unit conversion with area/time/speed 末尾无 Signed-off-by: 行 (git log -1 --format='%B' eec5ecc 仅含 Co-Authored-By); 仅有 a4f8f9e 含 Signed-off-by"
+    },
+    {
+      "item": "harmonyos-ui-test 未真实跑测",
+      "evidence": "apply-report.md §3.2 明确降级为 Node 端口测试, §3.1 列出 hdc list targets 仅显示 COM3/COM4 UART 设备, 无 127.0.0.1:5555 TCP/IP; specs/changes/20260617-requirement-add-中等模糊/ 下无 ui-tests/ 目录, 无截图, 无 uiautomator dump; 同样能力下 #18 archive 含 3 张 PNG + 2 份 dump, #25 缺位"
+    },
+    {
+      "item": "AID IMPLEMENTING 阶段未走完",
+      "evidence": "todo.md '### IMPLEMENTING' 行: '调用 aid-implementing → tasks.md' 复选框未勾选; 虽 tasks.md 存在 (221 行), 但 IMPLEMENTING 阶段产物未由 aid-implementing skill 产出流程生成"
+    }
+  ],
+  "suggestions": [
+    "eec5ecc: 端口测试 71/71 PASS 是强证据, 但 '零回归' 描述仅 spot check #18 4 大类各 1 条; 建议 emulator 恢复后全量跑 #18 hypium 测试 (10+8+6+5+5 用例) 拿到真回归报告",
+    "eec5ecc: capabilities.json 声明 emulator_status: 'running' 与 hdc list targets 实测不符, 这是 dispatcher 维护问题, 建议同步给 dev-01 修 capabilities.json 或修环境",
+    "a4f8f9e: commit message 自报 'dev-01 dispatcher 没在 push 前做 BUILD 校验' + 'rev-01 review 加硬门禁' 是好建议, 但未在本次 MR 加 pre-push hook 实现; 建议开 follow-up issue 跟踪"
+  ],
+  "highlights": [
+    "a4f8f9e: 解决了 main 分支 #13/#16/#17 三个 issue 累计 merge 后 CalculatorPage.ets 的 8 个 git merge conflict 标记, 让 hvigorw assembleHap 恢复 BUILD SUCCESSFUL, 并诚实记录根因 (dev-01 dispatcher 缺 pre-push BUILD 校验) + 给出改进建议",
+    "eec5ecc: apply-report.md §6 '已知非阻塞限制' 主动披露 capabilities.json emulator_status:running 声明与 hdc 实测不符, 没有伪造测试日志, 符合铁律 7",
+    "eec5ecc: delta-design.md (537 行) + delta-spec.md (298 行) + tasks.md (221 行) AID 制品完整, 沿用 #18 的 Map 工厂模式扩展 3 大类 (area/time/speed) + 48 个中英文别名, 不破坏 #18 hypium 测试代码兼容性"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — 主 commit 缺 signoff + 未跑 UI 自动化\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | FAIL | IMPLEMENTING 阶段未走完 (todo.md 复选框未勾), APPLYING 制品齐全但 tasks.md 非 aid-implementing 产出 |\n| harmonyos-ui-test | FAIL | 模拟器实际未连接, 降级为端口测试, 无截图无 uiautomator dump (#18 归档有 3 PNG + 2 dump) |\n| commit signoff | FAIL | eec5ecc 缺 Signed-off-by (仅 Co-Authored-By), 仅 a4f8f9e 有 signoff |\n| 分支规范 | OK | feat/issue-25-中等模糊 已 push 到 origin, 未直接推 main |\n| 铁律 7 不伪造 | OK | apply-report.md §6 诚实披露 capabilities.json 与实测不符, 未伪造测试日志 |\n\n## 阻塞项 (必须修复)\n- `eec5ecc` — 主 commit 末尾缺 `Signed-off-by: littleleafccccc <littleleafccccc@users.noreply.github.com>`, 仅含 Co-Authored-By\n  修复建议: `git commit --amend --signoff` (无其他改动) 或 `git rebase -i HEAD~1` 加 signoff, 然后 `git push --force-with-lease`\n- `specs/changes/20260617-requirement-add-中等模糊/` — 无 `ui-tests/` 目录, 无截图, 无 uiautomator dump\n  修复建议: 修复模拟器连接 (hdc connect 127.0.0.1:5555) 后执行 apply-report.md §3.3 补跑脚本, 至少产出 1 张初始页 + 1 张换算结果页 PNG + 1 份 uiautomator dump; 或在 capabilities.json 把 emulator_status 改为 'down' + 显式降级路径, 走端口测试需经 dev-01/rev-01 协商同意\n- `specs/changes/20260617-requirement-add-中等模糊/todo.md` — IMPLEMENTING 阶段 '调用 aid-implementing → tasks.md' 复选框未勾选\n  修复建议: 显式走一次 aid-implementing skill, 把 tasks.md 重新生成 (用 IMPLEMENTING 阶段 skill 模板), 或在 todo.md 补一段说明为什么跳过 (如 '本 change 是纯 Map 扩展, tasks.md 由 dev-01 手写代替')\n\n## 建议项 (建议修复)\n- eec5ecc: 端口测试 71/71 PASS 是强证据, 但 '零回归' 描述仅 spot check #18 4 大类各 1 条; 建议 emulator 恢复后全量跑 #18 hypium 测试 (10+8+6+5+5 用例) 拿到真回归报告\n- eec5ecc: capabilities.json 声明 emulator_status: 'running' 与 hdc list targets 实测不符, 这是 dispatcher 维护问题, 建议同步给 dev-01 修 capabilities.json 或修环境\n- a4f8f9e: commit message 自报 'dev-01 dispatcher 没在 push 前做 BUILD 校验' + 'rev-01 review 加硬门禁' 是好建议, 但未在本次 MR 加 pre-push hook 实现; 建议开 follow-up issue 跟踪\n\n## 亮点\n- a4f8f9e 解决了 main 分支 #13/#16/#17 三个 issue 累计 merge 后 CalculatorPage.ets 的 8 个 git merge conflict 标记, 让 hvigorw assembleHap 恢复 BUILD SUCCESSFUL, 并诚实记录根因 + 给出改进建议\n- eec5ecc apply-report.md §6 主动披露 capabilities.json 声明与 hdc 实测不符, 没有伪造测试日志, 符合铁律 7\n- eec5ecc delta-design.md (537 行) + delta-spec.md (298 行) + tasks.md (221 行) AID 制品完整, 沿用 #18 Map 工厂模式扩展 3 大类 (area/time/speed) + 48 个中英文别名, 不破坏 #18 hypium 测试代码兼容性\n\n## 接下来\n@littleleafccccc 请修复阻塞项后再 assign rev-01.\nissue 保持 open, 不要关闭."
+}

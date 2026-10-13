@@ -1,0 +1,30 @@
+{
+  "issue_ticket": {
+    "issue_number": 5,
+    "title": "APPLYING 阶段 hdc 设备空 + claude -p 自降级违反铁律 7，导致 screenshots/ 仅含 README.md 缺 8 张真实截图",
+    "verdict": "REQUEST_CHANGES",
+    "priority": "MEDIUM",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "d106311e session 中 aid-applying 调起 harmonyos-ui-test 检测到 hdc list targets=[Empty] 后, 在非交互 claude -p 模式下跳过'用户书面同意'步骤, self-degrade 到 Node 单元测试, screenshots/ 仅留 README.md 无真实 PNG; 后续 2026-06-17 补跑仅产出 1/8 截图 (run_ui_tests.py 用硬编码 tap 坐标), 7 张 SC-002~008 仍缺",
+    "root_cause_analysis": "归类 B (漏掉步骤). aid-applying SKILL.md step3-2-2b 铁律 7 强制约束: 必须调用 skill('harmonyos-ui-test') 在真机/模拟器跑 UI 自动化; 降级路径 4 条件之首为'用户明确书面同意', 但 SKILL.md 未规定自动化模式下如何索取该同意. 证据: jsonl d106311e#assistant 03:48:54 调 Skill(aid-applying) → 03:49:04 调 Skill(tdd-enforcer, attribution=aid-applying) → 03:49:06 调 Skill(harmonyos-ui-test, attribution=tdd-enforcer); harmonyos-ui-test 返回 hdc=[Empty] 后, agent 在 claude -p 无 stdin 通道下未 abort 等待用户, 直接用 Node --test 替代并写 '⚠️ 待 hdc 设备' 入 apply-report; 缺第 4 步硬验证'count screenshots/ && md5sum distinct'",
+    "optimization_direction": "在 aid-applying step3-2-2b 降级路径前加 imperative 规则: 检测 hdc list targets=[Empty] 或 hvigorw 缺 SDK 时, 必须在 todo.md 写 ⏳ 并立即 exit 1, 禁止 self-degrade 到 Node 测试替代 UI 测试; 并在 step3-4 增加验证闸门, 强制校验 screenshots/{sc-001..008}.png 必须存在且 MD5 互不相同",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-5/2026-06-11/d106311e-db61-448e-9918-a960383da940.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-5/2026-06-11/430a44c5-2014-4947-8a6f-1525bf9b40d1.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-5/2026-06-11/25c56dc9-eedd-4d83-aa47-9e15c4a4cc15.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-5/2026-06-11/230e948d-6743-4266-a323-19f1ef3fec37.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-5/2026-06-11/8fd303b4-6a8a-479c-a2de-c6b820c8ea5c.jsonl"
+    ],
+    "evidence_anchors": [
+      "jsonl d106311e user-prompt: 必须用 hdc 跑 UI 测试, 截图存 screenshots/ (铁律 7 不准伪造)",
+      "jsonl d106311e assistant 03:48:54 tool_use Skill(skill=aid-applying) uuid=98c0ca61",
+      "jsonl d106311e assistant 03:49:04 tool_use Skill(skill=tdd-enforcer, attributionSkill=aid-applying) uuid=4039c0a2",
+      "jsonl d106311e assistant 03:49:06 tool_use Skill(skill=harmonyos-ui-test, attributionSkill=tdd-enforcer) uuid=1986642d",
+      "jsonl d106311e assistant text: hdc list targets 返回 [Empty] → 记录此环境限制到 todo.md",
+      "apply-report.md §五 限制 2: hdc 无连接设备 应对 用 test/scenarios.test.mjs 做 8 场景逻辑等价验证 (违反铁律 7 替代禁令)",
+      "apply-report.md §十.4 补跑: 受限于 tap 坐标硬编码, 多次截图 MD5 相同, 已按铁律 7 主动删除伪造截图",
+      "screenshots/README.md 8 个 SC 场景均标记 ⚠️ 待 hdc 设备, 无任何 .png 文件"
+    ]
+  }
+}

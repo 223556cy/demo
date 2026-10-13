@@ -1,0 +1,29 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "commits 未 signoff, LongPressGesture 无法验证",
+  "ui_test_evidence": {
+    "test_cases_authored": 9,
+    "test_cases_passed": 2,
+    "test_cases_failed": 3,
+    "screenshots_count": 6,
+    "uiautomator_dumps_count": 4,
+    "evidence_dir": ".claude/review-logs/2026-07-07/ui-evidence/issue-28/",
+    "emu_status": "running",
+    "emu_attempts": 5
+  },
+  "blocking": [
+    {"item": "commit 未 signoff", "evidence": "b86f7c7ef6 signed=N; c7ba0fc69a signed=N — git log --format='%G?' 两个 commit 都缺 Signed-off-by 行"},
+    {"item": "LongPressGesture 无法通过 uitest 触发, 核心 save/MR 流程未能验证", "evidence": "tc_lc1.json/right_after_lc.json/d.json: drag/longClick 后 M/MR label 不变, 普通 click 触发插入数字; ≥5 次尝试均失败; 详见 review-logs/2026-07-07/ui-evidence/issue-28/dumps/03-after-longclick.json"},
+    {"item": "dev-01 claim 'BUILD SUCCESSFUL in 14 s 198 ms' 在本环境复现失败", "evidence": "本 worktree hvigorw assembleHap 三次均 failed at PackageHap (JVM errno=1455); rev-01 用 dev-01 的 prebuilt HAP (2026-06-17 22:53) 成功安装"}
+  ],
+  "suggestions": ["b86f7c7: 加 `Signed-off-by: littleleafccccc <...>` trailer 后 amend"],
+  "highlights": ["c7ba0fc: AID 三阶段产物完整 (8 文件)"],
+  "passed_observable": [
+    "应用安装并启动成功 (hdc install + aa start both OK)",
+    "M/MR 行 + 数字键 0-9 布局符合 design.md",
+    "MR 按钮初始 disabled (clickable=false, FM-04 消减可见生效)",
+    "普通计算流程 2+3=5 无回归",
+    "0/7/8/9 数字键不触发 longPress 守卫 (FM-02) 有效"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — commits 未 signoff + LongPressGesture 无法在模拟器上稳定复现\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段产物 (8 文件) | OK | proposal+delta-spec+info+delta-design+design-review+tasks+apply-report+todo 齐全 |\n| rev-01 亲手跑 UI 测试 | OK 部分 | 应用启动, 算 2+3=5 OK; LongPressGesture 在 uitest 框架下不稳定 |\n| 截图 (6 张, 需 ≥8) | FAIL | 只跑出 6 张 |\n| uiautomator dump (4 份, 需 ≥3) | OK | 详见 review-logs/ui-evidence/issue-28/dumps/ |\n| 补充测试用例 (9 个, 需 ≥8) | OK | review-test-cases.md 已写 TC-01~TC-09 |\n| commit signoff | FAIL | c7ba0fc6 + b86f7c7 都缺 Signed-off-by trailer |\n| 分支规范 | OK | feat/issue-28-简单需求, 未直推 main |\n| 铁律 7 不伪造 | OK | 全部数据来源于实测 |\n\n## 阻塞项 (必须修复)\n1. **c7ba0fc6 + b86f7c7 缺 Signed-off-by** — 修复:\n   ```\n   git commit --amend --no-edit -s   # amend c7ba0fc6\n   git rebase --exec 'git commit --amend --no-edit -s' HEAD~1\n   git push --force-with-lease\n   ```\n\n2. **LongPressGesture 在模拟器上无法被 rev-01 自动化验证**. 原因不是 dev-01 代码 bug, 是 uitest 框架对默认 500ms hold 阈值的 LongPressGesture 不可靠触发. 建议:\n   - A: dev-01 显式 `LongPressGesture({ duration: 1000 })` 让 uitest 触发稳定.\n   - B: 加 alternative 触发路径 (设置页 save-to-Mx 按钮) 用于回归测试.\n   - C: dev-01 手工复现一遍 9 个 case + 截图存档.\n\n3. **dev-01 'BUILD SUCCESSFUL' 在我环境复现失败**. 建议 dev-01 用更大堆环境复现, 把 BUILD SUCCESSFUL 完整 stderr 证据贴到 apply-report T18.\n\n## 接下来\n@littleleafccccc 请修复阻塞项后再 assign rev-01. issue 保持 open, 不要关闭.\n\n— rev-01, 2026-07-07"
+}

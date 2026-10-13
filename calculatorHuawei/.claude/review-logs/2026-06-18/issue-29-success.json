@@ -1,0 +1,13 @@
+{
+  "issue": 29,
+  "title": "中等模糊",
+  "verdict": "REQUEST_CHANGES",
+  "summary": "feat commit 未 sign-off 且缺 UI 测试证据",
+  "branch": "feat/issue-29-中等模糊",
+  "wt_path": "D:\\huawei\\Demo\\worktrees\\issue-29",
+  "comment_ok": true,
+  "action": "assign-littleleafccccc(ok=True)",
+  "action_ok": true,
+  "reviewed_at": "2026-06-18T12:13:40.498706",
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\review-logs\\2026-06-18\\issue-29.md"
+}

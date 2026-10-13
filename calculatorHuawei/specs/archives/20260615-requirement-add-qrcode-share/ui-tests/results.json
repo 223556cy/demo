@@ -1,0 +1,65 @@
+[
+  {
+    "ac_id": "AC-01",
+    "name": "输入 1+2= 后分享按钮可见",
+    "status": "BLOCKED",
+    "actual": "",
+    "expected": "",
+    "note": "baseline",
+    "time": "17:37:30"
+  },
+  {
+    "ac_id": "AC-01",
+    "name": "输入 1+2= 后分享按钮可见",
+    "status": "PASS",
+    "actual": "分享 found",
+    "expected": "",
+    "note": "",
+    "time": "17:37:40"
+  },
+  {
+    "ac_id": "AC-02",
+    "name": "空表达式时分享按钮存在（disabled）",
+    "status": "PASS",
+    "actual": "分享 found",
+    "expected": "",
+    "note": "",
+    "time": "17:37:44"
+  },
+  {
+    "ac_id": "AC-03",
+    "name": "1÷0 错误状态下分享按钮 disabled",
+    "status": "PASS",
+    "actual": "share_found=True, error_visible=True",
+    "expected": "",
+    "note": "",
+    "time": "17:37:53"
+  },
+  {
+    "ac_id": "AC-04",
+    "name": "点击分享按钮弹出模态层",
+    "status": "PASS",
+    "actual": "title_found=True, expr_found=True",
+    "expected": "",
+    "note": "expecting 标题 '二维码分享'",
+    "time": "17:38:07"
+  },
+  {
+    "ac_id": "AC-05",
+    "name": "新算式 SharePanel 含 QRCode 组件 + 算式文本",
+    "status": "PASS",
+    "actual": "qrcodes=1, formula_found=True",
+    "expected": "",
+    "note": "",
+    "time": "17:38:22"
+  },
+  {
+    "ac_id": "AC-06",
+    "name": "✕ 关闭 SharePanel",
+    "status": "PASS",
+    "actual": "panel_after_close=False",
+    "expected": "",
+    "note": "",
+    "time": "17:38:26"
+  }
+]

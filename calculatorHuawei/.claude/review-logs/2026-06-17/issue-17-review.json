@@ -1,0 +1,18 @@
+{
+  "verdict": "APPROVE",
+  "summary": "粘贴即计算：AID 三阶段齐全，UI 测试真实跑通",
+  "blocking": [],
+  "suggestions": [
+    "55ecfb5e: feat 与测试文件 (PasteAndCalculate.test.ets/.mjs) 同 commit, 建议按 TDD 节奏拆分为 test(red) → feat(green) 两个 commit",
+    "55ecfb5e: apply-report.md 在 feat commit 中而非单独 apply commit, 建议独立 commit 方便追溯 AID 阶段产物",
+    "f9932c1: capabilities.json 改动混在 fix(paste) 中, 严格说应单独 chore 提交 (影响范围与功能无关)"
+  ],
+  "highlights": [
+    "f9932c1: re-dispatch v2 认真修复了 v1 的 3 个阻塞项 — async pasteboard.getData、design.md 补全、UI 自动化 v2 改用 uitest uiInput (解决 v1 false negative)",
+    "f9932c1: 诚实披露 v2 已知限制 (HarmonyOS 模拟器 shell 沙箱无法 set 剪贴板), 端到端由 Node mock 兜底, 通过铁律 7",
+    "55ecfb5e: FMEA-2/4/5/6 风险缓解覆盖完整 (try/catch 静默 / hash 去重 / 200 截断 / trim 空白), 12 个 Node mock 用例全部对应",
+    "55ecfb5e: 复用现有 computePreview/onEquals/promptAction, 零侵入既有逻辑, 兼容既有 calc 引擎",
+    "55ecfb5e: design.md 362 行包含组件图/状态机迁移表/数据契约/FMEA/7 条设计决策记录, 文档完整度 ★5"
+  ],
+  "comment": "[rev-01] APPROVED — 粘贴即计算: AID 三阶段齐全, UI 自动化真实跑通\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | proposal/delta-spec/info/design/design-review/tasks/apply-report 全 7 件齐 (212+226+213+362+46+170+212=1441 行) |\n| harmonyos-ui-test | OK | 11 张真实 PNG 截图 (MD5 全部唯一, 187-193KB), uidump.json 49.4KB 真实 dump, results.json 5/5 PASS |\n| commit signoff | OK | 3/3 commits 均含 Signed-off-by: littleleafccccc (DCO) |\n| 分支规范 | OK | feat/issue-17-中等模糊, 已推 origin, 未动 main |\n| 铁律 7 不伪造 | OK | 截图 MD5 唯一 + apply-report 诚实披露模拟器沙箱限制 + Node mock 12/12 真实记录 |\n\n## 主要亮点\n- **f9932c1**: re-dispatch v2 修复了 v1 的 3 个阻塞项 — async pasteboard.getData() (HarmonyOS 4.0+ 异步 API 编译错)、补 design.md (362 行, 组件图/状态机/数据契约/FMEA/D1-D7 决策)、UI 自动化 v2 (改用 uitest uiInput + dumpLayout + screenCap, 解决 v1 用 hdc input text 实际是模拟按键的 false negative)\n- **f9932c1**: 诚实披露 v2 已知限制 (HarmonyOS 模拟器 shell 沙箱无法 set 剪贴板, 端到端由 12 个 Node mock 测试覆盖 FMEA-1/2/4/5/6 全部路径)\n- **55ecfb5e**: FMEA-2/4/5/6 缓解全覆盖 (try/catch 静默 / hash 去重 / 200 截断 / trim 空白)\n- **55ecfb5e**: 零侵入 — 复用 computePreview/onEquals/promptAction, 不修改任何既有逻辑\n\n## 决定\n已 close. 感谢 @littleleafccccc 的贡献.\n\n(后续建议见 suggestions: TDD 节奏拆分 commit / apply-report 独立 commit / capabilities.json 单独 chore 提交)"
+}

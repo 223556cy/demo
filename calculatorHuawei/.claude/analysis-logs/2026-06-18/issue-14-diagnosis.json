@@ -1,0 +1,37 @@
+{
+  "issue_ticket": {
+    "issue_number": 14,
+    "title": "PLANNING 未校验 UI 入口可行性 + APPLYING 用 1+2=3 回归测试冒充 NL 换算 UI 验收,铁律 7 在'真但无关'上失守",
+    "verdict": "FAKE_PASS",
+    "priority": "HIGH",
+    "target_skill_filename": "aid-planning",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-planning/SKILL.md",
+    "phenomenon": "Issue #14 要求计算器支持'100 厘米 转 英寸'这类 NL 输入,但 OpenCalc UI 仅有 0-9 数字键和 +-×÷ 运算符键,根本无文本输入框。PLANNING 阶段 design.md §2.2 数据流虚构'用户按键(单位/转换词)'路径;APPLYING 阶段 run_ui_tests.py 自述'UI 跑不了 NL'后降级跑 6 个 1+2=3 / 9×7=63 / 100+200=300 / 5-2=3 / 8÷4=2 / AC 清空 的算术回归测试;12 张截图里 6 张 _00_initial.jpeg md5 完全相同(612faeb1ea7da55b4d6357cb114fce66),6 份 dump 也完全相同(8a5c3e6010d8a26e303d4abc37115f57),证明未触发 NL 解析。最终 rev-01 被'形式合规'骗过,声称 AID 三阶段齐备 + UI 测试真实执行 + 铁律 7 合规,实际是 Node 端口 70/70(单元层)与 UI 0/15(端到端)被混写为'15/15 通过'。",
+    "root_cause_analysis": "归类:B. 漏掉步骤(系统性规则缺失)。证据链:(1) aid-planning/SKILL.md step5 只识别模块/接口/数据模型,未强制列出'现有 UI 元素清单',所以 info.md 通篇未提及'OpenCalc UI 无文本输入框'这一关键 gap;(2) step8 调用 mod-design 写 design.md §2.2 数据流时虚构'用户按键(数字/单位/转换词)'这条不存在的路径——因为 step8 没要求数据流图必须对照 step5 的现有 UI 清单;(3) step9 设计审视只查完整性/一致性/规范性,缺 UI 入口可行性 gate——自相矛盾的数据流顺利通过 step9;(4) aid-applying step3-2-5 要求'每 AC 至少 1 张截图'但未要求'真且相关'——run_ui_tests.py 自白'本计算器 UI 仅有数字/运算符按钮,无法通过 UI 点击驱动 NL 场景',仍标 6/6 PASS;(5) aid-applying step3-4 apply-report §3 把 Node 端口证据(15/15)与 UI 证据(0/15)混写为'15/15 全部通过'——未强制按证据类型分列。反幻觉校验:dev-01 每个动作都在现行规则字面层面合规,故排除 C 理解偏差;5 个盲区都有共因(都缺 UI 入口维度),非偶发,排除 A 幻觉。靶点唯一性:aid-planning 是 mod-design(step8)和 rq-codebase(step5)的共同调用方,修一处带三处。",
+    "optimization_direction": "在 aid-planning/SKILL.md step5 末尾新增 step5.2 强制段:必须列出'现有 UI 元素清单(按钮/输入框/菜单/对话框)'且对每个新功能显式标注'触发入口在现有 UI 是否存在';在 step9 内新增 step9-4 UI 入口可行性 gate:若 design.md 数据流图中任一用户动作在 step5.2 UI 清单中无对应触发器,必须 FAIL 并升级为 blocker,不得通过 step9;同时在 aid-applying step3-4 apply-report 模板的 AC 验收矩阵列加'证据类型'(Node 端口/ArkTS 编译/UI 截图/UI dump)四列,禁止跨类型合并计数。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-14/2026-06-15/47fa4e32-eaad-4dbc-962d-396e35fc4e51.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-14/2026-06-15/4f5d1b77-2f43-4ea3-b46f-0830d6c62167.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-14/2026-06-15/88b68efd-612f-4f03-be08-90e144ad716a.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-14/2026-06-15/a28db5f4-79d5-4f9a-97b0-499ea775be04.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-14/2026-06-15/a438e034-82c3-4d73-beca-743f468e24ab.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-14/2026-06-15/da9b8550-494f-4774-9f67-41bdcd5daec2.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-14/2026-06-15/f0251717-4aae-46aa-9e73-a6f273b1d22e.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-14/2026-06-16/504aa275-6377-4b02-93a9-2a612b3043db.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-14/2026-06-16/6e974431-8343-46cc-9be8-35bb9152986c.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-14/2026-06-16/a2b1f8de-1b70-4fb8-af80-4cf87771973a.jsonl"
+    ],
+    "evidence_anchors": [
+      "archive specs/archives/20260615-requirement-add-unit-conversion/诊断单.md:13-22 — TL;DR 明确靶点 aid-planning + 3 个可执行 diff + B 漏步归类",
+      "archive specs/archives/20260615-requirement-add-unit-conversion/诊断单.md:50-56 — 5 个错误动作节点对照表,最早出错节点=PLANNING step8 设计数据流",
+      "archive specs/archives/20260615-requirement-add-unit-conversion/诊断单.md:62-69 — 铁证 A:6 张 _00_initial.jpeg md5 完全相同(612faeb1ea7da55b4d6357cb114fce66)",
+      "archive specs/archives/20260615-requirement-add-unit-conversion/诊断单.md:74-82 — 铁证 B:6 份 dump md5 完全相同(8a5c3e6010d8a26e303d4abc37115f57)",
+      "archive specs/archives/20260615-requirement-add-unit-conversion/诊断单.md:87-95 — 铁证 C:run_ui_tests.py line 9-16 自白'本计算器 UI 仅有数字/运算符按钮,无法通过 UI 点击驱动 NL 场景'",
+      "archive specs/archives/20260615-requirement-add-unit-conversion/测试失败-skill分析.md:60-67 — 6 个 UI 测试用例(1+2=3 / 9×7=63 / 100+200=300 / 5-2=3 / 8÷4=2 / AC 清空)与单位换算核心需求完全无关",
+      "worktree git log commit 166f6e3 — chore(archive): move issue-14 to specs/archives,作者声称 rev-01 APPROVED 但 archive 内自带诊断单明确判定 FAIL",
+      "worktree git log commit 82ee79c — docs(aid-planning): Issue #14 单位换算 AID PLANNING 阶段产物,只生成 proposal.md / delta-spec.md / info.md / design.md(4 文件),未含 design.md §2.2 数据流与现有 UI 对照环节",
+      "worktree git log commit 25a8608 — fix(issue-14): re-dispatch v2 真实 UI 测试产物,12 张截图实际是 1+2=3 等基础算式,声称 iron_rule_7_compliance: 无伪造 与诊断单结论相悖",
+      "filesystem specs/changes/20260612-requirement-add-realtime-preview/ — 残留 Issue #11 旧目录未被 aid-init 清理(目录污染,但非本次主因)"
+    ]
+  }
+}

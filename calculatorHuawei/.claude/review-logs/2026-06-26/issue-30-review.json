@@ -1,0 +1,24 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "commit 未 sign-off, 阻塞合并",
+  "blocking": [
+    {
+      "item": "commit signoff",
+      "evidence": "a3b0da8 提交缺少 Signed-off-by 尾行 (Co-Authored-By ≠ Signed-off-by), 不符合 DCO 要求. git log a3b0da8 -1 --format='%(trailers)' 仅输出 Co-Authored-By, 无 Signed-off-by."
+    }
+  ],
+  "suggestions": [
+    "a3b0da8: 建议 amend 时追加 Signed-off-by: littleleafbbbbb <littleleafbbbbb@users.noreply.github.com>",
+    "a3b0da8: 提交说明写 '实改位置: ~/.hermes/profiles/pm-01/scripts/poll_issues.py (git 跟踪外)' — reviewer 看 diff 时找不到代码改动, 建议在 apply-report 顶部加显眼提示",
+    "a3b0da8: 此分支基于 demo/integration-all, +23876/-76 行 diff 大部分是 #21-#29 merge 内容. 建议 cherry-pick 或 rebase --onto main",
+    "a3b0da8: 真实测试日志应直接 cat 贴进 apply-report, 而不是手抄摘要"
+  ],
+  "highlights": [
+    "a3b0da8: TDD 节奏规范, RED (12 fail) → GREEN (17 pass) → REFACTOR 完整闭环",
+    "a3b0da8: HTTPError 优先于 URLError 判断 (URLError 是 HTTPError 父类) — 设计正确",
+    "a3b0da8: 退避 + ±0.5s jitter 防 thundering herd, 429 Retry-After 头支持, 白名单分类业务清晰",
+    "a3b0da8: 真跑集成测试抓到 7 issues, 422 fallback 保留, exit 0",
+    "a3b0da8: rev-01 独立复跑 python -m unittest test_poll_issues -v 确认 17/17 OK, 无伪造"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — commit 未 sign-off, 阻塞合并\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | proposal/delta-spec/info/delta-design/design-review/tasks/todo/apply-report 8 件齐全 |\n| harmonyos-ui-test | N/A | 纯 Python 脚本 bugfix, 无 ArkTS UI 变更, 不需要 UI 测试 |\n| commit signoff | **FAIL** | a3b0da8 缺 Signed-off-by 尾行 |\n| 分支规范 | OK | feat/issue-30-cron-数据采集脚本连接失败-win, 已推 origin |\n| 铁律 7 不伪造 | OK | rev-01 实跑 python -m unittest test_poll_issues -v → 17/17 OK |\n\n## 阻塞项 (必须修复)\n- **a3b0da8** — commit message 缺少 Signed-off-by: 尾行\n  - 现状: %(trailers) 仅 Co-Authored-By: Claude Opus 4.8, 无 DCO sign-off\n  - 修复建议: git commit --amend --signoff --no-edit, 或新 commit 加 sign-off 后 squash merge\n\n## 建议项 (建议修复)\n- a3b0da8: 此分支基于 demo/integration-all, +23876/-76 行 diff 包含 #21-#29 的 merge 内容. 建议 cherry-pick 或 rebase --onto main 让评审只看 Issue #30 增量\n- a3b0da8: 提交说明里写 '实改位置: ~/.hermes/profiles/pm-01/scripts/poll_issues.py (git 跟踪外)', reviewer 第一次看 diff 时找不到代码改动. 建议在 apply-report 顶部加 '**改动位置 = git 跟踪外**' 显眼提示\n- a3b0da8: 真实测试日志应直接 cat 贴进 apply-report, 而不是手抄摘要\n\n## 主要亮点\n- TDD 节奏规范: RED (12 fail) → GREEN (17 pass) → REFACTOR 完整闭环\n- HTTPError 优先于 URLError 判断 (URLError 是 HTTPError 父类) — 新手常踩坑, 设计正确\n- 退避 + ±0.5s jitter 防 thundering herd, 429 按 Retry-After 头退避, 401/404/422 立即失败 — 业务分类清晰\n- 真跑集成测试 python poll_issues.py 抓到 7 issues, 422 fallback 保留, exit 0\n- rev-01 独立复跑 python -m unittest test_poll_issues -v 确认 17/17 OK\n\n## 接下来\n@littleleafccccc 请修复阻塞项 (sign-off) 后再 assign rev-01.\nissue 保持 open, 不要关闭."
+}

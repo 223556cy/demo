@@ -1,0 +1,12 @@
+{
+  "issue": 30,
+  "title": "[CRON] 数据采集脚本连接失败 - WinError 10061",
+  "verdict": "REQUEST_CHANGES",
+  "priority": "MEDIUM",
+  "target_skill": "aid-applying",
+  "phenomenon": "针对 Issue #30 (pm-01 cron poll_issues.py 间歇性 WinError 10061) 的修复完整通过 TDD 12 RED→17 GREEN, 8/8 AID 产物 (proposal/delta-spec/info/delta-design/design-review/tasks/todo/apply-report) 齐全, 真实集成运行 exit 0 抓到 7 issues, 但 rev-01 仍以 REQUEST_CHANGES 阻塞: rev-01 引用 commit a3b0da8 仅有 Co-Authored-By 无 Signed-off-by (DCO 缺签). 当前 worktree HEAD a1cef94 内容同源但已含 Signed-off-by: littleleafccccc <2690949423@qq.com>, 证明缺签可在提交后修补, 但原始 commit 一次成型时即缺.",
+  "completed_at": "2026-07-01T10:03:28.501245",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-07-01\\issue-30.md"
+}

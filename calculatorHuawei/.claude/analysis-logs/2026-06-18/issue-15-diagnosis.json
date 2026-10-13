@@ -1,0 +1,41 @@
+{
+  "issue_ticket": {
+    "issue_number": 15,
+    "title": "历史列表按日期分组 (今天/昨天/更早) — re-dispatch v2 方案 A 真实 UI 验证打通",
+    "verdict": "APPROVE",
+    "priority": "LOW",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "Issue #15 re-dispatch 在 worktree 已有 v1 (7dff45d) 方案 B (DRAFT 标注, 等 aid-init 补资源) 的基础上,由 session 37666882 走通完整 PLANNING→IMPLEMENTING→APPLYING 三阶段;v2 (5009c07) 关键亮点:owner 心态不止按 v1 方案 B 标 DRAFT 等别人补,而是主动 git checkout main 同步 4 个项目级 HarmonyOS 资源 (main_pages.json / color.json / string.json / app_icon.png) + git add -f 强制跟踪,让 hvigorw assembleHap 真正 BUILD SUCCESSFUL in 18s 291ms,再 hdc install + aa start 拿到真实计算历史截图 ss-history-today.jpeg + 临时注入多日数据后 ss-history-3sections.jpeg + UI dump layout-3sections.json grep 命中 3/3 段头,UNBLOCK rev-01 阻塞项 #1,#2 commit signoff 在 v1 已修.",
+    "root_cause_analysis": "归类 B (漏掉步骤). 唯一性铁律下靶点 aid-applying — 在 APPLYING 阶段遇到 hvigorw assembleHap 失败 (Profile 'main_pages.json' not found) 时,v1 (7dff45d) 走方案 B = apply-report §0+§4.2 显眼标注 BLOCKED,等 aid-init 阶段补资源,这本质上是把补齐编译基础设施这一步外包给后续阶段,违反了 AID APPLYING 应交付完整可验证产物的职责. v2 (5009c07) 修复了这个遗漏:看到 capabilities.json §ui_test 标记 hdc+uitest+模拟器 100% 可用,就主动 sync 主仓资源 + git add -f + 真实跑 hvigorw 验证 + hdc install + aa start 全链路打通. session 37666882 jsonl L51 调 aid-planning → L65 rq-parse → L88 rq-codebase → L109 mod-design → L133 aid-implementing → L149 aid-applying 全链路,最后 commit 68982c3 (补资源) + 5009c07 (截图) 收尾,apply-report.md §0+§4.2+§6+§8 重写 (BLOCKED → UNBLOCKED),最终 APPROVE. 引用: 'jsonl 37666882 L149 调了 Skill aid-applying,v1 走方案 B 标 DRAFT 等 aid-init 补资源'; 'jsonl 37666882 L300+ apply 阶段补 main_pages.json 等 4 资源 (commit 68982c3) 真正跑通 BUILD SUCCESSFUL'.",
+    "optimization_direction": "在 aid-applying skill 的 BLOCKED 处理路径加 imperative 规则: 遇到 BUILD 阻塞 (Profile 'main_pages.json' not found 等项目级资源缺失) 时,必须先尝试 git checkout main -- opencalc/entry/src/main/resources/base/ 同步主仓资源 + git add -f 强制跟踪 + 真实跑 hvigorw --no-daemon assembleHap 验证,只有同步主仓资源后仍失败才允许标 DRAFT,而不是默认 DRAFT 等别人补.",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/37666882-4ef0-4530-a6cd-825e5c353155.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/04578ce0-e30c-40a3-84e8-414f1a177731.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/17d740ad-6709-4457-ab8d-305aebb83024.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/3512ea91-618a-4402-b703-96bfb0a3df6b.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/5bb0b033-e374-43c7-a1cf-5a5724f7c4a5.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/5df315fd-f621-4f20-a70a-49aa1ac84cab.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/62ca169e-87ab-416a-a363-512bf4521799.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/661581be-187a-4ab8-8c4e-a83670ee1e4b.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/a770a647-d0d0-4c03-bcd5-0dc37fee8e3d.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/b00bbec6-d652-4d35-8524-d937c363b9cd.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/b03615d9-6cb8-4d81-9465-828be03afee7.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/b2ebbd5a-6106-445c-9ab9-6402420bd804.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/bf0da46d-8ba2-497a-97b0-d4c5dfe3570d.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-15/2026-06-16/e4cac01a-9209-4c53-8cd8-63f70721910e.jsonl"
+    ],
+    "evidence_anchors": [
+      "jsonl 37666882 L51: assistant 调 Skill(input: skill=aid-planning),开启 PLANNING 阶段",
+      "jsonl 37666882 L65: assistant 调 Skill(input: skill=rq-parse),归属 aid-planning",
+      "jsonl 37666882 L88: assistant 调 Skill(input: skill=rq-codebase),归属 rq-parse",
+      "jsonl 37666882 L109: assistant 调 Skill(input: skill=mod-design),归属 rq-codebase,产出 delta-design.md",
+      "jsonl 37666882 L133: assistant 调 Skill(input: skill=aid-implementing),产出 tasks.md 含 TDD 节奏",
+      "jsonl 37666882 L149: assistant 调 Skill(input: skill=aid-applying),归属 aid-implementing",
+      "todo.md L77-83: re-dispatch v2 方案 A 实际修复 — 补 4 个项目级资源 (commit 68982c3), hvigorw BUILD SUCCESSFUL, hdc install + aa start + 6 张截图 + layout-3sections.json grep 命中 3/3",
+      "apply-report.md §0.1: v1 方案 B (DRAFT 标注) vs v2 方案 A (实际修复) 对比",
+      "apply-report.md §0.2 表格: ss-history-today.jpeg (今天段头+3 条 entry) + ss-history-3sections.jpeg (3 段全显示+10 条 entry) + layout-3sections.json grep 命中 3/3",
+      "git log: 8083dfc feat(history) → 7dff45d re-dispatch v1 → 68982c3 补资源 → 5009c07 截图,5 commits 均含 Signed-off-by 满足铁律 7"
+    ]
+  }
+}

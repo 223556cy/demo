@@ -1,0 +1,23 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "commit 缺 Signed-off-by, 阻塞合并",
+  "blocking": [
+    {
+      "item": "commit signoff 缺失",
+      "evidence": "a3b0da8: 提交末尾只有 'Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>', 无 'Signed-off-by: littleleafccccc <...>'. git log --format=%B | grep 'signed-off-by' 命中为空"
+    }
+  ],
+  "suggestions": [
+    "a3b0da8: 建议把 .env 注释行 (POLL_RETRY_MAX / POLL_RETRY_BASE_DELAY) 的可选配置默认值放进 setup_default_retry_config 单元测试断言中, 当前 test_default_retry_config 虽覆盖但未显式断言常量值, 未来若改默认值容易回归",
+    "a3b0da8: 建议在 _get_retry_after 中处理 HTTP-date 格式 (RFC 7231), 当前 apply-report §代码 diff 摘要 标注'待后续', 风险点: 真实 GitHub 偶发返回 HTTP-date (非整数秒) 时退避会回退到指数, 行为虽合理但 KEI-RT-01 监测会偏长",
+    "a3b0da8: 跨 profile 同步 (dev-01 / rev-01 / arch-01) 已识别为 Q-02, 建议本 issue 修复后立刻在 #30 之后开 follow-up issue, 避免同一根因在 3 个 profile 上重复发生",
+    "a3b0da8: apply-report §回退方案 写 'git checkout HEAD -- poll_issues.py (恢复原版, 约 129 行)'. 实际 wc -l = 340 行, 建议把行数与原文对齐, 避免下次 reviewer 误判 diff 大小"
+  ],
+  "highlights": [
+    "a3b0da8: TDD 节奏清晰, apply-report §TDD 循环 12 RED → 17 GREEN → REFACTOR, 单元测试我重新跑了一遍 `python -m unittest test_poll_issues -v` 全部 17 PASS, 日志格式与 apply-report §关键设计点验证 一致 ([RETRY] attempt=1/3 wait=2.2s reason=WinError 10061 等)",
+    "a3b0da8: 异常分类白名单 (HTTPError 先判 → URLError → SSL/Timeout → 5xx/429 重试; 401/403/404/422 立即失败) 设计严谨, design-review §2.3 delta-design 内部一致性 论证充分, URLError 是 HTTPError 子类这一陷阱在 Task 2.1 注释里点出",
+    "a3b0da8: 真实集成测试 exit 0 抓到 7 issues 包含 #30 自身, 422 fallback 保留, 证明修复不破坏现有 @me → all-issues 退化路径, 这是 CRON 任务的硬性 SLA",
+    "a3b0da8: FMEA 表覆盖 8 个故障模式 (FM-01~08) + 4 个 KEI 指标 (自愈率 ≥80%, P99 ≤30s), 把 DFR (Design for Reliability) 做到了可量化, 后续可被 ops 仪表盘直接消费"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — commit 缺 Signed-off-by, 阻塞合并\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | proposal / delta-spec / info / delta-design / design-review / tasks / todo / apply-report 8/8 齐全 (new-arch.md 合理跳过) |\n| harmonyos-ui-test | OK (N/A) | 本 issue 是 Python cron 脚本, 非 HarmonyOS UI; 已用真实 `python poll_issues.py` 集成运行代替, 抓到 7 issues, exit 0 |\n| commit signoff | **FAIL** | a3b0da8 末尾无 `Signed-off-by: littleleafccccc <...>`, 只有 `Co-Authored-By` |\n| 分支规范 | OK | `feat/issue-30-cron-数据采集脚本连接失败-win` 已 push 到 origin |\n| 铁律 7 不伪造 | OK | apply-report §测试详情 中 `[RETRY] attempt=1/3 wait=2.2s reason=WinError 10061` 等日志我重跑测试时能复现, 非伪造 |\n| AID 产物存在 | OK | `specs/changes/20260626-bugfix-cron-poll-issues-retry/` 下 8 个 md 文件齐全 |\n\n## 阻塞项 (必须修复)\n- **a3b0da8** — commit 缺 `Signed-off-by: littleleafccccc <2690949423@qq.com>` (DCO sign-off)\n  - 证据: `git log -1 --format=%B a3b0da8 | grep -i 'signed-off-by'` 命中为空\n  - 修复建议:\n    ```bash\n    # 方式 1: amend (若未推送, 或可强推)\n    git commit --amend --signoff --no-edit\n    git push --force-with-lease origin feat/issue-30-cron-数据采集脚本连接失败-win\n    # 方式 2: 追加 sign-off commit (若已共享, 安全优先)\n    git commit --signoff --allow-empty -m 'signoff: add DCO for a3b0da8 (Issue #30)'\n    git push origin feat/issue-30-cron-数据采集脚本连接失败-win\n    ```\n\n## 建议项 (建议修复)\n- **a3b0da8**: 建议在 `test_default_retry_config` 显式 `assertEqual(DEFAULT_RETRY_MAX, 3)` / `assertEqual(DEFAULT_RETRY_BASE_DELAY, 2.0)`, 避免未来默认值漂移\n- **a3b0da8**: `_get_retry_after` 当前只支持整数秒, RFC 7231 HTTP-date 未实现; 真实 GitHub 偶发返回 HTTP-date 时会回退到指数退避 (虽合理但 KEI-RT-01 监测会偏长), 建议下个 issue 补完\n- **a3b0da8**: apply-report §回退方案 写 '恢复原版, 约 129 行' 但实际 wc -l = 340, 行数描述与实际不符, 容易误导下次 reviewer\n- **a3b0da8**: design-review §4.2 Q-02 (跨 profile dev-01/rev-01/arch-01 同步) 建议本 issue 关闭前挂一个 follow-up issue, 避免同一根因在 4 个 profile 上复发\n\n## 主要亮点\n- TDD 节奏严谨 (12 RED → 17 GREEN → REFACTOR), 我重跑 `python -m unittest test_poll_issues -v` 17/17 PASS, 日志格式与 apply-report 完全一致\n- 异常白名单设计扎实: HTTPError 优先判 (避开 URLError 子类陷阱) + 401/403/404/422 立即失败 + 10061/SSL/Timeout/5xx/429 重试\n- 真实集成 `python poll_issues.py` exit 0, 7 issues 抓到 (含 #30 自身), 422 fallback 保留, SLA 不破\n- FMEA 8 个故障模式 + 4 个 KEI 指标, 把 DFR 做到可量化, 可被 ops 仪表盘直接消费\n\n## 接下来\n@littleleafccccc 请修复阻塞项 (补 DCO sign-off) 后再 assign rev-01.\nissue 保持 open, 不要关闭.\n"
+}

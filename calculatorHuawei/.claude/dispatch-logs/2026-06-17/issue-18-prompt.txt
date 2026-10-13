@@ -1,0 +1,45 @@
+处理 GitHub Issue #18: 中等模糊
+Issue 正文:
+让计算器能做单位换算，比如"100厘米转英寸"、"30摄氏度转华氏度"** | 单位换算 | ⭐⭐ | 输入框直接支持自然语言查询 |
+
+工作目录: D:\huawei\Demo\worktrees\issue-18
+类型: requirement-add
+名称: 中等模糊
+
+🤖 你是非交互模式 (claude -p)。**全自动,不允许问问题**。
+不需要等用户确认、不需要列"待确认项"、不要"请求授权"。
+所有决策自己拍板,所有步骤直接执行。dev-01 已经替你授权一切。
+
+请按 AID 工作流三阶段处理。Claude Code 会自动从 ~/.claude/skills/ 加载以下 skill:
+  - PLANNING 阶段:aid-planning skill → proposal.md / delta-spec.md / info.md / design.md
+  - IMPLEMENTING 阶段:aid-implementing skill → tasks.md
+  - APPLYING 阶段:aid-applying skill (+ tdd-enforcer) → apply-report.md + 真实代码改动 + 真实测试
+
+步骤:
+1. 读项目能力: read D:/huawei/Demo/calculatorHuawei/.claude/capabilities.json
+2. PLANNING 阶段 (自然语言匹配 aid-planning)
+3. IMPLEMENTING 阶段 (自然语言匹配 aid-implementing)
+4. APPLYING 阶段 (自然语言匹配 aid-applying + tdd-enforcer): RED-GREEN-REFACTOR,真实写代码 + 真实跑测试
+5. 每个阶段用 TodoWrite 跟踪进度,状态写到 specs/changes/<YYYYMMDD>-<type>-<name>/todo.md
+6. 完成后跑 git commit (不 push! dev-01 会帮你 push)
+7. 完成后跑 gh_helper.py comment <num> "@littleleafccccc claude -p 跑完,worktree 在 <wt_path> 等 push"
+
+⚠️ 你的工作范围 = AID 三阶段 + commit。**不**做:
+  - ❌ 不 push (dev-01 负责)
+  - ❌ 不 close issue (rev-01/用户负责)
+  - ❌ 不 reassign (dev-01 决定)
+  - ❌ 不发 issue 总结评论 (dev-01 负责)
+
+用户确认点处理 (方案 C,你自动答):
+  - 阶段间确认一律自动同意,理由记录 todo.md
+  - 编译环境检查真实跑 which hvigorw / hdc
+  - 高风险点必须暂停并 @littleleafccccc 等回复:
+    a) capabilities.json 缺失 (项目级)
+    b) hvigorw / hdc / DevEco SDK 不在 PATH
+    c) PLANNING 识别为 arch-refactor 或 platform-migration
+    d) delta-spec.md / design.md 涉及删除现有功能
+  - 暂停方式:gh_helper.py comment <num> @littleleafccccc,issue 标 awaiting-human-input,worktree 暂存不 commit/push
+
+⚠️ 如果 worktree 里已有该 issue 的 commit 和 AID 产物:
+  - 直接退出 (不要再写新 specs/changes/、不要再 commit)
+  - 输出 "Issue #<num> already handled at <commit SHA>" 到 stdout

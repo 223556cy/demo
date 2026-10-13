@@ -1,0 +1,72 @@
+[
+  {
+    "test_id": "BUG-01",
+    "name": "1++2 不应显示预览",
+    "expression": "1++2",
+    "expected": "",
+    "actual": "PASS",
+    "status": "result=0",
+    "note": "",
+    "time": "16:56:11"
+  },
+  {
+    "test_id": "BUG-02",
+    "name": "1+-2 不应显示预览",
+    "expression": "1+-2",
+    "expected": "",
+    "actual": "PASS",
+    "status": "result=0",
+    "note": "",
+    "time": "16:56:16"
+  },
+  {
+    "test_id": "BUG-03",
+    "name": "2*-2 不应显示预览",
+    "expression": "2*-2",
+    "expected": "",
+    "actual": "PASS",
+    "status": "result=0",
+    "note": "",
+    "time": "16:56:21"
+  },
+  {
+    "test_id": "BUG-04",
+    "name": "1÷0 不应显示预览",
+    "expression": "1÷0",
+    "expected": "",
+    "actual": "PASS",
+    "status": "result=0",
+    "note": "",
+    "time": "16:56:26"
+  },
+  {
+    "test_id": "REG-01",
+    "name": "1+2 → 3 仍工作",
+    "expression": "1+2",
+    "expected": "3",
+    "actual": "PASS",
+    "status": "result=0",
+    "note": "",
+    "time": "16:56:31"
+  },
+  {
+    "test_id": "REG-02",
+    "name": "5-10 → -5 仍工作",
+    "expression": "5-10",
+    "expected": "-5",
+    "actual": "PASS",
+    "status": "result=0",
+    "note": "",
+    "time": "16:56:36"
+  },
+  {
+    "test_id": "REG-03",
+    "name": "50+10% → 55 仍工作",
+    "expression": "50+10%",
+    "expected": "55",
+    "actual": "PASS",
+    "status": "result=0",
+    "note": "",
+    "time": "16:56:43"
+  }
+]

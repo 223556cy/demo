@@ -1,0 +1,75 @@
+# AID Skill Bank - Initialization Flag
+
+## Init Date
+2026-06-12 09:35
+
+## Project Configuration
+PROJECT_ROOT: D:/huawei/Demo/worktrees/issue-9/opencalc
+CHANGES_ROOT: specs/changes
+SPECS_FEATURE_ROOT: specs/specs
+TEST_ROOT: D:/huawei/Demo/worktrees/issue-9/opencalc/entry/src/test
+
+## Build Configuration
+Build Tool: hvigorw
+Build Version: 6.24.2
+Build Command: hvigorw --no-daemon assembleHap
+Build Status: success
+Build Note: Windows 下需用 --no-daemon 标志，daemon 模式下 Java 路径无法传递到子进程
+
+## Test Configuration
+Test Command: hvigorw --no-daemon test
+Test Available: true
+Test Framework: hypium + hamock
+Test Skills:
+  - harmony-ui-test: available (skipped - 本地单元测试优先)
+Test Paths:
+  Primary: D:/huawei/Demo/worktrees/issue-9/opencalc/entry/src/test
+  Suite Entry: List.test.ets
+  Test File: ets/calculator/Expression.test.ets
+Test Notes: test@entry 任务不存在，使用 hvigorw test 即可
+Platform: Windows 11
+Project Type: HarmonyOS
+
+## SDK Configuration
+SDK_HOME: D:/Program Files/Huawei/DevEco Studio/sdk
+SDK Type: DevEco Studio 5.x
+hvigorw Path: D:/Program Files/Huawei/DevEco Studio/tools/hvigor/bin/hvigorw.bat
+hvigorw Version: 6.24.2
+Java Path: D:/Program Files/Huawei/DevEco Studio/jbr/bin/java.exe
+Java Version: openjdk 21.0.8
+Node Path: D:/Program Files/nodejs/node.exe
+Node Version: v24.16.0
+
+## Git Configuration
+Main Repo: D:/huawei/Demo/calculatorHuawei
+Main Branch: main
+Current Worktree: D:/huawei/Demo/worktrees/issue-9
+Current Branch: feat/issue-9-percent-button
+Working Status: dirty (4 uncommitted changes)
+Uncommitted Files:
+  - opencalc/entry/build-profile.json5 (M)
+  - opencalc/entry/src/test/ets/calculator/Expression.test.ets (M)
+  - opencalc/entry/.test/ (??)
+  - opencalc/entry/src/test/List.test.ets (??)
+
+## Worktree Map
+- D:/huawei/Demo/calculatorHuawei              → main
+- D:/huawei/Demo/worktrees/issue-1             → feat/issue-1-pct
+- D:/huawei/Demo/worktrees/issue-3             → feat/issue-3-realtime-preview
+- D:/huawei/Demo/worktrees/issue-4             → feat/issue-4-programmer-mode
+- D:/huawei/Demo/worktrees/issue-5             → feat/issue-5-history-search
+- D:/huawei/Demo/worktrees/issue-6             → feat/issue-6-percentage
+- D:/huawei/Demo/worktrees/issue-7             → feat/issue-7-percentage-btn
+- D:/huawei/Demo/worktrees/issue-8             → feat/issue-8-percent
+- D:/huawei/Demo/worktrees/issue-9  (ACTIVE)   → feat/issue-9-percent-button
+
+## Directories
+- [x] PROJECT_ROOT exists
+- [x] specs/changes/ created
+- [x] specs/guidelines/ created
+- [x] specs/archives/ created
+- [x] specs/specs/ created
+- [x] TEST_ROOT exists (worktree/issue-9/opencalc/entry/src/test)
+
+## Session Recovery
+Last Session: none

@@ -1,0 +1,25 @@
+{
+  "complete_pct": 0.0,
+  "missing_recommended": [
+    "target_skill_section",
+    "target_line_range",
+    "additional_root_causes",
+    "exhaustion_check",
+    "runtime_evidence",
+    "zero_states_checked",
+    "fix_coverage_matrix",
+    "defect_dimension",
+    "discovery_timing",
+    "reasoning_method",
+    "problem_signature",
+    "evidence_strength",
+    "alternative_branches_excluded"
+  ],
+  "iron_rule_violations": [
+    "#11: optimization_direction 是字符串 (len=726), 应为 6 字段对象",
+    "#14: root_cause_analysis 缺 [机制: ...] 标记, 因果链不强",
+    "#16: zero_states_checked 仅 0 条 (需 ≥3)"
+  ],
+  "summary": "FAIL: v2.0 字段大量缺失 (13/13), claude 没按 v2.0 框架走",
+  "validated_at": "2026-07-13T16:23:40.826408"
+}

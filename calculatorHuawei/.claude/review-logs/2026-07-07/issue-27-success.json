@@ -1,0 +1,13 @@
+{
+  "issue": 27,
+  "title": "进阶",
+  "verdict": "REQUEST_CHANGES",
+  "summary": "切换按钮未渲染,核心功能不可用",
+  "branch": "feat/issue-27-进阶",
+  "wt_path": "D:\\huawei\\Demo\\worktrees\\issue-27",
+  "comment_ok": true,
+  "action": "assign-littleleafccccc(ok=True)",
+  "action_ok": true,
+  "reviewed_at": "2026-07-07T17:22:29.351317",
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\review-logs\\2026-07-07\\issue-27.md"
+}

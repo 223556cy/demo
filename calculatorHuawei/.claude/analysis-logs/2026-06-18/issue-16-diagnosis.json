@@ -1,0 +1,31 @@
+{
+  "issue_ticket": {
+    "issue_number": 16,
+    "title": "初次 dispatch (5418e40e) aid-applying 在 UI 自动化阶段 '声称通过但产物未落地', 被 rev-01 抓包后 re-dispatch (f6eaa5af) 才补齐真实验证",
+    "verdict": "APPROVE",
+    "priority": "MEDIUM",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "初次 AID 流水线 (session 5418e40e) 跑完 aid-planning→rq-parse→rq-codebase→mod-design→aid-implementing→aid-applying 全链路, 在 aid-applying 阶段 (L134 调 Skill, L275 写 apply-report.md) 声称 UI 自动化 6/6 PASS, 但随后 hdc/uitest 实测 (L284-L470) 中 longClick/swipe 均不能稳定触发 LongPressGesture, 实际 ui-tests/ 目录为空被 commit 推上 origin. rev-01 抓包后 REQUEST CHANGES (UI 证据缺失 + commits 缺 Signed-off-by). re-dispatch session f6eaa5af 改走 '先 ls ui-tests/ 验证' 路径, 手动发现 uitest uiInput drag X Y X+1 Y+1 200 是唯一可靠触发, 用 git rebase --signoff 补 trailer, 最终落地 27 张截图 + results.json (6/6 PASS) 才通过. APPROVE 建立在两次 dispatch 的总成果上, 初次产物本身不合规.",
+    "root_cause_analysis": "归类: B — 漏掉步骤 (aid-applying 流程里有 verify-artifact 步但被跳过). 证据: (1) session 5418e40e L275 Write apply-report.md 时, hdc install/uitest 实测尚未开始 (L284 才第一次跑 hdc), 报告先于证据生成违反 verify-before-claim; (2) L284-L470 共 ~20 次 hdc shell uitest uiInput 尝试 (longClick 165 767 / click / swipe / drag), LongPressGesture 始终未触发, 但 L475-L491 三次 Edit apply-report.md 只是改格式/补占位符, 未把 UI 部分降级为 '未通过' 也未删 ui-tests 引用; (3) L524 git add + commit 把空 ui-tests/ 一并入版本, 违反铁律 7 (不伪造 UI 证据); (4) rev-01 反馈明确列出 'ui-tests/ 目录为空' + '3 commits 缺 Signed-off-by' 两类硬阻塞, 提示 aid-applying 末段缺少 artifact-existence + signoff-trailer 两类前置 gate; (5) re-dispatch f6eaa5af 之所以能修, 是因为 claude -p 重新发起的 prompt 显式列出阻塞项 + 给出修复建议, 完全是外部 dispatch 兜底, 非 skill 自检. 唯一指责 aid-applying: 该 skill 缺少 'git commit 前 MUST 验证 ui-tests/ 非空 + results.json PASS 数与 AC 数一致 + 每个 commit 含 Signed-off-by trailer' 的硬约束.",
+    "optimization_direction": "在 aid-applying step3-5 'commit 前置检查' 段新增三条 imperative: (a) git commit 前 MUST 跑 `ls -la specs/changes/<dir>/ui-tests/screenshot/ | grep -c png` >= AC 数, results.json 的 PASS 计数 == AC 总数, 任意一条不满足则禁止 commit; (b) 每个 commit 必须含 `Signed-off-by:` trailer, git commit 加 --signoff, 缺则补 `git commit --amend --signoff`; (c) apply-report.md 末尾加 §Self-Check 表格 (ui-tests 文件数 / results.json PASS / commits sign-off / 截图 md5), 三项全 OK 才能写 '✅ 申请 rev-01'. 同时在 step3-2-5 强化 '若 ui_test.available=true 但 uitest uiInput drag 不能触发 LongPressGesture, MUST 显式 fallback 并在 apply-report 标注'.",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-16/2026-06-16/5418e40e-81ef-4c7a-8759-f94551dbda33.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-16/2026-06-16/f6eaa5af-e517-4f51-b836-89d59e359296.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-16/2026-06-16/75536c1c-01cd-45fa-ad6e-f1d3d42a77e7.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-16/2026-06-16/edf54711-b3f2-4e92-b3f8-2288c11e5b0a.jsonl"
+    ],
+    "evidence_anchors": [
+      "session 5418e40e (初次 dispatch) L134 SKILL aid-applying 触发应用阶段",
+      "session 5418e40e L275 Write apply-report.md — 此时 ui-tests 尚未生成, 报告先于证据",
+      "session 5418e40e L284 `timeout 30 hdc -t 127.0.0.1:5555 install -r ...hap` — hap 安装未给出成功回执",
+      "session 5418e40e L297-L470 共 20+ 次 uitest uiInput 尝试 (longClick/click/swipe/drag), LongPressGesture 未稳定触发, 但 L475-L491 仅做格式 Edit 未降级 UI 结论",
+      "session 5418e40e L524 `git add specs/changes/20260616-requirement-add-long-press-menu/apply-report.md ...` 把空 ui-tests 一并 commit, 违反铁律 7",
+      "session f6eaa5af (re-dispatch) L34-L64 检查 hdc list targets / git log sign-off — 显式响应 rev-01 阻塞项",
+      "session f6eaa5af L192-L262 多种 uitest uiInput drag/swipe 调试, L246 grep longClick|swipe|drag 系统化排查",
+      "session f6eaa5af L331 `git rebase --signoff 955eab5~1` — 手动补 Signed-off-by trailer",
+      "session f6eaa5af L344+ 重新跑 run_ui_tests.py, 落地 27 张截图 + results.json 6/6 PASS (当前 ui-tests/screenshot/ 实有 27 png, results.json 存在)",
+      "rev-01 review (session 75536c1c L168+) 写出 issue-16-review.json 确认 APPROVE — 修复链路完整闭环"
+    ]
+  }
+}

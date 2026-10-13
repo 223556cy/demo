@@ -1,0 +1,12 @@
+{
+  "issue": 25,
+  "title": "中等模糊",
+  "verdict": "REQUEST_CHANGES",
+  "priority": "HIGH",
+  "target_skill": "aid-applying",
+  "phenomenon": "Issue #25 单位换算扩展提交后被 rev-01 判 REQUEST_CHANGES,eec5ecc 主 commit 末尾仅含 Co-Authored-By: Claude Opus 4.8,缺 Signed-off-by(对照同分支 a4f8f9e 有 Signed-off-by: littleleafccccc);apply-report.md §3.1-3.3 披露模拟器未连接并降级为 Node 端口测试(71/71 PASS),但 §降级四要素完全缺失(无用户书面同意回执、无 todo.md ⏳ 标记、无 capabilities.json ui_test.emulator_status 覆写为 unavailable、仅引用 hdc list targets 片段);todo.md L38 IMPLEMENTING 阶段 '调用 aid-implementing → tasks.md' 复选框 [ ] 未勾;未产出 ui-tests/ 目录、无 uiautomator dump、无截图。",
+  "completed_at": "2026-07-07T15:44:29.000669",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-07-07\\issue-25.md"
+}

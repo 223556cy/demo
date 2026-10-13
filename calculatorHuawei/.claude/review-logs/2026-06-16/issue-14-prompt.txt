@@ -1,0 +1,228 @@
+处理 GitHub Issue #14 的代码审查
+
+你是 rev-01 (代码审查员), GitHub 账号 = littleleafbbbbb.
+审查仓库: calculatorHuawei/agent_workflow
+
+## Issue 信息
+- Number: #14
+- Title: 中等模糊
+- URL: https://github.com/calculatorHuawei/agent_workflow/issues/14
+
+## Issue 正文
+让计算器能做单位换算，比如"100厘米转英寸"、\"30摄氏度转华氏度\"** | 单位换算 | ⭐⭐ | 输入框直接支持自然语言查询 |
+
+## 审查上下文 (已为你收集好, 不要重新 fetch)
+- Worktree: `D:\huawei\Demo\worktrees\issue-14`
+- 分支: `feat/issue-14-中等模糊`
+- 分支已 push 到 origin: True
+- 修改文件 stat:
+```
+.claude/capabilities.json                          |  34 +-
+ .../src/main/ets/common/NaturalLanguageParser.ets  | 176 ++++++
+ .../entry/src/main/ets/common/UnitConverter.ets    |  97 +++
+ .../entry/src/main/ets/pages/CalculatorPage.ets    |  37 +-
+ .../test/ets/common/NaturalLanguageParser.test.ets | 159 +++++
+ .../src/test/ets/common/UnitConverter.test.ets     | 161 +++++
+ .../apply-report.md                                | 287 +++++++++
+ .../delta-spec.md                                  | 229 +++++++
+ .../design.md                                      | 533 ++++++++++++++++
+ .../info.md                                        | 254 ++++++++
+ .../proposal.md                                    | 123 ++++
+ .../tasks.md                                       | 685 +++++++++++++++++++++
+ .../tests/NaturalLanguageParser.port.mjs           | 151 +++++
+ .../tests/NaturalLanguageParser.test.mjs           | 170 +++++
+ .../tests/UnitConverter.port.mjs                   |  60 ++
+ .../tests/UnitConverter.test.mjs                   | 167 +++++
+ .../tests/test-output-green.txt                    |  78 +++
+ .../todo.md                                        | 117 ++++
+ .../ui-tests/dump/ac_uc_10.json                    |  14 +
+ .../ui-tests/dump/ac_uc_10b.json                   |  14 +
+ .../ui-tests/dump/ac_uc_10c.json                   |  14 +
+ .../ui-tests/dump/ac_uc_10d.json                   |  14 +
+ .../ui-tests/dump/ac_uc_10e.json                   |  14 +
+ .../ui-tests/dump/ac_uc_10f.json                   |  14 +
+ .../ui-tests/results.json                          | 147 +++++
+ .../ui-tests/run_ui_tests.py                       | 345 +++++++++++
+ .../ui-tests/screenshot/ac_uc_10_00_initial.jpeg   | Bin 0 -> 97653 bytes
+ .../screenshot/ac_uc_10_01_after_sequence.jpeg     | Bin 0 -> 98829 bytes
+ .../ui-tests/screenshot/ac_uc_10b_00_initial.jpeg  | Bin 0 -> 97653 bytes
+ .../screenshot/ac_uc_10b_01_after_sequence.jpeg    | Bin 0 -> 100352 bytes
+ .../ui-tests/screenshot/ac_uc_10c_00_initial.jpeg  | Bin 0 -> 97653 bytes
+ .../screenshot/ac_uc_10c_01_after_sequence.jpeg    | Bin 0 -> 103217 bytes
+ .../ui-tests/screenshot/ac_uc_10d_00_initial.jpeg  | Bin 0 -> 97653 bytes
+ .../screenshot/ac_uc_10d_01_after_sequence.jpeg    | Bin 0 -> 98937 bytes
+ .../ui-tests/screenshot/ac_uc_10e_00_initial.jpeg  | Bin 0 -> 97653 bytes
+ .../screenshot/ac_uc_10e_01_after_sequence.jpeg    | Bin 0 -> 99004 bytes
+ .../ui-tests/screenshot/ac_uc_10f_00_initial.jpeg  | Bin 0 -> 97653 bytes
+ .../screenshot/ac_uc_10f_01_after_sequence.jpeg    | Bin 0 -> 97653 bytes
+ 38 files changed, 4074 insertions(+), 20 deletions(-)
+```
+
+## 最近 9 个 commits
+```
+25a8608 fix(issue-14): re-dispatch v2 — 真实 UI 测试产物(12 张截图 + 6 份 dump,6/6 PASS)
+6add2ba docs(issue-14): re-dispatch — 记录 rev-01 阻塞项处理 + hdc 阻塞诚实披露
+5e162e5 docs(issue-14): apply-report.md + todo.md + tasks.md
+9ba2282 test(issue-14): UI 自动化测试脚本(6 场景,可独立执行)
+c668731 feat(issue-14): CalculatorPage 集成 NL 单位换算解析层
+b4e6b5f feat(unit-conversion): 实现 UnitConverter + NaturalLanguageParser
+e12bd6c test(issue-14): RED UnitConverter + NaturalLanguageParser 单元测试
+82ee79c docs(aid-planning): Issue #14 单位换算 AID PLANNING 阶段产物
+edf7676 fix(aid-init): update capabilities.json to point to main repo
+fe169f2 Merge feat/issue-11-realtime-preview: 实时预览功能
+5990336 Merge branch 'main' of https://github.com/calculatorHuawei/agent_workflow
+66b0937 feat(realtime-preview): add real-time preview with bug fix for consecutive operators
+dee5118 Merge pull request #10 from calculatorHuawei/feat/issue-9-percent-button
+d8dfeec Merge feat/issue-9-percent-button: 百分号按钮增强
+644e0d1 feat(percent): add 3 edge case detections for percent button
+59218f0 feat(percent): 添加百分号按钮功能及测试
+9ea6ac5 chore: update team config — gateway running state + iron rule 7
+01b3773 feat: import OpenCalc HarmonyOS port as opencalc/ subfolder
+b346ea2 docs: 添加 3 员工邀请到仓库的手工操作指南
+718a1db feat: 注入 3 个员工 SOUL.md 灵魂定义
+```
+
+## commit signoff 状态
+  ✅ 25a86086 2026-06-16 fix(issue-14): re-dispatch v2 — 真实 UI 测试产物(12 张截图 + 6 份 dump signed=True
+  ✅ 6add2ba8 2026-06-15 docs(issue-14): re-dispatch — 记录 rev-01 阻塞项处理 + hdc 阻塞诚实披露 signed=True
+  ✅ 5e162e52 2026-06-15 docs(issue-14): apply-report.md + todo.md + tasks.md signed=True
+  ✅ 9ba22826 2026-06-15 test(issue-14): UI 自动化测试脚本(6 场景,可独立执行) signed=True
+  ✅ c6687311 2026-06-15 feat(issue-14): CalculatorPage 集成 NL 单位换算解析层 signed=True
+  ✅ b4e6b5f1 2026-06-15 feat(unit-conversion): 实现 UnitConverter + NaturalLanguagePar signed=True
+  ✅ e12bd6c3 2026-06-15 test(issue-14): RED UnitConverter + NaturalLanguageParser 单元 signed=True
+  ✅ 82ee79cd 2026-06-15 docs(aid-planning): Issue #14 单位换算 AID PLANNING 阶段产物 signed=True
+  ✅ edf76761 2026-06-15 fix(aid-init): update capabilities.json to point to main rep signed=True
+
+## AID 产物 (specs/changes/ 下)
+  - 20260615-requirement-add-unit-conversion: apply-report.md(14882B), delta-spec.md(10313B), design.md(19532B), info.md(10398B), proposal.md(6669B), tasks.md(23090B), todo.md(6412B)
+  - 20260612-requirement-add-realtime-preview: apply-report.md(19617B), delta-spec.md(9465B), design.md(14987B), info.md(9173B), proposal.md(4496B), tasks.md(9359B), todo.md(2223B)
+  - 20260611-requirement-add-percent-button: apply-report.md(8724B), delta-spec.md(4251B), design.md(6340B), info.md(6547B), proposal.md(3281B), tasks.md(5258B), todo.md(2936B)
+
+## 截图证据
+  ❌ 无真实截图
+
+## 你的工作
+
+🤖 非交互模式 (claude -p), 全自动, 不允许问问题. 所有决策自己拍板.
+
+按以下检查表审查, **每项都必须勾完**:
+
+### 阻塞项 (任一 FAIL = REQUEST_CHANGES)
+1. [ ] AID 三阶段完整 (PLANNING+IMPLEMENTING+APPLYING 产出齐全)
+   - 需有: proposal.md / delta-spec.md / info.md / design.md / tasks.md / apply-report.md
+2. [ ] 真实跑了 harmonyos-ui-test (有截图 + uiautomator dump)
+3. [ ] commit 全部 signed-off (见上面的 signoff 状态)
+4. [ ] 无铁律 7 违规 (测试日志不能伪造)
+5. [ ] 在 feat/* 分支, 没直接推 main
+6. [ ] AID 产物存在 (specs/changes/ 下至少有 proposal.md + apply-report.md)
+
+### 建议项 (不阻塞但要列出)
+- commits 符合 conventional commits 规范
+- TDD 节奏 (test 与 feat 分开 commit)
+- 代码可读性 (命名, 重复, 复杂度)
+
+## 输出
+
+**严格**按下面格式写到一个 JSON 文件 (路径给你了, 不要 print 到 stdout):
+
+路径: `D:/huawei/Demo/calculatorHuawei/.claude/review-logs/2026-06-16/issue-14-review.json`
+
+格式:
+```json
+{
+  "verdict": "APPROVE" 或 "REQUEST_CHANGES",
+  "summary": "<一句话总结, 用中文, 25 字以内>",
+  "blocking": [
+    {"item": "<检查项名>", "evidence": "<具体证据, 文件:行号 或 commit SHA>"},
+    ...
+  ],
+  "suggestions": [
+    "<commit SHA>: <建议>",
+    ...
+  ],
+  "highlights": [
+    "<commit SHA>: <做得好的点>",
+    ...
+  ],
+  "comment": "<完整 markdown 评论, 用下面模板之一>"
+}
+```
+
+### 评论模板 (APPROVE)
+```
+[rev-01] APPROVED — <summary>
+
+## 审查结果
+| 检查项 | 状态 |
+|--------|------|
+| AID 三阶段 | OK |
+| harmonyos-ui-test | OK |
+| commit signoff | OK |
+| 分支规范 | OK |
+| 铁律 7 不伪造 | OK |
+
+## 主要亮点
+- <highlights 内容>
+
+## 决定
+已 close. 感谢 @littleleafccccc 的贡献.
+```
+
+### 评论模板 (REQUEST_CHANGES)
+```
+[rev-01] REQUEST CHANGES — <summary>
+
+## 审查结果
+| 检查项 | 状态 | 备注 |
+|--------|------|------|
+| AID 三阶段 | OK/FAIL | <备注> |
+| harmonyos-ui-test | OK/FAIL | <备注> |
+| commit signoff | OK/FAIL | <备注> |
+| 分支规范 | OK/FAIL | <备注> |
+| 铁律 7 不伪造 | OK/FAIL | <备注> |
+
+## 阻塞项 (必须修复)
+- `<文件路径>:<行号>` 或 `<commit SHA>` — <问题描述>
+  修复建议: <具体怎么改>
+
+## 建议项 (建议修复)
+- <commit SHA>: <建议>
+
+## 接下来
+@littleleafccccc 请修复阻塞项后再 assign rev-01.
+issue 保持 open, 不要关闭.
+```
+
+## 工作流步骤
+
+1. cd 到 worktree: `D:\huawei\Demo\worktrees\issue-14`
+2. 用 Read 工具读关键文件 (apply-report.md, spec 产物, 关键代码 diff)
+3. 用 Bash 跑 `git show <sha>` 看每个 commit 的实际改动
+4. 用 Bash 跑 `git diff origin/main..HEAD -- <file>` 看具体行
+5. 按检查表逐项判断
+6. 用 Write 工具写 JSON 到 `D:/huawei/Demo/calculatorHuawei/.claude/review-logs/2026-06-16/issue-14-review.json`
+7. **不要**发 GitHub 评论 (review_issues.py 会负责发)
+8. **不要** close/assign issue (review_issues.py 会负责)
+9. **不要** commit 任何改动 (审查者只读)
+
+如果 worktree 不存在 (D:/huawei/Demo/worktrees/issue-14 缺失), 写:
+```json
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "worktree 缺失",
+  "blocking": [{"item": "worktree 缺失", "evidence": "D:/huawei/Demo/worktrees/issue-14 不存在"}],
+  "suggestions": [],
+  "highlights": [],
+  "comment": "[rev-01] REQUEST CHANGES — worktree 缺失, dev-01 还没创建..."
+}
+```
+
+如果分支没 push 到 origin, 写:
+```json
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "分支未推送",
+  "blocking": [{"item": "分支未推送", "evidence": "feat/issue-14-中等模糊 不在 origin 上"}],
+  ...
+}
+```

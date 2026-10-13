@@ -1,0 +1,25 @@
+{
+  "issue_ticket": {
+    "issue_number": 27,
+    "title": "分数/小数显示切换功能实现完好，但 dev-01 误判 TCP 模拟器离线致 UI 自动化两次错误 Deferred",
+    "verdict": "APPROVE",
+    "priority": "HIGH",
+    "target_skill_filename": "harmonyos-ui-test",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/harmonyos-ui-test/SKILL.md",
+    "phenomenon": "Issue #27 三阶段 AID 产物齐全 (proposal/delta-spec/info/delta-design/design-review/tasks/todo/apply-report)，FractionUtil 单测 Node 端口 26/26 PASS、ArkTS 编译 BUILD SUCCESSFUL，rev-01 手动 UI 测试 10 PASS 最终 APPROVE。但 dev-01 在 APPLYING 阶段 (2026-06-17 及 2026-06-29 二次 re-dispatch) 两次将 UI 自动化 (Task 5.3) 标记为 Deferred，理由为『模拟器未连接，hdc list targets 返回空』；而 rev-01 独立验证 127.0.0.1:5555 实际 TCP Connected 并直接跑通全部用例，证明环境判定错误。",
+    "root_cause_analysis": "归类 B (漏掉步骤)。session jsonl (2026-06-17/63825131-01c9-455e-b37d-0eb6ab663cf6.jsonl line 205、209) 显示 dev-01 调用 harmonyos-ui-test 后仅执行 `hdc list targets` (返回空) 与 `hdc -t 127.0.0.1:5555 shell echo HELLO` (返回 [Fail]Not match target founded)，随即断言『The emulator is not running』并 Deferred。全部 67 个 session 中 `hdc tconn` 出现 0 次——dev-01 从未对 TCP 模拟器执行连接握手。HarmonyOS 网络模拟器 (127.0.0.1:5555) 必须先 `hdc tconn <ip:port>` 挂载后才会出现在 list targets 且 `-t` 才可用；`Not match target founded` 正是未 tconn 的典型报错。harmonyos-ui-test SKILL 环境准备步骤 1 仅写 `hdc list targets` 确认连接，Q1 排障仅给 `hdc kill/start`，完全缺失 tconn 挂载步骤，导致 dev-01 忠实执行 skill 后误判『环境不满足』而非真实设备离线。rev-01 连接后跑通已反证环境可用。",
+    "optimization_direction": "在 harmonyos-ui-test 环境准备步骤 1 与 Q1 排障处加 imperative 规则：当 `hdc list targets` 返回空时，必须先执行 `hdc tconn 127.0.0.1:5555` (或 capabilities.json 声明地址) 挂载 TCP 模拟器并重新 list targets，确认仍为空方可判定离线 Deferred。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-27/2026-06-17/63825131-01c9-455e-b37d-0eb6ab663cf6.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-27/2026-06-17/a13c6070-ce64-4b35-a423-b8dcb8a780ce.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-27/2026-06-17/c690fd0a-db05-4c57-9c1c-51e752fa5221.jsonl"
+    ],
+    "evidence_anchors": [
+      "63825131-...jsonl#L205 assistant: 'hdc list targets returns empty. Let me try connecting to the emulator directly.'",
+      "63825131-...jsonl#L209 assistant: 'hdc -t 127.0.0.1:5555 fails because no device is connected. The emulator is not running.' -> 据此 Deferred",
+      "apply-report.md Task 5.3 = 'Deferred 模拟器未连接 (hdc list targets 返回空)'；ui-tests/README.md 2026-06-29 二次 deferral 同结论",
+      "全 67 个 session grep 'hdc tconn' = 0 次；harmonyos-ui-test/SKILL.md L1039 步骤1 与 L1374-1382 Q1 排障均无 tconn 挂载步骤",
+      "rev-01 反证: 127.0.0.1:5555 TCP Connected 直接跑通 11 用例 (10 PASS/1 N/A/0 FAIL)，证明环境实际可用"
+    ]
+  }
+}

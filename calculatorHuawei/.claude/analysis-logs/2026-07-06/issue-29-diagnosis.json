@@ -1,0 +1,26 @@
+{
+  "issue_ticket": {
+    "issue_number": 29,
+    "title": "aid-applying apply-report 走诚实验收但未执行强制降级四要素, verdict REQUEST_CHANGES",
+    "verdict": "REQUEST_CHANGES",
+    "priority": "MEDIUM",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "dev-01 apply-session 调用 aid-applying 执行 APPLYING 阶段时, hdc list targets=Empty 且本机 AVD 不存在, apply-report.md:58-83 诚实标注了 hdc 失败与 AVD 不可用, 但未按 SKILL.md step3-2-2b-降级 五步强制检查块执行. capabilities.json 当前 ui_test.emulator_status 仍为 running (未落盘 unavailable), todo.md 无 ⏳+责任人+绝对日期标记, apply-report 未贴用户书面同意回执. rev-01 据此 verdict=REQUEST_CHANGES.",
+    "root_cause_analysis": "归类 B (漏掉步骤). aid-applying/SKILL.md 已写入完整 step3-2-2b-降级 强制检查块, 含 5 步强制执行顺序 + [CHECK-1]~[CHECK-4] grep 自检命令 + 反模式示例 (apply-report.md:58-83 即 issue#29 错例) + 违规处罚 (verdict 强制 REQUEST_CHANGES). 但 apply-session 实际只写诚实验收, 漏跑 4 项强制要素: (1) 未贴 '用户明确书面同意降级 YYYY-MM-DD HH:MM' 原文; (2) 未覆写 todo.md 加 ⏳+责任人+绝对日期三要素; (3) 未覆写 capabilities.json ui_test.emulator_status=running→unavailable (自承 stale 但字段值不变); (4) 未在 step3-4 入口跑 4 条 grep 自检命令. 根因 SKILL.md 把降级规则放在 step3-2-2b 子段表述为'写完 apply-report 后必须执行,失败则禁止提交 PR',但实际是软约束: apply-report 可先写,grep 可不跑,无 hard-fail 闸门阻断 step3-4. 此外 SKILL.md:251-386 将同一降级块复制粘贴两次 (内容完全相同), 维护漂移风险高, 容易让 apply-session 误以为规则是可选附加.",
+    "optimization_direction": "在 aid-applying step3-4 入口处加 imperative 闸门: 必先按顺序跑 [CHECK-1]~[CHECK-4] 四条 grep 自检 (SKILL.md:277-300/345-368 已存), 任一 FAIL 立即 exit 1 禁止写 apply-report.md, 不允许 '写完再补' 的软顺序; 同时删除 step3-2-2b-降级 块中 251-386 重复段, 浓缩为单一权威源, 并把降级规则的触发判据 (含 capabilities.json stale 检测的 jq 命令) 上移到 step3-0 环境检查段作为前置门.",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/13596774-3942-4151-8e48-61c5c7809878.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/15787451-6996-42b6-930c-8ec06d3b18a3.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-17/87c9f776-0d4d-4874-bdf1-c5e790e2e767.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-17/bc8f66cc-b85b-4773-918e-c224cac3c480.jsonl"
+    ],
+    "evidence_anchors": [
+      "apply-report.md:58-83 — 承认 hdc list targets=Empty + hdc tconn Fail + AVD 不存在, 但未走降级四要素 (缺书面同意 + todo.md ⏳ + capabilities.json 覆写 + 自检命令)",
+      "capabilities.json 当前 ui_test.emulator_status=running — 未覆写为 unavailable, 与 apply-report.md:60-67 自承 stale 状态矛盾, 字段值未落盘",
+      "aid-applying/SKILL.md:313-317 反模式示例 — 显式引用 'apply-report.md:58-83 — issue#29 错例 (仅诚实标注但未走降级四要素)' , 说明 SKILL 已预知此反模式但 apply-session 仍踩",
+      "aid-applying/SKILL.md:251-318 与 320-386 step3-2-2b-降级 块内容完全相同 (重复 136 行), 维护漂移风险高",
+      "rev-01 verdict=REQUEST_CHANGES 阻塞项定位 apply-report.md:58-83 harmonyos-ui-test 未实际执行, 修复建议第 2 条更新 capabilities.json ui_test.emulator_status=unavailable (本诊断印证该建议被遗漏)"
+    ]
+  }
+}

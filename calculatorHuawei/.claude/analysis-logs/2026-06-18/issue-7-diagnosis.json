@@ -1,0 +1,29 @@
+{
+  "issue_ticket": {
+    "issue_number": 7,
+    "title": "Issue #7 (百分号按钮) 被 CLOSED 但 rev-01 审查从未发生, aid-applying 再次把 REVIEWING 写成可绕过分支",
+    "verdict": "CLOSED",
+    "priority": "HIGH",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "Issue #7 (百分号按钮) 在 GitHub 上被 CLOSED 但全程无 rev-01 审查。b61453d0.jsonl 单个 AID 会话连续调完 aid-workflow → aid-planning → rq-parse → rq-codebase → mod-design → aid-implementing → aid-applying 后直接终止 (line 337 输出『最终全工作流完成』), 从未触发 aid-reviewing / aid-archiving。apply-report.md §九 直接写『下一步: 可执行 /aid-workflow archive requirement-add-percentage-btn 归档』, 跳过 REVIEWING 直接对归档;「用户确认」段仅询问『是否需要处理问题』, 无任何 hard-gate 禁止无审查关闭 issue。值得标记的隐性缺陷: rq-codebase 在 info.md §关键 bug (REQ-7-07) 段对 Expression.getPercentString 默认分支的索引做 off-by-one 误算 (声称 i=4/start=1, 实测 i=5/start=2, 实测后 substring(0,start+1)='50+' 已含 + 而非 '50'), 错误认定 REQ-7-07 bug 存在; mod-design 把同一误算复述到 delta-design.md §3.5.8 对比表; 最终由 aid-applying 的 Node 镜像 8/8 PASS 反向推翻、tasks.md 反向修改为 ⏭️ 跳过才纠正过来, 但这一『PLANNING 误诊 → APPLYING 反向推翻』的循环未被独立 review 环节捕获。",
+    "root_cause_analysis": "归类: C — 理解偏差 (skill 规则存在但措辞歧义)。证据: (1) b61453d0.jsonl line 170 调 Skill aid-applying, line 322 Write apply-report.md, line 333 跑完 Node 镜像测试, line 337 输出『最终全工作流完成』 — 整段无任何 aid-reviewing 调用, 无任何 review-required gate; (2) apply-report.md §九 APPLYING 阶段结论原文『下一步: 可执行 /aid-workflow archive requirement-add-percentage-btn 归档』, 把『进入 REVIEWING』整步省略, 用『可执行 archive』直接对接到归档; (3) aid-applying SKILL.md「step3-4 下一步」(line 324-326) 措辞『测试通过后，执行归档操作：执行 aid-archiving {类型}-{名称}』, 跳过 aid-reviewing 直接把 APPLYING 接 ARCHIVING;「APPLYING 阶段完成 → 用户确认」段 (line 339-363) 只列『接受, 继续下一阶段 / 处理问题』二选项, 无『rev-01 审查通过 (是/否)』hard-gate 字段, 无『rev-01 未通过禁止 close issue / 禁止合 PR』imperative; (4) 附带二次缺陷: rq-codebase (line 114→121 Write info.md) 把『50+10%』中 % 的位置误算为 i=4, 实际『50+10%』长度 6, % 在索引 5; start 回溯到 2 (停在 +), 不是 1; substring(0, start+1)='50+' 已含 +, 不是 '50'; opPos=2 不是 -1。该误算被 mod-design (line 128→138 Write delta-design.md §3.5.8) 原样复述, 但因 aid-applying 实际跑了 Node 镜像测试并反向推翻, 流程本身被内部『实测』救回 — 而这种救回本应是 rev-01 的职责, 现行 skill 让 APPLYING 自证正确即可过关。唯一指责 aid-applying: 该 skill 的「step3-4 下一步」段把 REVIEWING 写为可省略、用户确认模板无 hard-gate, 是导致『无 rev-01 即 close』的直接元凶。",
+    "optimization_direction": "在 aid-applying step3-4「下一步」段将『测试通过后，执行归档操作：执行 aid-archiving』改写为 imperative: 必须先执行 aid-reviewing 对整个变更 (含 proposal / delta-spec / info / delta-design / tasks / apply-report) 做轻量模式审阅, reviewer 输出 rev-01 通过后才允许进入 aid-archiving; 在「用户确认」模板新增 hard-gate 字段『rev-01 审查通过 (是/否)』, 未填『是』禁止 close GitHub issue / 禁止合 PR; 在 apply-report.md 模板加 §『Handoff Checklist』, 列 reviewer 必须 sign-off 的遗留项 (含 rq-codebase 索引推导是否有 off-by-one / delta-design §3.5.x 与 info.md 是否一致 / tasks.md 状态是否与实测一致), 缺一项即阻断 close。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-7/2026-06-11/1cab228e-14f4-4a7a-9066-a583855f45ad.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-7/2026-06-11/b61453d0-113c-4738-9f17-8e4cb37bf803.jsonl"
+    ],
+    "evidence_anchors": [
+      "b61453d0.jsonl line 8: Skill aid-workflow 入口, line 46: Skill aid-planning, line 55: Skill rq-parse, line 114: Skill rq-codebase, line 121: Write info.md (含 off-by-one 误算), line 128: Skill mod-design, line 138: Write delta-design.md §3.5.8 (复述同样误算), line 154: Skill aid-implementing, line 170: Skill aid-applying, line 322: Write apply-report.md, line 333: Bash 跑 Node 镜像测试, line 337 TEXT 末段『最终全工作流完成』 — 全流程无任何 aid-reviewing 调用",
+      "info.md line 113-118 关键 bug (REQ-7-07) 段: 输入 '50+10%' (i=4 指向 %) 实测 i 应为 5; start 回溯到 1 实测应为 2; substring(0,start+1)='50' 实测应为 '50+'; opPos=-1 实测应为 2 — 经典 off-by-one 误算但仍写出『结论: 期望 50+(50*(10/100))=55』",
+      "delta-design.md line 173-181 §3.5.8『修复前 vs 修复后对比 (50+10%)』表格: 与 info.md 同一 off-by-one (start=1/opPos=-1/重组='50(10/100)'), 完全错误的算法推导被当作修复目标写入设计文档",
+      "apply-report.md §一『经 Node 镜像实测, Expression.getPercentString 无 bug』+ §九『下一步: 可执行 /aid-workflow archive requirement-add-percentage-btn 归档』 — 把『进 REVIEWING』整步省略, 直接跳到归档",
+      "apply-report.md §二 代码完成情况表: Task 2.1 (GREEN 修复) ⏭️ 跳过『无 bug』+ Task 2.2 (REFACTOR) ⏭️ 跳过『无重构需求』, 与 PLANNING 阶段 info.md/delta-design.md 的 REQ-7-07 bug 假设矛盾, 由 APPLYING 阶段实测反向推翻而非 rev-01 审查推翻",
+      "apply-report.md §七『delta-design.md off-by-one 误算记录』段自承 i 实测 5、设计写 4, substring(0,start+1) 实测 '50+'、设计写 '50' — 等于系统自证设计文档有误但无人 review 即合入 worktree",
+      "aid-applying SKILL.md line 324-326 step3-4「下一步」段:『测试通过后，执行归档操作：执行 aid-archiving {类型}-{名称}』, 把 REVIEWING 写成可省略",
+      "aid-applying SKILL.md line 339-363「APPLYING 阶段完成 → 用户确认」模板: 选项只有『1. 接受，继续下一阶段 / 2. 处理问题』, 无『rev-01 审查通过 (是/否)』hard-gate, 无『rev-01 未通过禁止 close issue』imperative",
+      "design-review.md (mod-design 末段产物, line 146 Write) 是 PLANNING 内部 self-review, 范围仅限 design 章节, 不构成对 apply-report.md / 实测 / tasks.md 一致性的独立 rev-01",
+      "git status worktree feat/issue-7-percentage-btn: 仅 specs/* 与 opencalc/entry/src/test/* + tests/node/*, 无 review commit / 无 archive commit — AID 流程在 APPLYING 输出后即终止"
+    ]
+  }
+}

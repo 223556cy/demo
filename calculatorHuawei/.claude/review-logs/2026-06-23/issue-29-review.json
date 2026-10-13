@@ -1,0 +1,24 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "harmonyos-ui-test 未真实跑,缺三页截图/dump",
+  "blocking": [
+    {
+      "item": "真实跑了 harmonyos-ui-test (有截图 + uiautomator dump)",
+      "evidence": "apply-report.md:58-83 明确承认 hdc list targets 返回 Empty,无任何可用模拟器/设备;三页 (BasicGrid/ScientificGrid/ProgrammerGrid) 实际 UI 截图与 uiautomator dump 全部缺失;review_issues.py 的截图证据字段标注 ❌ 无真实截图"
+    }
+  ],
+  "suggestions": [
+    "491573c: 模式按钮点击 → cycleMode → swpController.changeIndex → onChange 的单向数据流,建议在 design.md 补一图(Swiper 与 currentMode 的因果链路),便于后续维护",
+    "491573c: 横屏分支 isLandscape 走 LandscapeGrid 不渲染 Swiper,建议在 CalculatorPage.ets 注释中显式标注此行为,避免未来误把 Swiper 移到横屏分支",
+    "491573c: getCurrentModeLabel() 硬编码 '基础'/'科学'/'程序员',建议改为从 string.json 读取,与 13 个新增 string resource 保持一致",
+    "a4f8f9e: merge 冲突解决后建议 squash 或 rebase 整理,避免 a4f8f9e + 491573c 双 commit 出现在 feat 分支"
+  ],
+  "highlights": [
+    "491573c: ModeController.ets 抽离为纯函数状态机 (KeyboardMode/nextMode/applySwiperIndex/resolveStartupMode),完全脱离 UI/Preferences,可在 hypium 单测,28/28 测试全绿",
+    "491573c: onSwiperChange 单一可信源设计 — 模式按钮和手势滑动都走同一入口,避免双开,持久化也互斥写 (scientific vs programmer 一次只写 1)",
+    "491573c: 启动优先级 SCIENTIFIC > PROGRAMMER > BASIC 用 resolveStartupMode 集中实现,6 个测试覆盖边界 (1/1 / 1/0 / 0/1 / 0/0 / 2/1 / 2/0),保留旧 scientificModeDefault 字段语义",
+    "491573c: apply-report.md 诚实标注 UI 自动化环境受限,不伪造截图/dump (符合铁律 7),TDD RED-GREEN-REFACTOR 三阶段记录完整",
+    "491573c: 横屏保留 LandscapeGrid 旧布局不影响,仅竖屏用 Swiper,设计审查一致"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — harmonyos-ui-test 未跑,缺三页截图/dump\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | PLANNING/IMPLEMENTING/APPLYING 产物齐全 (proposal/delta-spec/info/delta-design/design-review/tasks/apply-report) |\n| harmonyos-ui-test | FAIL | 无真实截图与 uiautomator dump,apply-report 承认 hdc list targets = Empty |\n| commit signoff | OK | 491573c + a4f8f9e 均有 Signed-off-by 末尾行 |\n| 分支规范 | OK | feat/issue-29-中等模糊,未推 main,已 push origin |\n| 铁律 7 不伪造 | OK | apply-report 诚实标注 emulator 不可用,未伪造测试日志 |\n\n## 阻塞项 (必须修复)\n- `specs/changes/20260617-requirement-add-keyboard-swipe/apply-report.md:58-83` — harmonyos-ui-test 未实际执行,无三页 (BasicGrid / ScientificGrid / ProgrammerGrid) 的截图与 uiautomator dump\n  修复建议:\n    1. 在有可用 HarmonyOS 设备/模拟器的环境 (CI runner 或本地 DevEco Studio) 重跑 harmonyos-ui-test skill,产出 3 张 Swiper 切换截图 + 对应 uiautomator dump (按钮/Grid/Swiper 节点)\n    2. 若本机 emulator 长期不可用,更新 `.claude/capabilities.json` 的 `ui_test.emulator_status` 为 `unavailable`,并在 PR 描述中向 dev-01 说明此限制\n    3. apply-report.md 补充实际 UI 验证记录,或明确归档到 specs/archives 时标注 \"UI 自动化未跑\"\n\n## 建议项 (建议修复)\n- 491573c: 模式按钮点击 → cycleMode → swpController.changeIndex → onChange 的单向数据流,建议在 design.md 补一图,便于后续维护\n- 491573c: 横屏 isLandscape 走 LandscapeGrid 不渲染 Swiper,建议在 CalculatorPage.ets 注释中显式标注此行为\n- 491573c: getCurrentModeLabel() 硬编码 '基础'/'科学'/'程序员',建议改为从 string.json 读取\n- a4f8f9e: merge 冲突修复 commit 建议与 491573c 合并/squash,避免 feat 分支出现双 commit\n\n## 亮点\n- ModeController.ets 抽离纯函数状态机,28/28 测试全绿,完全脱离 UI/Preferences\n- onSwiperChange 单一可信源设计,模式按钮和手势走同一入口,避免双开\n- 启动优先级 resolveStartupMode 集中实现,6 个测试覆盖边界\n- apply-report 诚实标注 emulator 不可用,符合铁律 7\n\n## 接下来\n@littleleafccccc 请修复阻塞项 (补 UI 自动化测试) 后再 assign rev-01.\nissue 保持 open, 不要关闭."
+}

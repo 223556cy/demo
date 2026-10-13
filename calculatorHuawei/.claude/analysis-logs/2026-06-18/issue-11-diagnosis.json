@@ -1,0 +1,35 @@
+{
+  "issue_ticket": {
+    "issue_number": 11,
+    "title": "实时预览 aid-applying 缺少真机 UI 测试强制步骤, Node 端口单测通过但真机暴露 1++2 误显示 BUG, 无 rev-01 审查即被外部 dispatcher 关闭",
+    "verdict": "CLOSED",
+    "priority": "HIGH",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "Issue #11 (实时预览) AID 流程完成后由外部 dispatcher 关闭 (无 rev-01 审查), apply-report.md 宣称 17/17 Node 端口单测 PASS + AC 15/15 PASS, 但 apply-report §6 明确自承『未在真机/模拟器验证』。外部补做的真机 UI 自动化测试 (session 11af7f06 → e5c7558e → b31de453) 发现 AC-RP-06 (1++2 语法错误) 在真机上误显示预览『3』, 而非预期的空字符串, 因为 Node 端口的 safeEval 与真机 Expression.ets 的 parseFactor (支持一元 +/- 语义) 行为不一致, 端口测试无法覆盖此类差异。apply-report.md §6.5 头注『根据修改后的 aid-applying skill §3-2-5 规则 (ui_test.available=true 时条件强制)』反向证明原 v1 缺这一步强制, 留出 BUG 漏出通道。",
+    "root_cause_analysis": "归类: B — 漏掉步骤 (流程里有一步没做)。证据: (1) d1e3dd47.jsonl (06:23) assistant 调 Skill aid-applying 完成 RED-GREEN-REFACTOR + Node 端口 17/17 PASS, 立即在 2b7e3577.jsonl (06:29) 生成 apply-report.md, 全程无真机验证; (2) apply-report §6 (line ~230) 自承『未在真机/模拟器编译 hvigorw — UI 渲染、@Watch 触发时机、maxLines 行为等仅在 Node 端口验证』 — 是 v1 缺步骤的自我声明; (3) §6.5 head (line ~236) 显式标注『根据修改后的 aid-applying skill §3-2-5 规则 (ui_test.available=true 时条件强制)』, 反向证明 v1 该规则缺失; (4) 11af7f06.jsonl (06:45) 外部手工加载 harmonyos-ui-test 补救, e5c7558e.jsonl (07:12) 又发现脚本误读状态栏时间 (y<100 过滤缺失), b31de453.jsonl (07:32) 才修复真机 BUG (hasConsecutiveBinaryOperators 增加 Unicode ×÷, 因 ASCII * 与 Unicode × 不匹配导致首轮修复失败); (5) todo.md:24 APPLYING 行宣称 DONE 但 §6.5 矛盾 — 单测通过 ≠ 真机验证。唯一指责 aid-applying: 该 skill v1 未在 ui_test.available=true 时强制真机验证 + 未在 apply-report 模板加 §6.5 必填章节, 是导致 Node 端口假阳性 + BUG 漏出 + 无 rev-01 即关闭的直接元凶。",
+    "optimization_direction": "在 aid-applying SKILL.md 的 APPLYING 阶段硬约束段加 imperative: 当 ui_test.available=true (hdc 设备已连 + 应用已安装) 时, 必须真机/模拟器跑 UI 自动化用例, 禁止仅凭 Node 端口单测声明完成; apply-report.md 模板加 §6.5『UI 自动化测试』必填章节 (含设备/hdc 版本/截图数/PASS 率), 缺则 abort APPLYING; 端口测试 (RealtimePreview.port.mjs) 必须强制覆盖与真机 Expression.ets 行为差异 (一元 +/-、Unicode × ÷ 等), 不能用 stub safeEval 替代。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-11/2026-06-12/7b302b7b-1eb4-415e-8325-1ab6fe100d91.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-11/2026-06-12/3169fdb3-22bd-42f9-9ee9-324b634d1061.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-11/2026-06-12/d1e3dd47-de43-4d33-b134-71c0a6425a41.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-11/2026-06-12/2b7e3577-9e9f-4a9f-8e4a-733292816297.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-11/2026-06-12/11af7f06-7cd5-4918-a29b-259f569fb247.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-11/2026-06-12/e5c7558e-a55e-4387-9974-c7b8d069dc2e.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-11/2026-06-12/b31de453-c6c1-4f8e-af96-7ad6dde27ce1.jsonl"
+    ],
+    "evidence_anchors": [
+      "d1e3dd47.jsonl:1 prompt='/aid-workflow continue requirement-add-realtime-preview Complete APPLYING phase: RED/GREEN/REFACTOR/Run real tests/Generate apply-report' (06:23 — aid-applying 初次执行)",
+      "2b7e3577.jsonl:1 prompt='/aid-workflow continue requirement-add-realtime-preview Generate apply-report.md to complete APPLYING phase. All tests and implementation are already done.' (06:29 — 生成报告, 无真机验证)",
+      "apply-report.md §6 (line ~230): '未在真机/模拟器编译 hvigorw — UI 渲染、@Watch 触发时机、maxLines 行为等仅在 Node 端口验证' — v1 缺步骤自我声明",
+      "apply-report.md §6.5 head (line ~236): '根据修改后的 aid-applying skill §3-2-5 规则 (ui_test.available=true 时条件强制), 本变更虽然 Node 端口 17/17 PASS + AC 15/15 PASS 完整, 但 §6 明确承认未在真机/模拟器验证。按新 skill 强制要求, 已在 HarmonyOS 模拟器 (127.0.0.1:5555) 上补做 UI 自动化测试' — 反向铁证 v1 缺失",
+      "apply-report.md §6.5.2 AC-RP-06 (line ~259): 'AC-RP-06 语法错误 1++2 expected \"\" actual \"3\" ❌ FAIL (BUG!)' — Node 端口测试假阳性案例",
+      "apply-report.md §6.5.3 root-cause (line ~278): 'Node 端口使用 RealtimePreview.port.mjs (纯 JS 实现), 与 ArkTS 实现 1:1 对应 — 真实运行时 computePreview 调用 this.expr.getCleanExpression(), 该方法会实际把 1++2 转换为 1+2' — 端口与真机行为差异",
+      "apply-report.md §6.5.6 BUG fix (line ~329): '根因分析 (第 1 轮修复失败后深入调查) —— Expression.ets 的 parseFactor 支持一元 + 和 - (line 78-79), 1++2 被解析为 1 + (+2) = 3 (一元正号语义)' — Unicode × ÷ 误判导致首轮修复失败",
+      "11af7f06.jsonl:1 prompt='Load skill harmonyos-ui-test and run DevEco Studio tests' (06:45 — 外部补救触发 UI 测试)",
+      "e5c7558e.jsonl:1 prompt='Fix the UI test script bug in Issue #11 testing' (07:12 — 状态栏 y<100 过滤缺失, 误读 02:52 为 expression)",
+      "b31de453.jsonl:1 prompt='Fix the calculator app to implement realtime preview feature for Issue #11. Problem found: The UI test shows that the app does NOT display preview' (07:32 — 真机 BUG 修复 hasConsecutiveBinaryOperators)",
+      "todo.md:24 APPLYING 行 'DONE | apply-report.md | 17/17 单测通过, 2 文件 +109/-1 行' — 与 §6.5 矛盾, 单测通过 ≠ 真机验证"
+    ]
+  }
+}

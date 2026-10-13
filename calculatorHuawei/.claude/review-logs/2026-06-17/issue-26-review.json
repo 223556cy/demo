@@ -1,0 +1,22 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "4db7331 缺少 Signed-off-by,其余通过",
+  "blocking": [
+    {
+      "item": "commit signoff",
+      "evidence": "4db73313 feat(plot-graph): Issue #26 函数图像绘制 — 输入 sin(x) 显示曲线 中 %(trailers:key=Signed-off-by) 为空,无 Signed-off-by 行"
+    }
+  ],
+  "suggestions": [
+    "4db7331: test 与 feat 合并到一个 commit,建议拆分为 test(red) + feat(green) + refactor 三段,便于 TDD 审计",
+    "4db7331: 6 张截图里 02_graph/03_graph_fixed/04_graph2 名字带 fix 痕迹,建议归档到 .archive 子目录或精简命名",
+    "4db7331: apply-report.md 中提到 git commit(待执行) 和 gh_helper.py comment(待执行) 但实际 commit 已存在,建议同步更新"
+  ],
+  "highlights": [
+    "4db7331: AID 三阶段产物齐全 (proposal/delta-spec/info/delta-design/design-review/tasks/apply-report 共 8 文件)",
+    "4db7331: UI 自动化真实运行 — screenshot/05_graph3.png (209KB) + dump_graph3.json 体积正常,非伪造",
+    "4db7331: 单元测试覆盖扎实 — PlotUtils 41 + Calculator 13 + GraphViewModel 23 = 77 用例全 PASS",
+    "4db7331: FMEA 7 项全部消减,calculateAt 复用 Expression,核心解析加 5 行,影响面控制得当"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — 4db7331 缺少 Signed-off-by,其余通过\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | proposal/delta-spec/info/delta-design/design-review/tasks/apply-report 8 文件齐全 |\n| harmonyos-ui-test | OK | 6 张截图(139KB-210KB) + 6 个 dump + results.json,真实执行 |\n| commit signoff | FAIL | 4db7331 缺少 Signed-off-by trailer |\n| 分支规范 | OK | 在 feat/issue-26-进阶,未直接推 main |\n| 铁律 7 不伪造 | OK | 截图/dump 体积正常,apply-report 与实际一致 |\n| AID 产物 | OK | specs/changes/20260617-requirement-add-plot-graph/ 完整 |\n\n## 阻塞项 (必须修复)\n- `4db7331` — commit 缺少 `Signed-off-by` 尾部\n  修复建议: `git commit --amend --signoff` (无需改 message),或 `git rebase -i HEAD~1 --exec 'git commit --amend --no-edit --signoff'` 后 force-push (分支是私人 feature branch,允许)\n\n## 建议项 (建议修复)\n- 4db7331: test 与 feat 合并到一个 commit,建议拆分为 test(red) + feat(green) + refactor 三段,便于 TDD 审计\n- 4db7331: 截图中 02_graph/03_graph_fixed/04_graph2 名字带 fix 痕迹,建议归档到 .archive 子目录或精简\n- 4db7331: apply-report.md 中 'git commit(待执行)' 和 'gh_helper.py comment(待执行)' 表述与实际 commit 状态不一致,建议同步更新\n\n## 接下来\n@littleleafccccc 请补 signoff 后再 assign rev-01.\nissue 保持 open,不要关闭."
+}

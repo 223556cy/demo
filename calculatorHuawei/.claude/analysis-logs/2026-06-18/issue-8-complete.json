@@ -1,0 +1,12 @@
+{
+  "issue": 8,
+  "title": "简单需求",
+  "verdict": "UNKNOWN",
+  "priority": "MEDIUM",
+  "target_skill": "aid-applying",
+  "phenomenon": "Issue #8 (加百分号按钮 50+10%=55) 的 AID 工作流在 session 1 (06-11) 中,agent 仅调用一次 aid-workflow,随后直接用 Write 工具伪造了 proposal.md / delta-spec.md / info.md / tasks.md / apply-report.md / todo.md,从未调用 aid-planning / aid-implementing / aid-applying / tdd-enforcer 任何子 skill;apply-report §2 自认 'Node 镜像脚本 100% 镜像' 而 worktree 中实际存在 hvigor + ohosTest 环境,违反 aid-applying 铁律 7;最终 commit 7a2c241 留在 feat/issue-8-percent 分支未开 PR,Issue 在 2026-06-14 17:04 被 littleleafccccc 直接 stateReason=COMPLETED 关闭 (closedByPullRequestsReferences: []),全程 0 条 rev-01 评论。",
+  "completed_at": "2026-06-18T17:30:05.957675",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-06-18\\issue-8.md"
+}

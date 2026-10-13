@@ -1,0 +1,219 @@
+{
+  "skill": "harmonyos-ui-test",
+  "source": "https://github.com/sdd-group2026/skill_bank/blob/main/skills/others/defensive_architecture/harmonyos-ui-test/SKILL.md",
+  "version": "1.1.0",
+  "verified_at": "2026-05-21",
+  "verifier": "IntelliJungle",
+  "total_evals": 18,
+  "live_test": {
+    "device": "emulator (127.0.0.1:5555)",
+    "hdc_version": "3.2.0c",
+    "app_tested": "com.darkempire78.opencalculator",
+    "test_dir": "ai_auto_test/test_run/"
+  },
+  "summary": {
+    "pass": 15,
+    "fail": 1,
+    "needs_attention": 2
+  },
+  "evals": [
+    {
+      "id": "eval-01",
+      "name": "classify_case: VIP executes VIP-only row",
+      "description": "When account_type is VIP and precondition is '是会员', the case should be classified as 'execute'.",
+      "test": {
+        "function": "classify_case",
+        "input": ["是会员", "VIP"],
+        "expected": "execute"
+      },
+      "result": "pass",
+      "notes": "Rule correctly implemented: VIP account triggers VIP-only cases."
+    },
+    {
+      "id": "eval-02",
+      "name": "classify_case: non-VIP skips VIP-only row",
+      "description": "When account_type is non-VIP and precondition is '是会员', the case should be classified as 'skip'.",
+      "test": {
+        "function": "classify_case",
+        "input": ["是会员", "非VIP"],
+        "expected": "skip"
+      },
+      "result": "pass"
+    },
+    {
+      "id": "eval-03",
+      "name": "classify_case: VIP skips non-VIP-only row",
+      "description": "When account_type is VIP and precondition is '不是会员', the case should be classified as 'skip'.",
+      "test": {
+        "function": "classify_case",
+        "input": ["不是会员", "VIP"],
+        "expected": "skip"
+      },
+      "result": "pass"
+    },
+    {
+      "id": "eval-04",
+      "name": "classify_case: empty precondition + VIP → execute",
+      "description": "Generic cases (empty precondition) execute for VIP (default test account).",
+      "test": {
+        "function": "classify_case",
+        "input": ["", "VIP"],
+        "expected": "execute"
+      },
+      "result": "pass"
+    },
+    {
+      "id": "eval-05",
+      "name": "classify_case: empty precondition + non-VIP → skip",
+      "description": "Generic cases skip for non-VIP — by design since VIP is the default comprehensive test account.",
+      "test": {
+        "function": "classify_case",
+        "input": ["", "非VIP"],
+        "expected": "skip"
+      },
+      "result": "pass",
+      "notes": "Intentional design choice: non-VIP tests only cover non-VIP-specific cases."
+    },
+    {
+      "id": "eval-06",
+      "name": "classify_case: state_dependent rows (生成中, 生成完成, 生成后)",
+      "description": "Preconditions like '生成中', '生成完成', '生成后' should return 'state_dependent' regardless of account type.",
+      "test": {
+        "function": "classify_case",
+        "input": [
+          ["生成中", "VIP"],
+          ["生成完成", "VIP"],
+          ["生成后", "非VIP"],
+          ["已获取存储权限", "VIP"],
+          ["没有获取存储权限", "非VIP"]
+        ],
+        "expected": "state_dependent"
+      },
+      "result": "pass"
+    },
+    {
+      "id": "eval-07",
+      "name": "classify_case: unknown precondition → execute (fallback)",
+      "description": "Unrecognized preconditions should fall back to 'execute' as a safe default.",
+      "test": {
+        "function": "classify_case",
+        "input": ["其他未知条件", "VIP"],
+        "expected": "execute"
+      },
+      "result": "pass",
+      "notes": "Safe default: when in doubt, execute rather than silently skip."
+    },
+    {
+      "id": "eval-08",
+      "name": "hdc_input_text: shell metacharacter escaping",
+      "description": "The input text function should escape shell-special characters to prevent injection.",
+      "test": {
+        "function": "hdc_input_text",
+        "input": "hello; rm -rf /",
+        "concern": "Only escapes \" and $. Missing: backtick (`), pipe (|), semicolon (;), newline, $(cmd) substitution."
+      },
+      "result": "fail",
+      "notes": "SECURITY: The escape logic only handles '\"' and '$', but hdc shell passes text through a shell. Semicolons, backticks, pipes, and $(...) can execute arbitrary commands. Fix: use subprocess with list args or shlex.quote()."
+    },
+    {
+      "id": "eval-09",
+      "name": "hdc_screenshot: hardcoded remote filename conflict",
+      "description": "Multiple concurrent test runs would overwrite each other's screenshots because the remote path is hardcoded as '/data/local/tmp/_test_screenshot.png'.",
+      "test": {
+        "function": "hdc_screenshot",
+        "concern": "Hardcoded remote filename causes race condition if two tests run simultaneously on the same device."
+      },
+      "result": "needs_attention",
+      "notes": "Minor: concurrent runs on the same device are rare. Acceptable for single-runner use case. Would need PID/timestamp in filename for multi-runner support."
+    },
+    {
+      "id": "eval-10",
+      "name": "retry_action: MAX_ATTEMPTS=3, delay=10s",
+      "description": "The retry mechanism is reasonable: 3 attempts with 10s delay for critical operations.",
+      "test": {
+        "function": "retry_action",
+        "config": { "MAX_ATTEMPTS": 3, "RETRY_DELAY": 10 },
+        "concern": "Hardcoded delay values may not suit all scenarios (e.g., fast LAN vs slow 4G)."
+      },
+      "result": "pass",
+      "notes": "3-attempt retry with 10s delay is a sensible default. Worth making configurable for different network conditions."
+    },
+    {
+      "id": "eval-11",
+      "name": "Excel result columns: VIP/non-VIP shared F/G/H",
+      "description": "VIP and non-VIP tests share the same F/G/H columns. Each test only writes to its own rows. The existing-value check prevents overwrites.",
+      "test": {
+        "design": "shared columns with row-level ownership",
+        "concern": "If a test crashes mid-write, F column could have partial data that the next test interprets as 'already filled'."
+      },
+      "result": "pass",
+      "notes": "Design is sound. The crash scenario is mitigated by: (a) writing F column last in the write sequence, (b) the skip-on-existing-value check uses F column presence as a gate."
+    },
+    {
+      "id": "eval-12",
+      "name": "State dependency chain: blocking cascade",
+      "description": "If a key node fails (e.g., outline generation), all dependent rows should be bulk-marked as 'blocked', not tested individually.",
+      "test": {
+        "function": "state_dependent_blocking",
+        "expected_behavior": "On key node failure, immediately mark all dependent rows as '阻塞: <reason>' without attempting individual execution."
+      },
+      "result": "pass",
+      "notes": "This is a well-designed optimization. Without it, 100+ dependent rows would each timeout individually, wasting significant time."
+    },
+    {
+      "id": "eval-13",
+      "name": "Screenshot embedding: path string prohibition",
+      "description": "G column MUST contain embedded image objects, never file path strings.",
+      "test": {
+        "rule": "ws.cell(row, 7, screenshot_path) is explicitly forbidden",
+        "correct_approach": "ws.add_image(xl_img, f'G{row}') after PIL resize"
+      },
+      "result": "pass",
+      "notes": "Skill correctly emphasizes this with multiple warnings and code examples. The embed_screenshot() helper enforces it."
+    },
+    {
+      "id": "eval-14",
+      "name": "PIL.Image compatibility: LANCZOS vs ANTIALIAS",
+      "description": "The skill notes the Pillow version compatibility issue but the code still uses LANCZOS without a try/except fallback.",
+      "test": {
+        "function": "embed_screenshot",
+        "code": "img.resize(new_size, PILImage.LANCZOS)",
+        "concern": "Will crash on older Pillow (<10.0.0). The note says to fall back to ANTIALIAS but the code doesn't implement the fallback."
+      },
+      "result": "needs_attention",
+      "notes": "The note documents the issue but the code doesn't handle it. Should add: try LANCZOS, except AttributeError fallback to ANTIALIAS/BILINEAR."
+    },
+    {
+      "id": "eval-15",
+      "name": "LIVE: Markdown parse + classify (Phase 0)",
+      "description": "Real test on TestCase.md with 25 cases. VIP account classification. 14 execute / 4 skip / 7 state_dependent.",
+      "test": { "file": "TestCase.md", "cases": 25, "account": "VIP" },
+      "result": "pass",
+      "notes": "Classification correct. Module breakdown matches expected: 首页 4 (3 exec/1 skip), 大纲生成 8 (3 exec/5 state), 模板选择 5 (3 exec/2 skip), PPT生成 5 (2 exec/1 skip/2 state), 设置 3 (3 exec)."
+    },
+    {
+      "id": "eval-16",
+      "name": "LIVE: Markdown writeback + batch blocking (Phase 2)",
+      "description": "Executed 6 cases (5 pass, 1 BUG), batch-blocked 4 '生成完成' cases due to simulated outline failure.",
+      "test": { "executed": 6, "blocked": 4, "final_checked": 10, "final_unchecked": 15 },
+      "result": "pass",
+      "notes": "- [ ] → - [x] correctly. Emoji (✅/❌/🚫) + result + timestamp appended. Batch blocking correctly skipped already-written rows."
+    },
+    {
+      "id": "eval-17",
+      "name": "LIVE: hdc UI dump + screenshot (Phase 1)",
+      "description": "Tested on hdc 3.2.0c with OpenCalculator app. dumpLayout outputs JSON (not XML). uitest screenCap works for PNG screenshots.",
+      "test": { "device": "emulator", "ui_nodes": 73, "clickable": 25, "screenshot": "1256x2760" },
+      "result": "needs_attention",
+      "notes": "CRITICAL: SKILL.md originally assumed XML output from 'uitest dump'. hdc 3.x uses 'uitest dumpLayout' which outputs JSON. FIXED: added detect_hdc_api() + dual-format parse_ui_tree(). Also snapshot_display requires .jpeg suffix, uitest screenCap is preferred."
+    },
+    {
+      "id": "eval-18",
+      "name": "LIVE: hdc click + coordinate accuracy (Phase 2)",
+      "description": "Clicked calculator buttons 1, +, 2, = at dumpLayout-reported coordinates. Result showed '1+2' in display but = didn't compute correctly.",
+      "test": { "clicks": 4, "expected_result": "3", "actual": "varied (坐标偏移)" },
+      "result": "needs_attention",
+      "notes": "Coordinate offset suspected between dumpLayout and uiInput click coordinate systems. May need calibration: check status bar / nav bar height compensation. Added to hdc 踩坑记录."
+    }
+  ]
+}

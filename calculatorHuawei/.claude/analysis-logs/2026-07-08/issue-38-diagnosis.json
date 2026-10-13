@@ -1,0 +1,30 @@
+{
+  "issue_ticket": {
+    "issue_number": 38,
+    "title": "APPROVE 通过 — skillopt-01/fix-issue-37-20260708 修复落地有效,dev-02 跑通 AID-Workflow 且发现并修复了 Expression.getPercentString base 缺括号新 bug",
+    "verdict": "APPROVE",
+    "priority": "LOW",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "dev-02 (littleleafaaaaa) 用 skillopt-01 改后的 aid-applying skill (commit=008787588261) 跑 issue #37 的 AID-Workflow 回归:① BUILD SUCCESSFUL — hvigorw assembleHap 4s,0 编译错误 (hvigorw 6.24.2 / openjdk 21.0.8 JBR / DEVECO_SDK_HOME=D:\\Program Files\\Huawei\\DevEco Studio\\sdk);② Node 端口单元测试 14/14 PASS (12 percent + 2 回归,覆盖核心+边界+错误恢复,Expression.test.mjs pass 14 fail 0 duration_ms 7.6);③ 真机 UI 验证 1/1 PASS — 设备 127.0.0.1:5555 在线,装 HAP→启动 App→切 BASIC 模式(swipe ×2)→定位 % 按钮→点 50+10%= → dumpLayout 验证 result=55,截图取证 ui-tests/screenshot/pct_50plus10_result55.png (201 KB);④ 发现并修复 Expression.getPercentString 在 +/- 分支生成表达式时 base 没加括号的 bug — 100+10%+5% 算成 210.5 (错) 而非 115.5 (对),修复在 Expression.ets:241 + :260 加括号 (+7/-2 行);⑤ Sanity Check ok=True exit=0;⑥ hypium test@entry 因项目 entry/build-profile.json5 未声明 test target 降级为 Node 端口(非阻塞,框架已声明但不可执行)。Sanity Check 输出残留若干模板未替换警告 ({N} / {SPECS_FEATURE_ROOT} / {RETRY_DELAY}) 但整体 ok=True exit=0。",
+    "root_cause_analysis": "归类:闭环验证通过 (Trigger 4 Closed-Loop APPROVED — 验签不诊断)。Per SOUL Trigger 4 推断规则,BUILD SUCCESSFUL + 所有测试 PASS + UI 测试 PASS + 找到/修复了真实 bug 四项齐全 → APPROVE。本次 dev-02 跑的是 aid-applying skill 修复后的 AID-Workflow (与 issue #37 同 scope — percent 按钮功能),关键信号全绿:0 编译错误 / 14/14 单测 / 1/1 真机 UI / 找到并修复了 1 个新真实 bug (Expression.getPercentString 字符串拼接缺括号导致 100+10%+5%=210.5 而非 115.5) / Sanity Check ok=True exit=0。该新 bug 与原 issue #37 mock force radian 不属同一根因(本次是字符串拼接语法 bug,上次是运行时 mock 状态机翻转 bug),但同构地证明了 skillopt-01 修复未引入回归 + 新 skill 仍能在 AID-Workflow 中发现真实 bug。Sanity Check 输出的模板残留变量警告属 cosmetic monitor 输出(对应 aid-monitor/aid-planning/aid-reviewing/harmonyos-ui-test/mod-design 几个 skill 的模板变量未被替换),不影响整体判定,与本次 aid-applying 修复无关。修复闭环判定:skillopt-01/fix-issue-37-20260708 分支的 aid-applying 修改有效,可走人工 merge → sync_to_agents 流程,无需再次触发 skillopt-01 优化(避免 skillopt → dev-02 → analysis → skillopt 死循环)。",
+    "optimization_direction": "无需优化。skillopt-01/fix-issue-37-20260708 分支的 aid-applying 修改已通过回归验证,可走人工 merge + sync_to_agents 流程。Sanity Check 输出的模板残留变量警告 ({N} / {SPECS_FEATURE_ROOT} / {RETRY_DELAY}) 属 cosmetic monitor 输出,不在本次 PR 修复范围,可后续单独开 issue 处理(若 ≥3 次出现则考虑入库为新 signature)。",
+    "session_files_analyzed": [],
+    "evidence_anchors": [
+      "[dev-02 report] ✅ BUILD SUCCESSFUL — hvigorw assembleHap 4s, 0 编译错误 (hvigorw 6.24.2 / openjdk 21.0.8 JBR / DEVECO_SDK_HOME=D:\\Program Files\\Huawei\\DevEco Studio\\sdk)",
+      "[dev-02 report] ✅ Node 端口单元测试: 14/14 PASS (12 percent + 2 回归, 覆盖核心 + 边界 + 错误恢复) — Expression.test.mjs pass 14, fail 0, duration_ms 7.6",
+      "[dev-02 report] ✅ 真机 UI 验证: 1/1 PASS — 设备 127.0.0.1:5555 模拟器在线, 流程 装 HAP → 启动 App → 切 BASIC 模式(swipe ×2) → 定位 % 按钮 → 点 50+10%= → dumpLayout 验证 result=55",
+      "[dev-02 report] 🐛 关键 bug: Expression.getPercentString 在 +/- 分支生成表达式时 base 没加括号 — 100+10%+5% 算成 210.5 而非 115.5",
+      "[dev-02 report] 修复: Expression.ets:241 + :260 加括号 (+7/-2 行)",
+      "[dev-02 report] ✅ Sanity Check ok=True exit=0",
+      "[dev-02 report] ✅ Skill 改动语法正确 — package_skills.py 通过",
+      "[dev-02 report] ✅ claude -p 成功调用跑 AID-Workflow",
+      "[dev-02 report] 已同步 skills@skillopt-01/fix-issue-37-20260708 commit=008787588261",
+      "[dev-02 report] 制品: opencalc/spec/changes/20260611-requirement-add-percent-button/apply-report.md (含 2026-07-08 重跑证据 + 真机截图链接)",
+      "[dev-02 report] 关键 Skill 引用: aid-applying/SKILL.md step3-0~3-4 全流程、step3-2-1 TDD RED→GREEN→REFACTOR 铁律 7 不准伪造、step3-2-2b HarmonyOS UI 强制 + 5 步降级兜底(本次未触发, hdc 在线)、step3-2-3 Lint(项目无 lint task, 由 BUILD SUCCESSFUL 替代)",
+      "[dev-02 report] ⚠️ 降级说明: hypium test@entry 因项目 entry/build-profile.json5 未声明 test target (仅 default target) 不可执行 → 降级为 Node 端口 (非阻塞)",
+      "[dev-02 report] Sanity Check 残留警告 (cosmetic, 非阻塞): [aid-monitor] {N} / [aid-planning] 缺 ## 概述 ## 前置条件 + {SPECS_FEATURE_ROOT} / [aid-reviewing] 缺 ## 概述 ## 前置条件 / [harmonyos-ui-test] {RETRY_DELAY} / [mod-design] {SPECS_FEATURE_ROOT}",
+      "[SOUL Trigger 4 推断规则] BUILD SUCCESSFUL + 所有测试 PASS + UI 测试 PASS + 找到/修复了真实 bug → APPROVE (literal, 见 analysis-SOUL.md 三、Trigger 4 verdict 推断规则表格)"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "issue_ticket": {
+    "issue_number": 29,
+    "title": "Issue #29 aid-applying 阶段铁律 7 被走降级路径绕过 + commit 模板漏 -s 标志 — UI 证据缺失且 2c79e0b 缺 Signed-off-by",
+    "verdict": "REQUEST_CHANGES",
+    "priority": "HIGH",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "589139d1 会话里 dev-01 调用 Skill aid-applying 跑 step3-2-2b(HarmonyOS UI 测试强制),执行 `hdc list targets` 返回 [Empty] + `hdc tconn 127.0.0.1:5555/5554` Fail + 整个 SDK 下无 hvd.xml AVD,确认 capabilities.json 的 emulator_status='running' 是 stale。但 claude(-p)未按 aid-applying SKILL.md §step3-2-2b 强制约束 4('不准以没有 hvigorw/模拟器 为由跳过')调用 gh_helper.py comment @littleleafccccc 暂停,而是直接走'降级路径',只在 apply-report.md §UI 自动化测试 段标注 ⚠️ 环境受限 + 5 行'替代验证'表格。git commit 也用了 SKILL.md Git Commit 模板里的 `git commit -m \"feat({name}): apply changes from aid-workflow\"`(无 -s 标志),产出 2c79e0b 缺 Signed-off-by。apply-report.md 写完后 dev-01 push 给 rev-01 被打回。",
+    "root_cause_analysis": "归类 C(理解偏差) + B(漏掉步骤) 混合,均在 aid-applying SKILL.md 单一文件内可定位。(C) §step3-2-2b 的'降级路径'条件写'用户明确书面同意',但未明说在 -p 非交互模式下 dev-01 的 orchestration prompt 方案 C(自动答)是否等同'书面同意';agent 把'诚实标注缺口'误当成授权信号,实际在 -p 模式无人类在环,正确动作应是 gh_helper.py comment + 标 awaiting-human-input 而非继续 commit。(B) §Git Commit 模板命令 `git commit -m \"feat({name}): apply changes from aid-workflow\"` 完全省略 `-s` (sign-off) 标志,没有把'必须 Signed-off-by'作为 imperative gate,导致 2c79e0b 缺 Signed-off-by(虽然后续 amended 为 491573c 已补 -s,但原 commit 状态已被 rev-01 抓取)。证据 589139d1.jsonl grep 'harmonyos-ui-test'=107 + 'hdc list targets Empty' + '降级路径' 关键字出现;apply-report.md §UI 自动化测试段原文承认 'hdc list targets 返回 [Empty]... capabilities.json 中的 emulator_status: running 是 stale 状态';同文件 §下一步 标记'本地 commit 完成 → 通知 dev-01 push',而 push 前无任何'人类书面同意降级'记录。",
+    "optimization_direction": "在 aid-applying SKILL.md §step3-2-2b 降级路径分支加 imperative:'-p 非交互模式下,若 capabilities.json 标 ui_test.available=true 但实测 hdc list targets Empty,必须先调 gh_helper.py comment <num> @littleleafccccc + issue 标 awaiting-human-input,严禁直接 commit';同时把 §Git Commit 模板命令从 `git commit -m \"feat({name}): apply changes from aid-workflow\"` 改为 `git commit -s -m \"feat({name}): ...\"`(加 -s 标志),并在 step3-2-2b 末尾新增 'pre-commit 自检'步骤:若 git log -1 --format=%B HEAD 不含 'Signed-off-by:',立即 abort 并提示补 --amend -s。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/589139d1-8e5c-4222-a0b1-b1021ed44bc2.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/63b2ec44-0ff3-43d4-9f6f-3cddb7ed0a36.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/13596774-3942-4151-8e48-61c5c7809878.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/627dcc06-2d83-461a-bf14-bbb926f4e6d7.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/e06e7a7f-f1d3-42d8-85d1-875c81f28323.jsonl"
+    ],
+    "evidence_anchors": [
+      "589139d1.jsonl grep 'harmonyos-ui-test'=107 命中(最高频),grep 'aid-applying' 高频 → 确认 dev-01 显式调过 aid-applying 并触发 step3-2-2b 强制 UI 测试分支",
+      "589139d1.jsonl grep 'hdc list targets' 多次出现,文本含 'hdc list targets 返回 [Empty],需要 tconn 连上模拟器' — 实际环境无 emulator 的关键证据",
+      "589139d1.jsonl grep 'git commit --amend -s' / 'git commit --amend --signoff' 多次出现,说明事后才知道补 -s,反过来证明原 commit 模板缺 -s",
+      "apply-report.md §UI 自动化测试原文:'阻塞原因 (capabilities.json 与实际环境不一致): hdc list targets 返回 [Empty]... capabilities.json 中的 emulator_status: running 是 stale 状态'",
+      "apply-report.md §下一步 原文:'✅ 本地 commit 完成 → 通知 dev-01 push' — push 前无任何人类书面同意降级记录",
+      "aid-applying SKILL.md §Git Commit 模板原文: `git commit -m \"feat({name}): apply changes from aid-workflow\"` 无 -s 标志 → B 类漏掉步骤的直接证据",
+      "aid-applying SKILL.md §step3-2-2b 降级路径条件:'用户明确书面同意降级' — 未说明 -p 模式下如何获取该同意 → C 类理解偏差的直接证据",
+      "git log 2c79e0b 全文无 'Signed-off-by:' 行;git log 491573c 含 'Signed-off-by: littleleafccccc <littleleafccccc@users.noreply.github.com>' → 印证原 commit 缺 sign-off,后续 --amend 才补上"
+    ]
+  }
+}

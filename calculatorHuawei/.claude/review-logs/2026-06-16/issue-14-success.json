@@ -1,0 +1,13 @@
+{
+  "issue": 14,
+  "title": "中等模糊",
+  "verdict": "APPROVE",
+  "summary": "AID 三阶段齐备 + UI 测试真实执行 + 铁律 7 合规",
+  "branch": "feat/issue-14-中等模糊",
+  "wt_path": "D:\\huawei\\Demo\\worktrees\\issue-14",
+  "comment_ok": true,
+  "action": "close(ok=True)",
+  "action_ok": true,
+  "reviewed_at": "2026-06-16T12:37:40.729178",
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\review-logs\\2026-06-16\\issue-14.md"
+}

@@ -1,0 +1,203 @@
+metadata:
+  generated_at: '2026-06-08 19:22:20'
+  stage: gateway-running
+  next_stage: issue-pending
+  updated_at: '2026-07-01 10:20:00'
+  gateway:
+    started_at: '2026-07-01 10:20:00'
+    pid: 48628
+    task_id: skillopt01-onboard
+    mode: foreground-background
+    active_cron_jobs: 5
+    cron_jobs:
+      - id: dev01aabbcc01
+        name: dev-01 Issue Worker
+        profile: dev-01
+        schedule: every 10m
+        mode: no-agent
+      - id: d3ad336493ba
+        name: rev-01 Issue Reviewer
+        profile: rev-01
+        schedule: every 10m
+        mode: no-agent
+      - id: a1b2c3d4e5f6
+        name: analysis Issue Forensic Worker
+        profile: analysis
+        schedule: every 10m
+        mode: no-agent
+      - id: b2c3d4e5f6a7
+        name: skillopt-01 Skill Optimizer Worker
+        profile: skillopt-01
+        schedule: every 10m
+        mode: no-agent
+      - id: dev02aabbcc01
+        name: dev-02 Regression Runner
+        profile: dev-02
+        schedule: every 10m
+        mode: no-agent
+    notes:
+      - 全部 5 个 cron 都是每 10min 触发 (no_agent 模式)，及时性优先
+      - dev-01 / rev-01 / analysis / skillopt-01 / dev-02 形成 v3 PR 闭环: dev-01→rev-01→analysis→skillopt-01→dev-02→analysis (judge)
+      - dev-02 (2026-07-07) 加入闭环, 每 10min 拉 [regression] issue, 跑完整 AID-Workflow 验证 skillopt-01 改动
+  org_name_corrected: true
+  previous_org_name: oneplusn-team
+  github_push_commit: 8cb00944f3ae6f4cd64eeebe9eb0b736f43ca828
+organization:
+  name: calculatorHuawei
+  url: https://github.com/calculatorHuawei
+repository:
+  name: agent_workflow
+  url: https://github.com/calculatorHuawei/agent_workflow
+  issues_url: https://github.com/calculatorHuawei/agent_workflow/issues
+  status: created
+  created_at: '2026-06-08'
+  default_branch: main
+  pushed_at: '2026-06-08 20:05:00'
+  commit_sha: 8cb00944f3ae6f4cd64eeebe9eb0b736f43ca828
+boss:
+  github_username: 223556cy
+  email: 2690920195@qq.com
+souls_source:
+  base_path: D:\huawei\ai-native-org-guide\souls\
+  available:
+    - 01-评审大哥-SOUL.md
+    - 02-开发小哥-SOUL.md
+    - 03-测试小哥-SOUL.md
+    - 04-项目总管-SOUL.md
+    - 05-挑战大姐-SOUL.md
+team_memory:
+  base_path: D:\huawei\Demo\calculatorHuawei\.claude\memory\
+  established_at: '2026-07-01 10:55:00'
+  writer: analysis
+  readers:
+    - dev-01
+    - rev-01
+    - skillopt-01
+    - pm-01
+  files:
+    - 00-INDEX.md: 团队记忆索引 + 检索命令 + 统计
+    - failures.md: ❌ 失败案例 (analysis finalize verdict=REJECT/CLOSED)
+    - successes.md: ✅ 成功案例 (analysis finalize verdict=APPROVE)
+    - optimization-backlog.md: 💡 待优化项聚合 (按 skill + priority)
+    - archive/: 季度归档 (90 天后)
+  authority: 'SKILL.md > Memory (Memory 是来由, SKILL.md 是规则)'
+  expiry_days: 90
+agents:
+  dev-01:
+    name: dev-01
+    role: developer
+    agent_type: hermes
+    github_username: littleleafccccc
+    github_email: 2690920195+dev01@qq.com
+    gateway_port: 8100
+    status: active
+    onboarded_at: '2026-06-08 19:25:27'
+    token_status: filled
+    token_expires_at: '2026-09-06'
+    token_scopes: 'repo, workflow, delete:packages, write:packages'
+    soul_source: D:\huawei\ai-native-org-guide\souls\02-开发小哥-SOUL.md
+    soul_role: 开发小哥（资深鸿蒙开发工程师）
+    soul_injected_at: '2026-06-08 21:00:00'
+    upgrades:
+      - module: hindsight
+        enabled: true
+        upgraded_at: '2026-06-08 19:27:00'
+        install_cmd: "uv pip install --python ~/.hermes/hermes-agent/venv/bin/python hindsight-all"
+        config_path: "~/.hermes/hindsight/config.json"
+  rev-01:
+    name: rev-01
+    role: reviewer
+    agent_type: hermes
+    github_username: littleleafbbbbb
+    github_email: 2690920195+rev01@qq.com
+    gateway_port: 8101
+    status: active
+    onboarded_at: '2026-06-08 19:25:40'
+    token_status: filled
+    token_expires_at: '2026-09-06'
+    token_scopes: 'admin:org, admin:repo_hook, repo, workflow, delete:packages, write:packages'
+    soul_source: D:\huawei\ai-native-org-guide\souls\02-开发小哥-SOUL.md
+    soul_role: 代码审查员（技术型 — 共享开发技术栈 + 审查视角）
+    soul_injected_at: '2026-06-08 21:00:00'
+    soul_note: '本地无纯代码审查员模板，使用 02-开发小哥 的技术栈知识 + 审查视角标注'
+    upgrades:
+      - module: hindsight
+        enabled: true
+        upgraded_at: '2026-06-08 19:27:00'
+        install_cmd: "uv pip install --python ~/.hermes/hermes-agent/venv/bin/python hindsight-all"
+        config_path: "~/.hermes/hindsight/config.json"
+  pm-01:
+    name: pm-01
+    role: project-manager
+    agent_type: hermes
+    github_username: littleleafaaaaa
+    github_email: 2690920195+pm01@qq.com
+    gateway_port: 8102
+    status: active
+    onboarded_at: '2026-06-08 19:25:54'
+    token_status: filled
+    token_expires_at: '2026-09-06'
+    token_scopes: 'admin:org, admin:repo_hook, repo, workflow, delete:packages, write:packages'
+    soul_source: D:\huawei\ai-native-org-guide\souls\04-项目总管-SOUL.md
+    soul_role: 项目总管（知识库 + 文档管理 + 规范维护）
+    soul_injected_at: '2026-06-08 21:00:00'
+    upgrades:
+      - module: hindsight
+        enabled: true
+        upgraded_at: '2026-06-08 19:27:00'
+        install_cmd: "uv pip install --python ~/.hermes/hermes-agent/venv/bin/python hindsight-all"
+        config_path: "~/.hermes/hindsight/config.json"
+  analysis:
+    name: analysis
+    role: research-analyst
+    agent_type: hermes
+    github_username: littleleafAnalysis
+    github_email: 2690920195+analysis@qq.com
+    gateway_port: 8103
+    status: active
+    onboarded_at: '2026-06-18 11:42:00'
+    token_status: filled
+    token_expires_at: '2026-09-06'
+    token_scopes: 'repo, workflow, write:packages, read:org'
+    soul_source: D:\huawei\ai-native-org-guide\souls\05-挑战大姐-SOUL.md
+    soul_role: 首席诊断分析师 (法医诊断 + 4 步根因分析 + skill 优化接力)
+    soul_injected_at: '2026-06-18 11:50:00'
+    soul_note: '诊断 -> 输出 diagnosis.json (含 target_skill + optimization_direction) -> 转 skillopt-01'
+    cron_frequency: '*/10 * * * *'
+    memory_write: true
+    memory_files:
+      - failures.md: verdict=REQUEST_CHANGES/CLOSED 时追加
+      - successes.md: verdict=APPROVE 时追加
+      - optimization-backlog.md: 自动按 skill 聚合失败
+    workflow:
+      - '拉 issues (analysis:pending 标签 / assignee)'
+      - '委派 claude -p 跑 4 步诊断 (非阻塞 Popen)'
+      - 'finalize: 发评论 + 写 .claude/memory/ + 改 label (pending -> complete) + unassign'
+  skillopt-01:
+    name: skillopt-01
+    role: skill-optimizer
+    agent_type: hermes
+    github_username: littleleafOptimizer
+    github_email: 2690920195+skillopt@qq.com
+    gateway_port: 8104
+    status: active
+    onboarded_at: '2026-07-01 10:20:00'
+    token_status: filled
+    token_expires_at: '2026-09-06'
+    token_scopes: 'repo, workflow, write:packages, read:org'
+    soul_source: '~/.hermes/profiles/skillopt-01/SOUL.md'
+    soul_role: Skill 优化师 (两次唤醒协议 v2.3 + JSON Patch + A/B 沙箱验证 + Memory 检索)
+    soul_injected_at: '2026-07-01 10:20:00'
+    soul_version: v2.3
+    soul_note: '分析小哥 diagnosis.json -> 读 .claude/memory/ -> Stage 1 (JSON Patch, reason 引用 memory Issue) -> 系统平台注入 + A/B 沙箱 -> Stage 2 (决策报告 + 更新 optimization-backlog)'
+    cron_frequency: '*/10 * * * *'
+    memory_read: true
+    memory_files:
+      - failures.md: 写 patch 前必读 (避免重复优化)
+      - optimization-backlog.md: 找目标 / 检查状态
+    workflow:
+      - '拉 issues (skillopt:pending / skillopt:rediagnose 标签 / assignee)'
+      - 'Stage 1: 委派 claude -p 生成 JSON Patch ([STAGE: 1] 状态锁)'
+      - '平台自动: 备份 .bak -> 注入 patch -> worktree A/B 沙箱 -> dev-01 跑测试'
+      - 'Stage 2: 委派 claude -p 基于沙箱日志出具决策报告 ([STAGE: 2] 状态锁)'
+      - '合并/回滚 -> 改 label (pending -> complete) + 发评论'

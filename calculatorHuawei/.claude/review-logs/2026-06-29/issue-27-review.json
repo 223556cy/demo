@@ -1,0 +1,27 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "UI 测试缺截图 + commits 未 sign-off",
+  "blocking": [
+    {
+      "item": "harmonyos-ui-test 无截图与 dump",
+      "evidence": "specs/changes/20260617-requirement-add-result-display-toggle/ 目录下无 ui-tests/ 子目录; apply-report.md §\"UI 自动化测试\" 显式披露 Task 5.3 Deferred (hdc list targets 返回 Empty). 未执行 AC-1~5 截图序列, 也无 uiautomator dump."
+    },
+    {
+      "item": "commit 未 signed-off",
+      "evidence": "19ff4e21 feat(result-display): 分数/小数显示自由切换 [Issue #27] → Signed-off-by: Ns; 66315758 docs(aid): Issue #27 AID 三阶段产物补全 → Signed-off-by: Ns. 仅 a4f8f9e (前置 merge fix) 有签名."
+    }
+  ],
+  "suggestions": [
+    "19ff4e21: AID apply-report §\"诚实披露\" 思路正确, 建议下次若有可用模拟器时按 harmonyos-ui-test skill 补跑 AC-1~5 (竖屏默认 0.5 / 切换后 1/2 / 再切回 0.5 / 启动保留 / 历史仍为小数) 并附 5 张截图 + dump.",
+    "19ff4e21: 切换按钮在错误态/无结果时隐藏, 建议在 UI 测中补一组错误态验证 (避免回归时按钮闪烁).",
+    "66315758: 进阶 apply-report.md 与 20260617 toggle 目录存在两份近似产物, 建议在 docs 中明确引用关系避免后续 reviewer 误判重复."
+  ],
+  "highlights": [
+    "19ff4e21: 缓存 lastRawResult 而非从 result 字符串反解 (避免千分位丢精度), 设计稳健.",
+    "19ff4e21: FractionUtil 26/26 Node 端口测试 + 18 hypium 用例覆盖 gcd/toFraction/format, 阈值 maxDenominator=9999 合理.",
+    "19ff4e21: FMEA 6 类风险在 delta-spec §4 与 apply-report 中都有具体落地 (浮点/横屏/持久化/GCD/错误态/空结果短路), 风险消减到位.",
+    "19ff4e21: 切换按钮横屏隐藏 + 错误态禁用策略与 ToggleRow 一致, UI 风格统一.",
+    "66315758: AID 三阶段产物齐全 (proposal/delta-spec/info/delta-design/design-review/tasks/todo/apply-report), 文档规范."
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — UI 测试缺截图 + commits 未 sign-off\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | proposal/delta-spec/info/delta-design/design-review/tasks/todo/apply-report 全在 (20260627-requirement-add-进阶 + 20260617-requirement-add-result-display-toggle 两套产物) |\n| harmonyos-ui-test | FAIL | 20260617 目录无 ui-tests/ 子目录; apply-report.md §UI 自动化测试 显式披露 Task 5.3 Deferred (hdc list targets 返回 Empty). 未产出 AC-1~5 截图与 uiautomator dump |\n| commit signoff | FAIL | 19ff4e21 与 66315758 均为 Signed-off-by: Ns; 仅 a4f8f9e (前置 merge fix) 有签名 |\n| 分支规范 | OK | 在 feat/issue-27-进阶, 已推送 origin/feat/issue-27-进阶, 未直接推 main |\n| 铁律 7 不伪造 | OK | Node 端口 26/26 PASS 与 hvigorw assembleHap BUILD SUCCESSFUL 均为真实跑测输出; UI 测缺失按 capabilities.json 协议诚实披露, 无伪造痕迹 |\n\n## 阻塞项 (必须修复)\n- 19ff4e21 + 66315758 — 两个 commit 均未带 Signed-off-by trailer\n  修复建议: git rebase --signoff 19ff4e21~1 后 force-push, 或 amend 每条 commit 加 Signed-off-by: littleleafccccc <...>\n\n- specs/changes/20260617-requirement-add-result-display-toggle/ 缺 ui-tests/ 子目录\n  修复建议: 启动模拟器后按 harmonyos-ui-test skill 跑 AC-1~5 (默认 0.5 / 切换显示 1/2 / 再切回 0.5 / 启动后模式保留 / 历史仍为小数), 产出 5 张 screenshot + 对应 uiautomator dump 到 specs/changes/20260617-requirement-add-result-display-toggle/ui-tests/screenshot/ 与 dump/, 然后在新 commit 中引用路径\n\n## 建议项 (建议修复)\n- 19ff4e21: 切换按钮在错误态/无结果时隐藏, 建议补一组错误态 UI 回归用例避免后续闪烁\n- 66315758: 进阶 (20260627) 与 toggle (20260617) 两套 AID 产物近似, 建议在 apply-report.md 中明确互引关系, 避免后续 reviewer 重复审查\n\n## 接下来\n@littleleafccccc 请修复阻塞项后再 assign rev-01.\nissue 保持 open, 不要关闭."
+}

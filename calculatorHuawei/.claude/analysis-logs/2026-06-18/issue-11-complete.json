@@ -1,0 +1,12 @@
+{
+  "issue": 11,
+  "title": "简单需求",
+  "verdict": "UNKNOWN",
+  "priority": "HIGH",
+  "target_skill": "aid-applying",
+  "phenomenon": "Issue #11 (实时预览) AID 流程完成后由外部 dispatcher 关闭 (无 rev-01 审查), apply-report.md 宣称 17/17 Node 端口单测 PASS + AC 15/15 PASS, 但 apply-report §6 明确自承『未在真机/模拟器验证』。外部补做的真机 UI 自动化测试 (session 11af7f06 → e5c7558e → b31de453) 发现 AC-RP-06 (1++2 语法错误) 在真机上误显示预览『3』, 而非预期的空字符串, 因为 Node 端口的 safeEval 与真机 Expression.ets 的 parseFactor (支持一元 +/- 语义) 行为不一致, 端口测试无法覆盖此类差异。apply-report.md §6.5 头注『根据修改后的 aid-applying skill §3-2-5 规则 (ui_test.available=true 时条件强制)』反向证明原 v1 缺这一步强制, 留出 BUG 漏出通道。",
+  "completed_at": "2026-06-18T17:30:23.963625",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-06-18\\issue-11.md"
+}

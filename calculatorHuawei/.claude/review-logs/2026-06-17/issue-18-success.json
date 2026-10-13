@@ -1,0 +1,13 @@
+{
+  "issue": 18,
+  "title": "中等模糊",
+  "verdict": "APPROVE",
+  "summary": "AID 制品完备, 真实 UI 跑通, 诚实披露 P0",
+  "branch": "feat/issue-18-中等模糊",
+  "wt_path": "D:\\huawei\\Demo\\worktrees\\issue-18",
+  "comment_ok": true,
+  "action": "close(ok=True)",
+  "action_ok": true,
+  "reviewed_at": "2026-06-17T11:27:41.542388",
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\review-logs\\2026-06-17\\issue-18.md"
+}

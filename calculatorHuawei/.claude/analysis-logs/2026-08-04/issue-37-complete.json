@@ -1,0 +1,9 @@
+{
+  "issue": 37,
+  "title": "[bug] sin(x) 在 GraphPage 渲染成直线 — isDegree 时序竞态 (issue #26 回归)",
+  "verdict": "SKIP_ALREADY_DONE",
+  "completed_at": "2026-08-04T00:08:41.060655",
+  "comment_ok": false,
+  "label_ok": false,
+  "log": "(已分析完成 (analysis:complete 存在, 无重新请求))"
+}

@@ -1,0 +1,25 @@
+{
+  "issue_ticket": {
+    "issue_number": 29,
+    "title": "harmonyos-ui-test 未跑,缺三页截图与 uiautomator dump,apply-report 未走降级路径",
+    "verdict": "REQUEST_CHANGES",
+    "priority": "MEDIUM",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "aid-applying 阶段 step3-2-2b 铁律 7 强制要求跑 harmonyos-ui-test,但本机 hdc list targets=Empty 触发降级路径;apply-report.md:58-83 仅'诚实标注'缺口,未执行降级路径的 3 个子步骤(用户书面同意/todo.md ⏳ + 责任人/capabilities.json emulator_status 更新),致 PR 缺三页截图与 dump。",
+    "root_cause_analysis": "B 类(漏掉步骤),含 D 因素(外部:emulator unavailable)。aid-applying/SKILL.md step3-2-2b 已定义 4 个不准+1 个降级路径(行 226-249),降级路径要求 4 条件同时满足:用户明确书面同意+apply-report「风险与遗留问题」段显式记录+todo.md 标记 ⏳ + 责任人 + 计划补做时间。apply-report.md:58-83 仅满足条件 2 (诚实标注缺口),未满足条件 1/3/4:用户未明确书面同意降级,todo.md:118-128 step3-3 段仅有测试运行无 ⏳ 标记,capabilities.json 的 ui_test.emulator_status 仍标 running (stale,apply-report.md:67 自承 stale 但未覆写)。证据:apply-report.md:58-83 替代验证段未引用降级路径四要素,todo.md 整篇无 ⏳,capabilities.json 实际值未变。",
+    "optimization_direction": "在 step3-2-2b 末尾追加强制检查块:当 hdc list targets 返回 Empty 或 capabilities.json 的 emulator_status 与 hdc 实际探测冲突时,必须先在 todo.md 插入 ⏳ 标记 + 责任人 + 计划补做时间,再覆写 capabilities.json 的 ui_test.emulator_status 为 unavailable,最后才允许 apply-report 写环境受限段,并显式记录用户书面同意降级。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-17/87c9f776-0d4d-4874-bdf1-c5e790e2e767.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/13596774-3942-4151-8e48-61c5c7809878.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/15787451-6996-42b6-930c-8ec06d3b18a3.jsonl"
+    ],
+    "evidence_anchors": [
+      "apply-report.md:58-83 — 标注 hdc list targets=Empty,hdc tconn 失败,AVD 不存在,但只提请 dev-01 / 人类协助两选项,未引用降级路径四要素",
+      "apply-report.md:67 — 自承 capabilities.json 中的 emulator_status: running 是 stale 状态,但未触发覆写动作",
+      "aid-applying/SKILL.md:226-249 — step3-2-2b 强制约束与降级路径(4 条件全列:用户书面同意+apply-report 风险段+todo.md ⏳+仅当次 session)",
+      "todo.md:118-128 — step3-3 段仅列测试结果,无任何 ⏳ 标记、无责任人、无计划补做时间",
+      "capabilities.json — ui_test.emulator_status 仍为 running,与 apply-report.md:67 自承的 stale 状态冲突,未覆写"
+    ]
+  }
+}

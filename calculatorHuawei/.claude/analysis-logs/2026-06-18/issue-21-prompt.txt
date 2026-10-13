@@ -1,0 +1,157 @@
+# 首席诊断任务 (Issue #21)
+
+## Issue 上下文
+- Number: #21
+- Title: 测试噪声-aid-planning
+- 最终结论: **REQUEST_CHANGES** — commit 缺少 Signed-off-by 阻塞合并
+- URL: https://github.com/calculatorHuawei/agent_workflow/issues/21
+- 状态: closed
+- 标签: (无)
+
+## Issue 正文
+请为当前的计算器应用追加一个‘阶乘（!）’运算按钮。”
+
+## rev-01 完整审查评论 (最重要)
+[rev-01] REQUEST CHANGES — commit 缺少 Signed-off-by 阻塞合并
+
+## 审查结果
+| 检查项 | 状态 | 备注 |
+|--------|------|------|
+| AID 三阶段 | OK | proposal/delta-spec/info/design/tasks/todo/apply-report 7 个 artifact 齐全 |
+| harmonyos-ui-test | OK | 5/5 PASS, 7 张截图 (1320x2856 PNG) + 8 个 uiautomator dump (含 ! 按钮 + 720 结果) |
+| commit signoff | **FAIL** | d3b5ae4 trailers 仅含 Co-Authored-By, 缺 Signed-off-by |
+| 分支规范 | OK | feat/issue-21-测试噪声-aid-planning, 未直接推 main |
+| 铁律 7 不伪造 | OK | 单元测试 13/13 实跑通过, 输出与 apply-report §3.1 完全一致 |
+
+## 阻塞项 (必须修复)
+- `d3b5ae4` — commit message 缺 `Signed-off-by: littleleafccccc <...>` trailer
+  修复建议: `git commit --amend --signoff` 然后 `git push --force-with-lease origin feat/issue-21-测试噪声-aid-planning`
+
+## 建议项 (建议修复)
+- d3b5ae4: 拆分为 test/feat 两个 commit (ISSUE21_F1..F8 测试先 RED 后 UI GREEN) 符合 TDD 节奏, 当前 1 个 commit 模糊了 TDD 边界
+
+## 主要亮点
+- d3b5ae4: 主动接管上一轮被错误标记'安全拦截'的噪声 attempt, 在 apply-report §8 透明记录, 决策可追溯
+- d3b5ae4: 5/5 harmonyos-ui-test 真实跑通, 截图 + dump 双证据齐全, 铁律 7 未违规
+- d3b5ae4: AID 三阶段 7 个 artifact 齐全, 不动现有不变量
+- d3b5ae4: 单元测试 13/13 实跑通过 (含 5 个 percent 回归 0 破坏)
+
+## 接下来
+@littleleafccccc 请修复阻塞项 (补 Signed-off-by) 后再 assign rev-01.
+issue 保持 open, 不要关闭.
+
+## Worktree 信息
+- Path: `D:\huawei\Demo\worktrees\issue-21` (exists=True)
+- Branch: `feat/issue-21-测试噪声-aid-planning`
+- AID 产物 change_id: `20260617-requirement-add-factorial-button`
+- AID 产物列表: apply-report.md(9082B), delta-spec.md(1966B), design.md(5538B), info.md(3602B), proposal.md(4079B), tasks.md(4643B), todo.md(1708B)
+
+## Session 对话文件路径 (核心证据)
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\1078f257-e5b0-4198-9fe3-2d3c1e89b48d.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\127ea0ce-f0dd-4c70-b788-e7a83f35ea64.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\182f1986-18f5-42a2-8b69-2bd7b251028a.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\18e8cc0c-e671-4efa-91f7-4b75981c1c53.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\1bef196a-1e70-4074-aef8-d6d34ad71110.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\22f788bb-6167-4905-8f7e-e5d9c1087e1c.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\289cb9eb-0753-44d6-aa81-db00cc19cee2.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\2d51ab58-435c-45e7-9eb9-888bb42e3824.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\32cb6f70-af01-4353-ac1d-060b73867761.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\35bdc592-ddfc-4e27-8b56-15e1a2b994fc.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\374acb6a-cf53-41b8-aae8-11132d49a076.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\3c9a9887-20b5-4d45-8dfe-0d424e34d04b.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\3dedfd60-7171-4d99-8c15-eb97bb4fa6f7.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\5318ba18-8999-445c-9469-58d836947814.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\5835404f-6834-4c89-918c-a3f98c736185.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\5b92a28f-fe9a-452f-ae5f-05bde6e50293.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\611295ab-9344-40b4-8a4d-024b778cca08.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\6521bcb5-fcfc-48fb-b592-3f31e77e0f8e.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\67e6c3ee-3235-457f-923e-9eb336d89521.jsonl`
+  - `D:\huawei\my_sessions\sessions\claude-code\dev-01\_raw\D--huawei-Demo-worktrees-issue-21\2026-06-17\6bc3cc68-f6e7-4d21-afba-3fcf9555564a.jsonl`
+  ... 还有 55 个
+
+## 工作目录 (Claude 必须能读)
+- 项目根: `D:/huawei/Demo/calculatorHuawei`
+- Worktree: `D:/huawei/Demo/worktrees/issue-21`
+- Session 原始: `D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-21`
+
+## 你的工作 (法医式诊断 4 步链)
+
+🤖 非交互模式 (claude -p), 全自动, 不允许问问题. 所有决策自己拍板.
+
+### 步骤 A. 现象还原 (Phenomenon)
+1. 通读 session jsonl: 看 claude -p 调了几次 aid-planning / aid-implementing / aid-applying / tdd-enforcer skill
+2. 看每个 skill 内部怎么跑的: 有没有 step 跳过、有没有命令失败、产物缺什么
+3. 对比 AID 产物: proposal.md / delta-spec.md / design.md / tasks.md / apply-report.md 是否齐全
+4. 提取核心现象 (1 句话总结, 50-150 字)
+
+### 步骤 B. 根因剖析 (Root Cause) — 归类到以下 4 类之一
+- **A. 幻觉乱写** — claude 自己瞎写 (改了 prompt / 产物) 但 skill 没要求
+- **B. 漏掉步骤** — 流程里有一步没做 (要加 imperative 规则)
+- **C. 理解偏差** — skill 规则存在但歧义 (要改写措辞)
+- **D. 外部因素** — 不是 skill 的问题 (e.g. 网络、SDK 缺失、用户描述不清)
+  - 此时 target_skill_filename = 'N/A' (跳过 skill 优化)
+
+### 步骤 C. 精准定位靶点 (Target Skill)
+从以下候选里选**唯一**一个负责的 skill (必须**确切存在**于文件系统):
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-planning/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-implementing/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/tdd-enforcer/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-parse/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-clarify/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-codebase/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/mod-design/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-init/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-archiving/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-monitor/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-reviewing/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/dfr-fmea-harmony/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/harmonyos-ui-test/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/prd-generator/SKILL.md
+
+**唯一性铁律**: 同时指责多个 skill = 失职. 选**最直接**造成失败的那一个.
+
+**证据要求**: 引用 session jsonl 里的具体动作 (e.g. 'jsonl#3 assistant 调了 Skill aid-applying 但产物 apply-report.md 缺失').
+
+### 步骤 D. 优先级判定 (Priority)
+- **HIGH** — 阻塞发布 / 影响 30% 以上 issue / 安全相关
+- **MEDIUM** — 影响 10-30% issue / 体验问题
+- **LOW** — 偶发 / 边缘场景 / 文档改进
+
+## 输出格式 (严格 JSON, 不允许偏差)
+
+**严格**按下面格式写到指定 JSON 文件 (路径给你了, **不要** print 到 stdout):
+
+路径: `D:/huawei/Demo/calculatorHuawei/.claude/analysis-logs/2026-06-18/issue-21-diagnosis.json`
+
+```json
+{
+  "issue_ticket": {
+    "issue_number": 21,
+    "title": "<一句话总结 Bug>",
+    "verdict": "REQUEST_CHANGES",
+    "priority": "<HIGH | MEDIUM | LOW>",
+    "target_skill_filename": "<花名册中确切存在的文件名 不带 .md, 或 'N/A'>",
+    "target_skill_path": "<绝对路径 或 'N/A'>",
+    "phenomenon": "<客观描述 50-150 字>",
+    "root_cause_analysis": "<含 A/B/C/D 归类 100-300 字, 引用 session jsonl 具体动作>",
+    "optimization_direction": "<给 skillopt-01 的具体指导 30-100 字, 动词开头>",
+    "session_files_analyzed": ["<jsonl 路径>", ...],
+    "evidence_anchors": ["<session jsonl 里的关键 line 引用>", ...]
+  }
+}
+```
+
+**硬约束**:
+1. target_skill_filename 必须是上面花名册里**确切存在**的 SKILL.md 文件名 (e.g. "aid-applying"), 不带 .md
+2. 如果根因是 D 类 (外部因素), target_skill_filename = 'N/A'
+3. 不允许任何字段缺失或格式偏差
+4. optimization_direction 必须是动词开头的具体动作 (e.g. "在 step 5 末尾加 imperative: 必须 git add -A 后再 commit")
+
+## 收尾规则 (硬)
+1. **不要** 发 GitHub 评论 (dispatch_analysis.py 会基于 JSON 自动生成评论)
+2. **不要** close / reopen / assign issue
+3. **不要** commit / push
+4. **不要** 重写任何 skill 文件 (那是 skillopt-01 的工作)
+5. **不要** 改 worktree 任何文件
+6. **不要** 评价 dev-01 / rev-01 / 用户 (质疑规则, 不质疑人)

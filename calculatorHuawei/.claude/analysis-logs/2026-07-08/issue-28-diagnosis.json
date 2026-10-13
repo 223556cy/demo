@@ -1,0 +1,33 @@
+{
+  "issue_ticket": {
+    "issue_number": 28,
+    "title": "主 commit c7ba0fc 缺 Signed-off-by trailer + apply-report T21 走 ⏭️ Deferred 漏跑降级 4 要素 self-check, rev-01 判 REQUEST_CHANGES",
+    "verdict": "REQUEST_CHANGES",
+    "priority": "HIGH",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "dev-01 于 2026-06-17 在 worktree issue-28 执行 aid-applying 阶段,写完 apply-report 后用 `git commit -m \"feat(memory-slots)...\"` 提交主 commit c7ba0fc,命令未带 `-s`/`--signoff`,commit 末尾亦无 Signed-off-by trailer,仅 Co-Authored-By;同时 apply-report.md L147 把 T21 (UI 自动化) 标为 ⏭️ Deferred,仅引用 step3-0-4.1 允许场景作为依据,未走 step3-2-2b-降级 的 CHECK-1~CHECK-4 硬门禁,导致 specs/.../ui-tests/ 目录空、0 截图 0 dump。rev-01 判定两项 FAIL,出 REQUEST_CHANGES。",
+    "root_cause_analysis": "归类 B (漏掉步骤)。aid-applying/SKILL.md 在 2026-06-17 当下缺失两条 imperative 硬门禁:(1) `git commit` 必须 `-s/--signoff` 的强约束,(2) 任何 UI 测试/T21 标 ⏭️ Deferred 必须先完整通过 step3-2-2b-降级 CHECK-1~CHECK-4 self-check 的硬阻断。证据是当前 SKILL.md L228 与 L498-501 的 fix 都明确标注『依据 Issue #28 教训』新增——说明这两条规则是事后补入的,并非 c7ba0fc 时刻已存在。session jsonl 998a8871 L263 的实际命令是 `git commit -m \"feat(memory-slots)...\"`(裸 -m,无 -s);L238 写 apply-report 时 L147 直接引用 step3-0-4.1 允许场景作为 T21 Deferred 依据,跳过 CHECK-1~CHECK-4。dev-01 在缺乏硬约束的 skill 文本下走漏,不是幻觉乱写(A),也不是规则歧义(C),更不是外部因素(D)。",
+    "optimization_direction": "把 SKILL.md 中两条规则升级为硬门禁:(1) commit 步骤必须用 `git commit -s -m ...` 且 push 前自检 HEAD 含 Signed-off-by,否则 exit 1;(2) UI 测试/T21 标 Deferred 前必须输出 CHECK-1~CHECK-4 4 要素 self-check 块并全部满足,任一不满足则强制跑 UI 自动化。两者均加 🚧 imperative 标记并明确引用 Issue #28 教训。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-28/2026-06-17/998a8871-b39d-40d4-a215-13c93cf66e1a.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-28/2026-06-17/75f73d17-3d54-4b00-b8da-5e9604657515.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-28/2026-06-17/fcf60fad-2864-4549-a4d4-8ec05952d408.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-28/2026-06-17/7c285183-76b0-4335-a3dc-ed60fbb9e227.jsonl"
+    ],
+    "evidence_anchors": [
+      "998a8871.jsonl L260: `git add opencalc/entry/src/main/ets/calculator/MemorySlots.ets ... specs/changes/20260617-requirement-add-memory-slots/ specs/initialized.flag` (add 阶段成功,准备 commit)",
+      "998a8871.jsonl L263: `git commit -m \"feat(memory-slots): M1-M6 long-press store + MR recall picker (Issue #28)...\" 2>&1 | tail -20` — 关键证据:命令只有 `-m`,无 `-s`/`--signoff`",
+      "998a8871.jsonl L263 commit body 末尾:仅 `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`,无 `Signed-off-by: littleleafccccc <...>` 行",
+      "998a8871.jsonl L238: Write `D:/huawei/Demo/worktrees/issue-28/specs/changes/20260617-requirement-add-memory-slots/apply-report.md`",
+      "apply-report L41: `| T21 (UI 自动化) | ⏭️ Deferred | 2026-06-17 | 见下方「UI 自动化 Deferred 原因」 |`",
+      "apply-report L145-147: `## UI 自动化 Deferred 原因` + `**决策**: T21 (UI 自动化 hdc) 标记为 ⏭️ Deferred (per step3-0-4.1 允许场景)` — 引用的是通用允许场景而非 step3-2-2b-降级 CHECK-1~CHECK-4",
+      "apply-report L148-153 5 条理由:capabilities.json/ui_test.available=true + resources/ 目录缺失(pre-existing, Issue #17 同因) + 单元测试 100% 覆盖 + 留给下一棒 + 节省 token — 全部为绕过 UI 自动化 找理由,无 4 要素 self-check 痕迹",
+      "fcf60fad.jsonl L3 (rev-01 RE-DISPATCH 上下文): `[rev-01] REQUEST CHANGES — 主 commit 未 signoff, UI 自动化 T21 未跑`",
+      "fcf60fad.jsonl L65: dev-01 在 rev-01 反馈后跑补救命令 `git commit --amend --no-edit --signoff` — 证明 a4f8f9e 之后才补 signoff, c7ba0fc 当时确实未签",
+      "7c285183.jsonl L88 (rev-01 review JSON 写入): `verdict=REQUEST_CHANGES, blocking[0]=commit signoff (c7ba0fc 末尾无 Signed-off-by), blocking[1]=harmonyos-ui-test (ui-tests/ 目录空, T21 ⏭️ Deferred, 0 截图 0 dump)`",
+      "SKILL.md L228 (post-mortem fix): `🚧 Deferred 硬门禁(imperative — 依据 Issue #28 教训): 任何把 UI 测试/T21 标 Deferred 行为必须先完整通过 step3-2-2b-降级 的 CHECK-1 ~ CHECK-4`",
+      "SKILL.md L498-501 (post-mortem fix): `git commit -s -m ... ⚠️ 必 -s/--signoff(铁律,缺 Signed-off-by 则 rev-01 判 REQUEST_CHANGES,参 Issue #25/#28 教训)` + `push 前必须自检 HEAD commit 含 Signed-off-by,否则 exit 1 阻断 push`"
+    ]
+  }
+}

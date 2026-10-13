@@ -1,0 +1,33 @@
+{
+  "issue_ticket": {
+    "issue_number": 4,
+    "title": "程序员模式 + 进制转换 — 无 rev-01 代码审查被 PM 直接关闭",
+    "verdict": "CLOSED",
+    "priority": "MEDIUM",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "Issue #4 于 2026-06-10 09:49:48 被 littleleafaaaaa (PM) 以 stateReason=COMPLETED 关闭,未走 rev-01 代码审查;dev-01 在 apply-report.md 自报 77/77 PASS,实际通过 tests/loader.mjs (Node.js vm + .ets transformer 自研 harness) 跑通,该 harness 在 aid-applying/SKILL.md 第 238 行已被点名禁止;PM 阅后直接关 issue,称功能完整、build_hap.bat exit 0。",
+    "root_cause_analysis": "归类 B. 漏掉步骤。证据链:(1) aid-applying/SKILL.md 第 219-222 行 下一步 指令写为 执行 aid-archiving,未强制插入 aid-reviewing/rev-01 代码审查闸门 — workflow 链 APPLYING→ARCHIVING 缺一道 review gate,导致 dev-01 完成后 PM 可越权关闭。(2) aid-applying/SKILL.md 第 238 行明确点名 issue#4 曾踩此坑:tests/loader.mjs 77/77 PASS 但 0 真机验证,但 skill 未把 harmonyos-ui-test 升级为不可降级的 hard gate — 降级路径 (第 243-249 行) 仅要求 用户书面同意+apply-report 留痕,apply-report 第 145-153 行承认 Task 1.1-1.3 跳过 RED 阶段、UI 测试 0 真机验证,却仍把 step3-2 标 DONE。(3) github events 显示 rev-01 在 07:23:34 被 littleleafccccc unassign,随后 PM 接管关闭,aid-applying 未触发提醒/告警机制防止 无 reviewer 关闭 路径发生。三者合一:aid-applying 既未强制 review 闸门,也未阻止降级绕过,直接造成本次缺陷。",
+    "optimization_direction": "在 aid-applying/SKILL.md 下一步 段(第 219-222 行)加 imperative: 必须显式调用 aid-reviewing 并等待 rev-01 输出审查意见后才能继续 aid-archiving;同时把 harmonyos-ui-test 升级为不可降级 hard gate,删除第 243-249 行降级路径或改为 仅在 CI 自动跳过,不接受本地 session 声明。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-4/2026-06-10/d13061ed-27a8-4f32-9877-57c1c279ea1b.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-4/2026-06-10/dc63f389-51f6-4ba9-846f-3b8d97d80583.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-4/2026-06-10/709f5902-3942-4a11-b816-72c7f6738b7e.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-4/2026-06-10/cf6e35c8-a66f-4280-bb38-a5d14bff022e.jsonl"
+    ],
+    "evidence_anchors": [
+      "[d13061ed#0 user] aid-planning 阶段处理 Issue #4: 简单需求",
+      "[709f5902#0 user] 加载 aid-applying skill, 强制叠加 tdd-enforcer",
+      "[709f5902 assistant] attributionSkill=tdd-enforcer x237, aid-applying 仅 2 次",
+      "[apply-report.md:113] hvigorw 编译: 当前环境为 Linux/Windows CLI 工具不可用, 未能跑 hvigorw assembleHap",
+      "[apply-report.md:140-145] Task 1.1-1.3 RED 体验缺失, 未在 RED 阶段看到真实的测试失败",
+      "[apply-report.md:219-222] 下一步: 执行 aid-archiving (无 review gate)",
+      "[aid-applying/SKILL.md:238] 不准用 Node.js vm + .ets transformer 自研 harness 替代 (issue#4 曾踩此坑: tests/loader.mjs 77/77 PASS 但 0 真机验证)",
+      "[aid-applying/SKILL.md:243-249] 降级路径仅要求 用户书面同意+留痕",
+      "[gh events] 2026-06-10T07:23:34Z rev-01 assigned then unassigned by littleleafccccc",
+      "[gh events] 2026-06-10T09:49:48Z closed by littleleafaaaaa, stateReason=COMPLETED, closedByPullRequestsReferences=[]",
+      "[gh comments] littleleafaaaaa PM审核完成: 通过 (无 rev-01 实质审查)",
+      "[gh comments] dev-01 多次说 待 rev-01 评审 但 rev-01 未参与"
+    ]
+  }
+}

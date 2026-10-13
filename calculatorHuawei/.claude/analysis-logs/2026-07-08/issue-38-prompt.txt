@@ -1,0 +1,222 @@
+# 首席诊断任务 (Issue #38)
+
+## Issue 上下文
+- Number: #38
+- Title: [regression] skillopt-01/fix-issue-37-20260708
+- 最终结论: **REGRESSION_DELEGATED** — (无 summary)
+- URL: https://github.com/calculatorHuawei/agent_workflow/issues/38
+- 状态: open
+- 标签: regression-done
+
+## Issue 正文
+## dev-02 回归测试任务
+
+**触发源**: Issue #37 (analysis 诊断 → skillopt-01 改 skill)
+**skill 改动分支**: [`skillopt-01/fix-issue-37-20260708`](https://github.com/calculatorHuawei/aid-workflow-skills/tree/skillopt-01/fix-issue-37-20260708)
+**目标 skill**: `aid-applying`
+
+## dev-02 你需要做
+
+**只测 issue #37** (与本次 skill 改动强相关), **不要跑 12-issue 全套** (耗时 + 跟本次改动无关)。
+
+1. **拉新 skill**:
+   ```bash
+   python D:/huawei/Demo/aid-workflow-skills/scripts/dev02_pull_skills.py --ref skillopt-01/fix-issue-37-20260708
+   ```
+   (这会从 aid-workflow-skills 仓库的 `skillopt-01/fix-issue-37-20260708` 分支拉取所有 skills 到你 profile)
+
+2. **跑 AID-Workflow 验证 (只跑 issue #37)**:
+   ```bash
+   python D:/huawei/Demo/aid-workflow-skills/scripts/dev02_run_and_report.py \
+     --issue 37 --commit-sha <branch HEAD> --only issue-37
+   ```
+   报告会贴到本 issue comment + 自动转交 analysis
+
+3. **期望产出**:
+   - 完整 AID-Workflow 制品 (proposal/delta-spec/info/design/tasks/apply-report)
+   - 真实代码改动
+   - 编译/测试 evidence
+   - 与历史制品对比 (看新 skill 是否让产出更符合 diagnosis)
+
+## 期望
+
+- 用新 skill 跑 AID-Workflow, 产出**完整制品** (spec/code/test 报告)
+- 报告里**不 judge** (那是 analysis 的事)
+
+## 关键约束
+
+- ❌ **不要**跑 12-issue 全套 (只测本 issue)
+- ❌ 不要改 `skillopt-01/fix-issue-37-20260708` 分支
+- ❌ 不要 commit 到 aid-workflow-skills
+- ✅ 用 `littleleafaaaaa` 身份 (**不要**用 dev-01 的 PAT 顶替)
+- ✅ 跑完转交 `littleleafAnalysis`
+
+---
+🤖 此 issue 由 skillopt-01 自动创建, 用于触发 dev-02 闭环验证
+
+
+## rev-01 完整审查评论 (最重要)
+## dev-02 回归测试结果
+
+**Issue**: #38 - [regression] skillopt-01/fix-issue-37-20260708
+**时间**: 2026-07-08 16:56
+
+### 1. Skill 拉取
+- 分支: [`skillopt-01/fix-issue-37-20260708`](https://github.com/calculatorHuawei/aid-workflow-skills/tree/skillopt-01/fix-issue-37-20260708)
+- 结果: 已同步 skills@skillopt-01/fix-issue-37-20260708 (commit=008787588261)
+
+### 2. AID-Workflow 执行（claude code 调用）
+
+```
+# 报告
+
+## 编译
+✅ **BUILD SUCCESSFUL** — `hvigorw assembleHap` 4s, 0 编译错误（hvigorw 6.24.2 / openjdk 21.0.8 JBR / DEVECO_SDK_HOME=D:\Program Files\Huawei\DevEco Studio\sdk）
+
+## 测试
+- **Node 端口单元测试**: ✅ **14/14 PASS**（12 percent + 2 回归，覆盖核心 + 边界 + 错误恢复）
+  - `node Expression.test.mjs` → `pass 14, fail 0, duration_ms 7.6`
+- **真机 UI 验证**: ✅ **1/1 PASS**（设备 127.0.0.1:5555 模拟器在线）
+  - 流程：装 HAP → 启动 App → 切 BASIC 模式（swipe ×2）→ 定位 % 按钮 → 点 `50 + 10 % =` → dumpLayout 验证 result=`55`
+  - 截图取证：`ui-tests/screenshot/pct_50plus10_result55.png`（201 KB）
+- **hypium test@entry**: ⚠ 项目 `entry/build-profile.json5` 未声明 test target（仅 `default` target），框架已声明但不可执行；降级为 Node 端口
+
+## 关键 bug（已修）
+`Expression.getPercentString` 在 + / - 分支生成表达式时 `base` 没加括号。`100+10%+5%` 会算成 210.5 而非 115.5。修复 = 给 `base` 加括号（`Expression.ets:241` + `:260`），2 行注释 + 2 处加括号（+7/-2）。
+
+## 关键 Skill 引用
+| Skill | 关键规则 |
+|-------|----------|
+| `aid-applying/SKILL.md` step3-0~3-4 | 全流程（环境检查 → TDD → 测试 → 报告） |
+| `aid-applying/SKILL.md` step3-2-1 | TDD RED→GREEN→REFACTOR，铁律 7"不准伪造" |
+| `aid-applying/SKILL.md` step3-2-2b | HarmonyOS UI 强制 + 5 步降级兜底（本次未触发，hdc 在线） |
+| `aid-applying/SKILL.md` step3-2-3 | Lint（项目无 lint task，由 BUILD SUCCESSFUL 替代） |
+| `tdd-enforcer`（隐含） | RED→GREEN→REFACTOR 循环 |
+| `harmonyos-ui-test`（隐含） | `uitest screenCap` / `dumpLayout` / `uiInput click` |
+
+## 制品
+- `opencalc/spec/changes/20260611-requirement-add-percent-button/apply-report.md`（含 2026-07-08 重跑证据 + 真机截图链接）
+- `opencalc/spec/changes/20260611-requirement-add-percent-button/
+```
+
+### 3. Sanity Check
+- ok: `True`
+- exit: `0`
+
+```
+  [aid-monitor] 残留未替换变量: {'{N}'}
+  [aid-planning] 缺段落: ## 概述
+  [aid-planning] 缺段落: ## 前置条件
+  [aid-planning] 残留未替换变量: {'{SPECS_FEATURE_ROOT}'}
+  [aid-reviewing] 缺段落: ## 概述
+  [aid-reviewing] 缺段落: ## 前置条件
+  [harmonyos-ui-test] 残留未替换变量: {'{RETRY_DELAY}'}
+  [mod-design] 残留未替换变量: {'{SPECS_FEATURE_ROOT}'}
+
+```
+
+### 4. 结论
+
+- ✅ Skill 改动**语法正确**（package_skills.py 通过）
+- ✅ claude -p **成功**调用跑 AID-Workflow
+- 📋 报告交 analysis review
+
+---
+🤖 dev-02 (littleleafaaaaa) 自动生成
+
+
+## Worktree 信息
+- Path: `D:\huawei\Demo\worktrees\issue-38` (exists=False)
+- Branch: `(无)`
+- AID 产物 change_id: `(无)`
+- AID 产物列表: (无)
+
+## Session 对话文件路径 (核心证据)
+  ❌ 无 session jsonl 文件 (issue 可能没经过 dev-01 claude -p)
+
+## 工作目录 (Claude 必须能读)
+- 项目根: `D:/huawei/Demo/calculatorHuawei`
+- Worktree: `D:/huawei/Demo/worktrees/issue-38`
+- Session 原始: `D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-38`
+
+## 你的工作 (法医式诊断 4 步链)
+
+🤖 非交互模式 (claude -p), 全自动, 不允许问问题. 所有决策自己拍板.
+
+### 步骤 A. 现象还原 (Phenomenon)
+1. 通读 session jsonl: 看 claude -p 调了几次 aid-planning / aid-implementing / aid-applying / tdd-enforcer skill
+2. 看每个 skill 内部怎么跑的: 有没有 step 跳过、有没有命令失败、产物缺什么
+3. 对比 AID 产物: proposal.md / delta-spec.md / design.md / tasks.md / apply-report.md 是否齐全
+4. 提取核心现象 (1 句话总结, 50-150 字)
+
+### 步骤 B. 根因剖析 (Root Cause) — 归类到以下 4 类之一
+- **A. 幻觉乱写** — claude 自己瞎写 (改了 prompt / 产物) 但 skill 没要求
+- **B. 漏掉步骤** — 流程里有一步没做 (要加 imperative 规则)
+- **C. 理解偏差** — skill 规则存在但歧义 (要改写措辞)
+- **D. 外部因素** — 不是 skill 的问题 (e.g. 网络、SDK 缺失、用户描述不清)
+  - 此时 target_skill_filename = 'N/A' (跳过 skill 优化)
+
+### 步骤 C. 精准定位靶点 (Target Skill)
+从以下候选里选**唯一**一个负责的 skill (必须**确切存在**于文件系统):
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-planning/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-implementing/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/tdd-enforcer/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-parse/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-clarify/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/rq-codebase/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/mod-design/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-init/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-archiving/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-monitor/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-reviewing/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/dfr-fmea-harmony/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/harmonyos-ui-test/SKILL.md
+  D:/huawei/Demo/calculatorHuawei/.claude/skills/prd-generator/SKILL.md
+
+**唯一性铁律**: 同时指责多个 skill = 失职. 选**最直接**造成失败的那一个.
+
+**证据要求**: 引用 session jsonl 里的具体动作 (e.g. 'jsonl#3 assistant 调了 Skill aid-applying 但产物 apply-report.md 缺失').
+
+### 步骤 D. 优先级判定 (Priority)
+- **HIGH** — 阻塞发布 / 影响 30% 以上 issue / 安全相关
+- **MEDIUM** — 影响 10-30% issue / 体验问题
+- **LOW** — 偶发 / 边缘场景 / 文档改进
+
+## 输出格式 (严格 JSON, 不允许偏差)
+
+**严格**按下面格式写到指定 JSON 文件 (路径给你了, **不要** print 到 stdout):
+
+路径: `D:/huawei/Demo/calculatorHuawei/.claude/analysis-logs/2026-07-08/issue-38-diagnosis.json`
+
+```json
+{
+  "issue_ticket": {
+    "issue_number": 38,
+    "title": "<一句话总结 Bug>",
+    "verdict": "REGRESSION_DELEGATED",
+    "priority": "<HIGH | MEDIUM | LOW>",
+    "target_skill_filename": "<花名册中确切存在的文件名 不带 .md, 或 'N/A'>",
+    "target_skill_path": "<绝对路径 或 'N/A'>",
+    "phenomenon": "<客观描述 50-150 字>",
+    "root_cause_analysis": "<含 A/B/C/D 归类 100-300 字, 引用 session jsonl 具体动作>",
+    "optimization_direction": "<给 skillopt-01 的具体指导 30-100 字, 动词开头>",
+    "session_files_analyzed": ["<jsonl 路径>", ...],
+    "evidence_anchors": ["<session jsonl 里的关键 line 引用>", ...]
+  }
+}
+```
+
+**硬约束**:
+1. target_skill_filename 必须是上面花名册里**确切存在**的 SKILL.md 文件名 (e.g. "aid-applying"), 不带 .md
+2. 如果根因是 D 类 (外部因素), target_skill_filename = 'N/A'
+3. 不允许任何字段缺失或格式偏差
+4. optimization_direction 必须是动词开头的具体动作 (e.g. "在 step 5 末尾加 imperative: 必须 git add -A 后再 commit")
+
+## 收尾规则 (硬)
+1. **不要** 发 GitHub 评论 (dispatch_analysis.py 会基于 JSON 自动生成评论)
+2. **不要** close / reopen / assign issue
+3. **不要** commit / push
+4. **不要** 重写任何 skill 文件 (那是 skillopt-01 的工作)
+5. **不要** 改 worktree 任何文件
+6. **不要** 评价 dev-01 / rev-01 / 用户 (质疑规则, 不质疑人)

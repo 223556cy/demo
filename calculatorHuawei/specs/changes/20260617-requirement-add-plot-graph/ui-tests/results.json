@@ -1,0 +1,17 @@
+[
+  {
+    "ac": "AC-1",
+    "status": "PASS",
+    "label": "AC-1 打开绘图页"
+  },
+  {
+    "ac": "AC-2",
+    "status": "PASS",
+    "label": "AC-2 默认 sin(x) 渲染曲线"
+  },
+  {
+    "ac": "AC-3-8",
+    "status": "PASS",
+    "label": "AC-3-8 其他 AC 由单元测试覆盖"
+  }
+]

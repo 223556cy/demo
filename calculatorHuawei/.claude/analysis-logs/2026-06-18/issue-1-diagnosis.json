@@ -1,0 +1,27 @@
+{
+  "issue_ticket": {
+    "issue_number": 1,
+    "title": "Issue #1 (%按钮) 被 CLOSED 但 rev-01 审查从未发生, AID 流程停在 APPLYING 后未强制 handoff 给 REVIEWING",
+    "verdict": "CLOSED",
+    "priority": "HIGH",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "Issue #1 (%按钮) 在 GitHub 上被 CLOSED 但全程无 rev-01 审查。3 个 AID 会话 (PLANNING 93a649aa → IMPLEMENTING 8c153cf5 → APPLYING b092053c) 全部跑完后流程即终止, 从未触发 aid-reviewing / aid-archiving。apply-report.md「下一步」用『或者』措辞把『进入 REVIEWING 阶段: 执行 aid-reviewing』写成可绕过分支;「用户确认」段仅询问『是否需要处理问题』, 无任何 hard-gate 禁止无审查关闭 issue。结果: 6 项遗留问题 (L-01..L-06, 含 L-02/L-03 spec 字面量偏差、L-04 错误用例实现 gap、L-06 hvigorw 环境缺失) 未经评审直接归并到 main, 实现侧偏差与运行时风险被静默吞掉。",
+    "root_cause_analysis": "归类: C — 理解偏差 (skill 规则存在但措辞歧义)。证据: (1) b092053c apply 会话最后一段 assistant 文本明确写出『进入 REVIEWING 阶段: 执行 aid-reviewing 20260609-requirement-add-percent / 或者 (在 reviewer 接受后) 进入 ARCHIVING 阶段: 执行 aid-archiving...』, 把 REVIEWING 写成 ARCHIVING 的可绕过分支; (2) aid-applying SKILL.md「APPLYING 阶段完成 → 用户确认」段仅列『选项: 1. 接受, 继续下一阶段 / 2. 处理问题』, 无『rev-01 未通过禁止 close issue / 禁止合并 PR』的 imperative gate; (3) 8c153cf5 implementing + b092053c applying 两会话均产出 27/27 测试 PASS 的乐观信号 (即便底层是 TS 端口而非真实 Hypium, 已违反 aid-applying 铁律 7), 触发 PM『看起来都绿了』的关闭冲动。唯一指责 aid-applying: 该 skill 把『下一阶段』写成软建议而非硬规则, 是导致『无 rev-01 即 close』的直接元凶。",
+    "optimization_direction": "在 aid-applying step3-4「下一步」段改写为 imperative: 把『或者』删除, 强制『必须先执行 aid-reviewing, reviewer 接受后才有权 close GitHub issue / 合并 PR』; 在「用户确认」模板新增 hard-gate 字段『rev-01 审查通过 (是/否)』, 未填『是』时禁止进入归档阶段; 同时在 apply-report.md 模板加 §『Handoff Checklist』, 列出 reviewer 必须 sign-off 的 L-01..L-06 等遗留项, 缺一项即阻断 close。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-1/2026-06-09/8c153cf5-6bac-4232-974a-69f7f2425d80.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-1/2026-06-09/93a649aa-6f0b-43cc-bda4-53358406ed29.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-1/2026-06-09/b092053c-5130-419e-a11e-8dbef8474fe8.jsonl"
+    ],
+    "evidence_anchors": [
+      "session 93a649aa (PLANNING): assistant 调 Skill aid-planning / rq-parse / rq-clarify / rq-codebase / mod-design, 产出 proposal.md(86L) / delta-spec.md(273L) / info.md(194L) / delta-design.md(407L) / design-review.md(110L) — PLANNING 完整无缺",
+      "session 8c153cf5 (IMPLEMENTING): assistant 调 Skill aid-implementing, 产出 tasks.md(220L) 13 任务 — IMPLEMENTING 完整",
+      "session b092053c (APPLYING) assistant 末段: 『执行 aid-reviewing 20260609-requirement-add-percent / 或者 (在 reviewer 接受后) 执行 aid-archiving...』 — 把 REVIEWING 写成可绕过分支, 是 C 类理解偏差的源头",
+      "session b092053c 多次执行 `npx ts-node Expression.test.ts` 通过 27/27 PASS, apply-report.md 自承『真实 Hypium 验证待 reviewer 在 DevEco Studio 内执行』 — 违反 aid-applying 铁律 7 但被『待 reviewer 验证』一句掩盖",
+      "apply-report.md §遗留问题 L-01..L-06 (含 L-02/L-03 spec 字面量偏差、L-04 错误用例语法错误不报、L-06 worktree 缺 main_pages.json) 共 6 项未决事项, 无 reviewer sign-off 即随代码合入 main",
+      "git log worktree feat/issue-1-pct: 仅 9 commits, 末段 chore gitignore + APPLYING docs, 无 review / merge commit — AID 流程停在 APPLYING, 无后续",
+      "todo.md 阶段状态表末行: step3-0~4 APPLYING (aid-applying) ✅ 完成, 后续 REVIEWING / ARCHIVING 行不存在 — 流程确实在该处终结"
+    ]
+  }
+}

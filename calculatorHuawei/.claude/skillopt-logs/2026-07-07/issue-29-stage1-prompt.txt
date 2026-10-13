@@ -1,0 +1,128 @@
+[skillopt-01 v4 - Edit 工具直改模式]
+
+你需要修改 `skills/aid-applying/SKILL.md` (绝对路径: `D:\huawei\Demo\aid-workflow-skills\skills\aid-applying\SKILL.md`) 来落实以下 diagnosis 方向。
+
+## 诊断 (Issue #29)
+
+```json
+{
+  "issue_number": 29,
+  "title": "aid-applying 降级四要素强制块被绕过, harmonyos-ui-test 未跑且 capabilities.json 未覆写",
+  "verdict": "REQUEST_CHANGES",
+  "priority": "HIGH",
+  "target_skill_filename": "aid-applying",
+  "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+  "phenomenon": "dev-01 在 worktree D:/huawei/Demo/worktrees/issue-29 调用 aid-applying 跑完 28/28 单元测试与 hvigorw 编译,但 step3-2-2b-降级 强制检查块四要素全部缺失:apply-report.md:58-83 仅'诚实标注'hdc list targets=Empty / hdc tconn 失败 / AVD 不可用,但未调 harmonyos-ui-test skill、未获取用户书面同意、todo.md 无 ⏳+责任人+绝对日期、.claude/capabilities.json 的 ui_test.emulator_status 字段仍为 stale 的 'running'。这恰是 SKILL.md:312-317 显式列为'反模式示例 (禁止复刻)'的错例形态。",
+  "root_cause_analysis": "归类为 B(漏掉步骤)。aid-applying/SKILL.md:251-318 的 'step3-2-2b-降级:强制检查块 (铁律 7 兜底)' 明确写出当 hdc list targets=Empty / capabilities.json stale 时必须按 1-5 顺序执行:暂停写入 → 用户书面同意 → todo.md ⏳+责任人+绝对日期 → capabilities.json ui_test.emulator_status 覆写为 unavailable → apply-report 引四项证据。jsonl#14 (1e7215e9 assistant thinking) 显示 dev-01 检测到 worktree 已有 commit+产物后直接退出未跑 aid-applying;真正跑 aid-applying 的早期 jsonl (apply-report.md 是 06-18 12:18 写入) 在降级块已存在版本上执行,但 step3-2-2b-降级 触发条件全部满足时 agent 跳过了五步强制块、仅写出'环境受限'自由文体段落,违反铁律 7 兜底。apply-report.md 文本'请 dev-01 / 人类协助'与 SKILL.md 反模式示例 '请 dev-01 / 人类协助处理' 字符级吻合,确认为降级块被绕过而非 skill 缺失。",
+  "optimization_direction": "在 step3-2-2b-降级 第 5 步末尾追加 imperative self-check 块:写完 apply-report.md 后必须跑 SKILL.md:278-300 的四条 grep 自检命令 (用户书面同意/todo ⏳ 三要素/capabilities.json unavailable/hdc 原始输出),任一 FAIL 禁止 commit/push 并自动 verdict=REQUEST_CHANGES;同时删除重复的第二份降级块 (lines 320-386 是 251-318 的完全重复,违反单一可信源)。",
+  "session_files_analyzed": [
+    "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-17/87c9f776-0d4d-4874-bdf1-c5e790e2e767.jsonl",
+    "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-17/bc8f66cc-b85b-4773-918e-c224cac3c480.jsonl",
+    "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/13596774-3942-4151-8e48-61c5c7809878.jsonl",
+    "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/15787451-6996-42b6-930c-8ec06d3b18a3.jsonl",
+    "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/1e7215e9-3462-42a5-a926-f427e2e172ba.jsonl",
+    "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/2ad43b33-cb05-40dc-ba03-b57fb40e9564.jsonl"
+  ],
+  "evidence_anchors": [
+    "apply-report.md:58-83 'UI 自动化测试 (harmonyos-ui-test) — ⚠️ 环境受限' 段:仅列 hdc 失败原始输出+capabilities stale 自承,缺用户书面同意/todo ⏳/capabilities 覆写",
+    "apply-report.md:80-82 '请 dev-01 / 人类协助' 字符级匹配 SKILL.md:315 反模式示例 '请 dev-01 / 人类协助处理'",
+    ".claude/capabilities.json ui_test.emulator_status='running' 未被降级流程覆写为 'unavailable' (skill 要求第 4 步强制覆写)",
+    "todo.md APPLYING 段 (lines 105-134) 无 ⏳ 标记、无责任人、无绝对日期三要素 (skill 要求第 3 步强制三要素)",
+    "aid-applying/SKILL.md:251-318 step3-2-2b-降级 强制块完整存在但被完全跳过;SKILL.md:312-317 反模式示例与 apply-report.md 实况字符级吻合",
+    "aid-applying/SKILL.md:320-386 是 251-318 的全文重复,降级块定义出现两份,违反单一可信源",
+    "session 1e7215e9 jsonl#14 assistant thinking 确认 'worktree 已有 commit+产物,直接退出' — 第二次 dispatch 没重跑 aid-applying 也未补四要素"
+  ]
+}
+```
+
+## 团队 memory (failures.md 相关教训)
+
+```
+# ❌ Failures — 失败案例库
+
+> **写入者**：analysis (verdict ∈ {REQUEST_CHANGES, CLOSED-with-issues})
+> **检索者**：dev-01 被打回时 / skillopt-01 优化时 / 老板复盘时
+> **归档**：90 天后移入 `archive/YYYY-Qn-failures.md`
+
+---
+
+## 索引（最近 10 条）
+
+<!-- analysis 每次 finalize 时追加，下方是新条目 -->
+
+| Issue | Skill | Date | Priority | 一句话教训 |
+|-------|-------|------|----------|-----------|
+| (暂无) | - | - | - | - |
+
+---
+
+## 详细记录
+
+## Issue #29 - aid-applying - 2026-07-07
+
+- **Verdict**: REQUEST_CHANGES
+- **Priority**: 🔴 **HIGH**
+- **Trigger**: verdict=REQUEST_CHANGES
+- **现象**: dev-01 在 worktree D:/huawei/Demo/worktrees/issue-29 调用 aid-applying 跑完 28/28 单元测试与 hvigorw 编译,但 step3-2-2b-降级 强制检查块四要素全部缺失:apply-report.md:58-83 仅'诚实标注'hdc list targets=Empty / hdc tconn 失败 / AVD 不可用,但未调 harmonyos-ui-test skill、未获取用户书面同意、todo.md 无 ⏳+责任人+绝对日期、.claude/capabilities.json 的 ui_test.emulator_status 字段仍为 stale 的 'running'。这恰是 SKILL.md:312-317 显式列为'反模式示例 (禁止复刻)'的错例形态。
+- **根因**: 归类为 B(漏掉步骤)。aid-applying/SKILL.md:251-318 的 'step3-2-2b-降级:强制检查块 (铁律 7 兜底)' 明确写出当 hdc list targets=Empty / capabilities.json stale 时必须按 1-5 顺序执行:暂停写入 → 用户书面同意 → todo.md ⏳+责任人+绝对日期 → capabilities.json ui_test.emulator_status 覆写为 unavailable → apply-report 引四项证据。jsonl#14 (1e7215e9 assistant thinking) 显示 dev-01 检测到 worktree 已有 commit+产物后直接退出未跑 aid-applying;真正跑 aid-applying 的早期 jsonl (apply-report.md 是 06-18 12:18 写入) 在降级块已存在版本上执行,但 step3-2-2b-降级 触发条件全部满足时 agent 跳过了五步强制块、仅写出'环境受限'自由文体段落,违反铁律 7 兜底。apply-report.md 文本'请 dev-01 / 人类协助'与 SKILL.md 反模式示例 '请 dev-01 / 人类协助处理' 字符级吻合,确认为降级块被绕过而非 skill 缺失。
+- **教训**: 在 step3-2-2b-降级 第 5 步末尾追加 imperative self-check 块:写完 apply-report.md 后必须跑 SKILL.md:278-300 的四条 grep 自检命令 (用户书面同意/todo ⏳ 三要素/capabilities.json unavailable/hdc 原始输出),任一 FAIL 禁止 commit/push 并自动 verdict=REQUEST_CHANGES;同时删除重复的第二份降级块 (lines 320-386 是 251-318 的完全重复,违反单一可信源)。
+- **建议**: 在 step3-2-2b-降级 第 5 步末尾追加 imperative self-check 块:写完 apply-report.md 后必须跑 SKILL.md:278-300 的四条 grep 自检命令 (用户书面同意/todo ⏳ 三要素/capabilities.json unavailable/hdc 原始输出),任一 FAIL 禁止 commit/push 并自动 verdict=REQUEST_CHANGES;同时删除重复的第二份降级块 (lines 320-386 是 251-318 的完全重复,违反单一可信源)。
+- **Session 证据**: `D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-17/87c9f776-0d4d-4874-bdf1-c5e790e2e767.jsonl`, `D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-17/bc8f66cc-b85b-4773-918e-c224cac3c480.jsonl`, `D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-29/2026-06-18/13596774-3942-4151-8e48-61c5c7809878.jsonl`
+- **AID 产物**: (待补)
+- **URL**: https://github.com/calculatorHuawei/agent_workflow/issues/29
+
+---
+<!-- 按时间倒序，最新在上 -->
+
+<!--
+### 模板（analysis 复制此模板追加）
+## Issue #<N> - <skill_name> - <YYYY-MM-DD>
+
+- **Verdict**: REQUEST_CHANGES
+- **Priority**: 🔴 HIGH / 🟡 MEDIUM / 🟢 LOW
+- **Trigger**: <什么场景触发的分析>
+- **现象**: <客观描述 50-150 字>
+- **根因**: <A/B/C/D 归类 100-300 字>
+- **教训**: <可被 dev-01 引用的经验 30-80 字>
+- **建议**: <动词开头的具体动作 30-100 字>
+- **Session 证据**: `<jsonl 路径>`
+- **AID 产物**: `<p
+```
+
+## 你的工作流
+
+1. **Read** `skills/aid-applying/SKILL.md` 读原文
+2. 用 **Edit 工具** 按 `optimization_direction` 做局部修改
+   - 优先 Edit (old_text + new_content), 一次 Edit 只改一处
+   - 多处改动用多次 Edit, **不要** Write 整篇文件
+   - Edit 的 old_text 必须精确匹配文件原文
+3. (可选) 改完用 Read 校验一次
+4. 在 **stdout 输出 `Reason:` 段** (≤500 词 Markdown), 列出改动点 + 理由 + 引用 failures.md 教训编号
+5. **不要** git add / commit / push (dispatcher 负责)
+
+## 工具白名单
+
+你能用: Bash, Read, Write, Edit, Glob, Grep, TodoWrite
+你不能用: WebFetch, WebSearch, Task, Skill
+
+cwd 已是 skills 仓库根, 你能直接操作 `D:/huawei/Demo/aid-workflow-skills/skills/<name>/SKILL.md`
+
+## stdout Reason: 格式
+
+```
+Reason:
+## 改动 1
+- 位置: skills/aid-applying/SKILL.md:319
+- 改动: 追加 step3-2-2b-降级 强制自检块
+- 理由: 依据 diagnosis #29 + failures.md Issue #N
+```
+
+## 关键约束
+
+- ❌ 不 git commit / git push
+- ❌ 不 Write 整篇 (只 Edit)
+- ❌ 不改 diagnosis 范围之外的文件
+- ❌ 不调用 WebFetch / WebSearch / Task / Skill
+- ✅ 改完 stdout 必须有 `Reason:` 段
+
+[STAGE: 1 结束]

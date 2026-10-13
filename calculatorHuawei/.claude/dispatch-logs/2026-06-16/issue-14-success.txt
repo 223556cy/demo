@@ -1,0 +1,7 @@
+Issue #14 re-dispatch completed at 2026-06-16T12:16:31.190397
+Commit: 6add2ba82cf881edecf831acfcd059852cab5b3e
+Branch: feat/issue-14-中等模糊
+Worktree: `D:\huawei\Demo\worktrees\issue-14`
+Change: 20260615-requirement-add-unit-conversion
+Mode: re-dispatch (claude force-pushed)
+Dispatch log: `D:\huawei\Demo\calculatorHuawei\.claude\dispatch-logs\2026-06-16\issue-14.md`

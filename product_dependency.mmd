@@ -1,0 +1,37 @@
+graph LR
+classDef contract fill:#fff3e0,stroke:#fb8c00,color:#000;
+classDef design fill:#fff9c4,stroke:#f57c00,stroke-width:2px,color:#000;
+classDef code fill:#e8f5e9,stroke:#43a047,color:#000;
+classDef test fill:#f3e5f5,stroke:#8e24aa,color:#000;
+classDef script fill:#e0f7fa,stroke:#00838f,color:#000;
+classDef config fill:#f5f5f5,stroke:#616161,color:#000;
+classDef fail fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000;
+    P1["📑 capabilities.json"]:::contract
+    P2["📑 todo.md v6"]:::contract
+    P3["📑 proposal.md"]:::contract
+    P4["📑 delta-spec.md"]:::contract
+    P5["📑 info.md"]:::contract
+    P6["📐 delta-design.md"]:::design
+    P7["📐 design-review.md"]:::design
+    P8["📑 tasks.md"]:::contract
+    P9["📑 main_pages.json"]:::contract
+    P10["❌ apply-report.md"]:::fail
+    P5 ==>|"⚠未消费"| P6
+    P6 ==>|"⚠未消费"| P10
+    P4 ==>|"⚠未消费"| P6
+    P3 ==>|"⚠未消费"| P6
+    P8 ==>|"⚠未消费"| P10
+    P6 ==>|"⚠未消费"| P8
+    P8 ==>|"⚠未消费"| P2
+    linkStyle 0 stroke:#c62828,stroke-width:2.5px;
+    linkStyle 1 stroke:#c62828,stroke-width:2.5px;
+    linkStyle 2 stroke:#c62828,stroke-width:2.5px;
+    linkStyle 3 stroke:#c62828,stroke-width:2.5px;
+    linkStyle 4 stroke:#c62828,stroke-width:2.5px;
+    linkStyle 5 stroke:#c62828,stroke-width:2.5px;
+    linkStyle 6 stroke:#c62828,stroke-width:2.5px;
+
+    %% 图例:
+    %%  🟢 实线绿 = 逻辑依赖 + 消费都有 (健康)
+    %%  🔵 虚线蓝 = 仅消费（观察到但无逻辑依据）
+    %%  🔴 实线红 = 仅逻辑依赖（理应消费但未消费）← RCA 关键

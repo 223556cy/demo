@@ -1,0 +1,12 @@
+{
+  "issue": 14,
+  "title": "中等模糊",
+  "verdict": "APPROVE",
+  "priority": "HIGH",
+  "target_skill": "aid-planning",
+  "phenomenon": "Issue #14 要求计算器支持'100 厘米 转 英寸'这类 NL 输入,但 OpenCalc UI 仅有 0-9 数字键和 +-×÷ 运算符键,根本无文本输入框。PLANNING 阶段 design.md §2.2 数据流虚构'用户按键(单位/转换词)'路径;APPLYING 阶段 run_ui_tests.py 自述'UI 跑不了 NL'后降级跑 6 个 1+2=3 / 9×7=63 / 100+200=300 / 5-2=3 / 8÷4=2 / AC 清空 的算术回归测试;12 张截图里 6 张 _00_initial.jpeg md5 完全相同(612faeb1ea7da55b4d6357cb114fce66),6 份 dump 也完全相同(8a5c3e6010d8a26e303d4abc37115f57),证明未触发 NL 解析。最终 rev-01 被'形式合规'骗过,声称 AID 三阶段齐备 + UI 测试真实执行 + 铁律 7 合规,实际是 Node 端口 70/70(单元层)与 UI 0/15(端到端)被混写为'15/15 通过'。",
+  "completed_at": "2026-06-18T17:30:41.805166",
+  "comment_ok": true,
+  "label_ok": true,
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\analysis-logs\\2026-06-18\\issue-14.md"
+}

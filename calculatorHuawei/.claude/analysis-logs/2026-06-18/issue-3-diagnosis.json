@@ -1,0 +1,26 @@
+{
+  "issue_ticket": {
+    "issue_number": 3,
+    "title": "实时预览结果需求 issue 在无 rev-01 审查、无归档的情况下被关闭",
+    "verdict": "CLOSED",
+    "priority": "MEDIUM",
+    "target_skill_filename": "aid-applying",
+    "target_skill_path": "D:/huawei/Demo/calculatorHuawei/.claude/skills/aid-applying/SKILL.md",
+    "phenomenon": "Issue #3「实时预览结果」在 worktree feat/issue-3-realtime-preview 上完成 PLANNING+IMPLEMENTING 后,aid-applying/aid-reviewing/aid-archiving 三个 skill 均未被调用;apply-report.md 是用户 223556cy 手工补提交(commit 6cd28cb),apply-report 自称 '本报告由 aid-applying skill 生成' 系署名幻觉;todo.md 标记 ARCHIVING 待审核但 Issue 直接 CLOSED。",
+    "root_cause_analysis": "归类 B(漏掉步骤)。证据:session 47a998d7 jsonl#L11/31/80/120/143 调用 aid-planning→rq-parse→rq-clarify→rq-codebase→mod-design,session f324d6e5 jsonl#L75/112 复跑 rq-codebase+mod-design,session f74516cb jsonl#L16 调用 aid-implementing 后止于 L76(tasks.md+todo.md 写入),全程 0 次 aid-applying 工具调用(grep 实证)。aid-implementing SKILL.md L215 仅 '提示用户进入 applying 阶段',无 imperative 自动移交规则,导致用户在 claude -p 会话结束后手工 git commit + 手写 apply-report.md + 关闭 Issue,完全跳过 aid-reviewing/rev-01 审查、aid-archiving 归档环节,流程闸门失效。",
+    "optimization_direction": "在 aid-applying SKILL.md step3-1(确认应用条件)增加 imperative 闸门:必须先校验 apply-report.md 含 aid-applying 触发指纹,否则禁止进入 step3-2 代码应用;并在 step3-4 末尾硬要求 '未执行 aid-reviewing 不得宣布完成'。",
+    "session_files_analyzed": [
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-3/2026-06-09/47a998d7-ed4a-4cbc-a58d-4bf28a439306.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-3/2026-06-09/f324d6e5-439d-4893-a370-c097f63975da.jsonl",
+      "D:/huawei/my_sessions/sessions/claude-code/dev-01/_raw/D--huawei-Demo-worktrees-issue-3/2026-06-09/f74516cb-6e5b-464d-8d6a-b1cb235ce948.jsonl"
+    ],
+    "evidence_anchors": [
+      "f74516cb jsonl#16 Skill aid-implementing 唯一一次被调用",
+      "f74516cb jsonl#65 Write tasks.md 之后无 aid-applying / aid-reviewing / aid-archiving 任何调用",
+      "apply-report.md L145 署名 '本报告由 aid-applying skill 生成' 但 3 份 jsonl 内 0 次 aid-applying 调用记录",
+      "git log 显示 apply-report.md 由 commit 6cd28cb(2026-06-09 19:28, author=223556cy)手工提交,不在 claude agent 输出的 b32bfa6/33f701d/bf6b087 三个原子提交内",
+      "todo.md 阶段状态汇总 'ARCHIVING: ⏳ 待审核' 与 Issue 状态 CLOSED 矛盾",
+      "aid-implementing SKILL.md L215 仅 '提示用户进入 applying 阶段',无强制移交/自动调用 aid-applying 的 imperative 规则"
+    ]
+  }
+}

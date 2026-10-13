@@ -1,0 +1,62 @@
+=== TC-01: empty items → 3 个空段 ===
+  ✅ sections.length: actual=3
+  ✅ sections[0].key === TODAY: actual=0
+  ✅ sections[0].title === 今天: actual=今天
+  ✅ sections[0].items.length === 0: actual=0
+  ✅ sections[1].key === YESTERDAY: actual=1
+  ✅ sections[1].title === 昨天: actual=昨天
+  ✅ sections[2].key === EARLIER: actual=2
+  ✅ sections[2].title === 更早: actual=更早
+
+=== TC-02: 全部今天 (3 条) → 仅今天段有数据 ===
+  ✅ today.items.length: actual=3
+  ✅ yesterday.items.length: actual=0
+  ✅ earlier.items.length: actual=0
+
+=== TC-03: 全部昨天 (2 条) → 仅昨天段有数据 ===
+  ✅ today.items.length: actual=0
+  ✅ yesterday.items.length: actual=2
+  ✅ earlier.items.length: actual=0
+
+=== TC-04: 全部更早 (5 条) → 仅更早段有数据 ===
+  ✅ today.items.length: actual=0
+  ✅ yesterday.items.length: actual=0
+  ✅ earlier.items.length: actual=5
+
+=== TC-05: 跨三天混合 → 三段均有数据 ===
+  ✅ today.items.length: actual=1
+  ✅ today[0].id: actual=1
+  ✅ yesterday.items.length: actual=1
+  ✅ yesterday[0].id: actual=2
+  ✅ earlier.items.length: actual=1
+  ✅ earlier[0].id: actual=3
+
+=== TC-06: 边界 00:00:00 → 跨日正确分组 ===
+  ✅ today.items.length: actual=1
+  ✅ today[0].id === 1 (todayStart 归今天): actual=1
+  ✅ yesterday.items.length: actual=1
+  ✅ yesterday[0].id === 2 (yesterdayEnd 归昨天): actual=2
+  ✅ earlier.items.length: actual=0
+
+=== TC-07: 段内顺序保持 newest-first ===
+  ✅ today.items.length: actual=3
+  ✅ today[0].id: actual=1
+  ✅ today[1].id: actual=2
+  ✅ today[2].id: actual=3
+
+=== TC-08: items=null → 返回 3 段均空 (不抛异常) ===
+  ✅ sections.length: actual=3
+  ✅ today.items.length: actual=0
+  ✅ yesterday.items.length: actual=0
+  ✅ earlier.items.length: actual=0
+
+=== TC-09: items=undefined → 返回 3 段均空 (不抛异常) ===
+  ✅ sections.length: actual=3
+  ✅ today.items.length: actual=0
+  ✅ yesterday.items.length: actual=0
+  ✅ earlier.items.length: actual=0
+
+=== TC-10: startOfLocalDay 应返回当日 00:00:00.000 ===
+  ✅ startOfLocalDay(2026-06-16 14:30:45): actual=1781539200000
+
+=== Summary: 41 passed, 0 failed ===

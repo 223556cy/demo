@@ -1,0 +1,674 @@
+#!/usr/bin/env python3
+"""
+/oneplusn — 1+N 数字员工团队管理命令
+
+所有操作在子公司专属工作目录中执行，目录以 Organization 名称命名。
+
+用法:
+    # 初始化（创建子公司 + 批量创建员工 + 可选升级）
+    ./oneplusn init
+
+    # 添加单个数字员工
+    ./oneplusn add --work-dir oneplusn-team/
+
+    # 删除/停用数字员工
+    ./oneplusn delete --work-dir oneplusn-team/ --name dev-01
+
+    # 查看所有数字员工状态
+    ./oneplusn status --work-dir oneplusn-team/
+
+    # 列出所有数字员工
+    ./oneplusn list --work-dir oneplusn-team/
+
+    # 升级数字员工
+    ./oneplusn upgrade --work-dir oneplusn-team/ --name dev-01
+
+    # 同步 handoff 和 README
+    ./oneplusn sync --work-dir oneplusn-team/
+
+    # 编辑数字员工配置
+    ./oneplusn edit --work-dir oneplusn-team/ --name dev-01
+
+    # 显示帮助
+    ./oneplusn --help
+    ./oneplusn <command> --help
+"""
+
+import argparse
+import os
+import subprocess
+import sys
+import time
+from pathlib import Path
+from typing import Dict, List, Optional
+
+import yaml
+
+
+def log(message: str, level: str = "INFO"):
+    prefix = {"INFO": "[ℹ]", "OK": "[✓]", "WARN": "[⚠]", "ERROR": "[✗]",
+              "STEP": "[→]", "ASK": "[?]", "DONE": "[★]"}
+    print(f"{prefix.get(level, '[?]')} {message}")
+
+
+def ask(question: str, default: str = "") -> str:
+    try:
+        if default:
+            r = input(f"  {question} [{default}]: ").strip()
+            return r if r else default
+        return input(f"  {question}: ").strip()
+    except EOFError:
+        return default
+
+
+def ask_bool(question: str) -> bool:
+    try:
+        while True:
+            r = input(f"  {question} (y/n): ").strip().lower()
+            if r in ("y", "yes", "是"): return True
+            if r in ("n", "no", "否", ""): return False
+            print("    请输入 y 或 n")
+    except EOFError:
+        return False
+
+
+def run_script(script: str, args: List[str]) -> int:
+    """运行子脚本。"""
+    script_dir = Path(__file__).parent
+    script_path = script_dir / script
+    if not script_path.exists():
+        log(f"脚本不存在: {script_path}", "ERROR")
+        return 1
+    cmd = ["python3", str(script_path)] + args
+    log(f"执行: {' '.join(cmd)}")
+    result = subprocess.run(cmd)
+    return result.returncode
+
+
+def load_handoff(path: str) -> Dict:
+    with open(path, 'r') as f:
+        return yaml.safe_load(f) or {}
+
+
+def save_handoff(path: str, data: Dict):
+    with open(path, 'w') as f:
+        yaml.dump(data, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
+
+
+def ensure_work_dir(work_dir: str) -> Path:
+    """确保工作目录存在。"""
+    p = Path(work_dir)
+    p.mkdir(parents=True, exist_ok=True)
+    (p / "agents").mkdir(exist_ok=True)
+    return p
+
+
+def get_handoff_path(work_dir: str) -> str:
+    """获取 handoff.yaml 路径。"""
+    return str(Path(work_dir) / "handoff.yaml")
+
+
+def get_skill_dir() -> Path:
+    """获取 skill 脚本目录。"""
+    return Path(__file__).parent
+
+
+# ============ init ============
+
+def cmd_init(args):
+    log("\n" + "=" * 50, "STEP")
+    log("1+N 数字员工团队 — 初始化", "STEP")
+    log("=" * 50, "STEP")
+
+    # 检测依赖
+    log("\n[前置] 检测依赖...")
+    ret = run_script("create_org.py", ["--check-deps"])
+    if ret != 0:
+        log("依赖检测未通过，请先安装缺失工具", "ERROR")
+        log("运行: python3 create_org.py --check-deps 查看详情")
+        return 1
+
+    # 阶段 1: 创建子公司
+    log("\n[阶段 1/3] 创建子公司", "STEP")
+
+    org_name = ""
+    boss_username = ""
+    boss_email = ""
+    repo_name = "agent_workflow"
+    boss_token = ""
+
+    if ask_bool("是否创建新的 GitHub Organization？"):
+        ret = run_script("create_org.py", ["--interactive"])
+        if ret != 0:
+            log("子公司创建失败", "ERROR")
+            return 1
+
+        # 读取刚生成的 handoff
+        if Path("handoff.yaml").exists():
+            handoff = load_handoff("handoff.yaml")
+            org_name = handoff.get("organization", {}).get("name", "")
+            boss_username = handoff.get("boss", {}).get("github_username", "")
+            boss_email = handoff.get("boss", {}).get("email", "")
+            boss_token = handoff.get("boss", {}).get("token", "")
+            repo_name = handoff.get("repository", {}).get("name", "agent_workflow")
+    else:
+        log("复用已有子公司信息")
+        org_name = ask("Organization 名称")
+        boss_username = ask("老板 GitHub 用户名")
+        boss_email = ask("老板邮箱")
+        repo_name = ask("仓库名称", "agent_workflow")
+
+    if not org_name:
+        log("Organization 名称不能为空", "ERROR")
+        return 1
+
+    # 创建工作目录
+    work_dir = ensure_work_dir(org_name)
+    handoff_path = get_handoff_path(str(work_dir))
+
+    # 初始化 handoff.yaml
+    handoff = {
+        "metadata": {
+            "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "stage": "org-setup-complete",
+            "updated_at": time.strftime("%Y-%m-%d %H:%M:%S")
+        },
+        "organization": {
+            "name": org_name,
+            "url": f"https://github.com/{org_name}"
+        },
+        "repository": {
+            "name": repo_name,
+            "url": f"https://github.com/{org_name}/{repo_name}",
+            "issues_url": f"https://github.com/{org_name}/{repo_name}/issues"
+        },
+        "boss": {
+            "github_username": boss_username,
+            "email": boss_email
+        },
+        "agents": {}
+    }
+    if boss_token:
+        handoff["boss"]["token"] = boss_token
+
+    save_handoff(handoff_path, handoff)
+    log(f"工作目录已创建: {work_dir}/", "OK")
+    log(f"handoff.yaml 已生成: {handoff_path}", "OK")
+
+    # 复制 rules.md 模板
+    skill_dir = get_skill_dir()
+    # 查找 onboarding skill 的 rules 模板
+    onboarding_dir = skill_dir.parent.parent / "oneplusn-agent-onboarding"
+    rules_src = onboarding_dir / "references" / "rules-template.md"
+    if rules_src.exists():
+        rules_dst = work_dir / "rules.md"
+        rules_dst.write_text(rules_src.read_text())
+        log(f"rules.md 已复制到: {rules_dst}", "OK")
+
+    # 阶段 2: 批量创建数字员工
+    log(f"\n[阶段 2/3] 创建数字员工", "STEP")
+    count_str = ask("需要创建多少个数字员工？", "1")
+    try:
+        count = int(count_str)
+    except ValueError:
+        count = 1
+
+    for i in range(count):
+        log(f"\n--- 创建第 {i+1}/{count} 个数字员工 ---", "STEP")
+
+        # 选择 Agent 类型
+        log("\n选择 Agent 框架类型：")
+        log("  1. Hermes Agent（当前唯一支持）")
+        log("  2. OpenClaw（即将支持）")
+        log("  3. Claude Code（即将支持）")
+        log("  4. Cursor Agent（即将支持）")
+        agent_type_idx = ask("请选择", "1")
+        agent_type_map = {"1": "hermes", "2": "openclaw", "3": "claude-code", "4": "cursor-agent"}
+        agent_type = agent_type_map.get(agent_type_idx, "hermes")
+        if agent_type != "hermes":
+            log(f"{agent_type} 尚未支持，将使用 Hermes Agent", "WARN")
+            agent_type = "hermes"
+
+        # 上岗
+        ret = run_script("onboard_agent.py", [
+            "--handoff", handoff_path,
+            "--interactive"
+        ])
+        if ret != 0:
+            log(f"第 {i+1} 个员工上岗失败", "WARN")
+            if not ask_bool("继续创建下一个？"):
+                break
+        else:
+            # 更新 agent_type
+            handoff = load_handoff(handoff_path)
+            # 找到最新添加的 agent
+            if handoff.get("agents"):
+                latest_name = list(handoff["agents"].keys())[-1]
+                handoff["agents"][latest_name]["agent_type"] = agent_type
+                save_handoff(handoff_path, handoff)
+                log(f"已记录 Agent 类型: {latest_name} = {agent_type}", "OK")
+
+    # 阶段 3: 可选升级
+    log(f"\n[阶段 3/3] 升级数字员工（可选）", "STEP")
+    if ask_bool("是否升级数字员工？"):
+        run_script("upgrade_agent.py", [
+            "--handoff", handoff_path,
+            "--interactive"
+        ])
+
+    # 同步 README
+    log(f"\n同步 README...")
+    sync_readme(handoff_path)
+
+    log(f"\n{'='*50}", "DONE")
+    log(f"初始化完成！", "DONE")
+    log(f"工作目录: {work_dir}/", "DONE")
+    log(f"{'='*50}", "DONE")
+    return 0
+
+
+# ============ add ============
+
+def cmd_add(args):
+    work_dir = Path(args.work_dir)
+    if not work_dir.exists():
+        log(f"工作目录不存在: {work_dir}", "ERROR")
+        log("请先运行 init 或指定正确路径")
+        return 1
+
+    handoff_path = get_handoff_path(str(work_dir))
+    if not Path(handoff_path).exists():
+        log(f"handoff.yaml 不存在: {handoff_path}", "ERROR")
+        return 1
+
+    log(f"\n添加数字员工到 {work_dir}/", "STEP")
+    handoff = load_handoff(handoff_path)
+    existing = handoff.get("agents", {})
+    if existing:
+        log(f"已有 {len(existing)} 个员工")
+
+    # 选择 Agent 类型
+    log("\n选择 Agent 框架类型：")
+    log("  1. Hermes Agent（当前唯一支持）")
+    log("  2. OpenClaw（即将支持）")
+    log("  3. Claude Code（即将支持）")
+    log("  4. Cursor Agent（即将支持）")
+    agent_type_idx = ask("请选择", "1")
+    agent_type_map = {"1": "hermes", "2": "openclaw", "3": "claude-code", "4": "cursor-agent"}
+    agent_type = agent_type_map.get(agent_type_idx, "hermes")
+    if agent_type != "hermes":
+        log(f"{agent_type} 尚未支持，将使用 Hermes Agent", "WARN")
+        agent_type = "hermes"
+
+    ret = run_script("onboard_agent.py", [
+        "--handoff", handoff_path,
+        "--interactive"
+    ])
+
+    if ret == 0:
+        handoff = load_handoff(handoff_path)
+        if handoff.get("agents"):
+            latest_name = list(handoff["agents"].keys())[-1]
+            handoff["agents"][latest_name]["agent_type"] = agent_type
+            save_handoff(handoff_path, handoff)
+            log(f"已记录: {latest_name} agent_type={agent_type}", "OK")
+
+        if ask_bool("同步更新 README？"):
+            sync_readme(handoff_path)
+
+    return ret
+
+
+# ============ delete ============
+
+def cmd_delete(args):
+    work_dir = Path(args.work_dir)
+    handoff_path = get_handoff_path(str(work_dir))
+    handoff = load_handoff(handoff_path)
+    agents = handoff.get("agents", {})
+
+    if not agents:
+        log("没有已上岗的数字员工", "WARN")
+        return 0
+
+    name = args.name
+    if not name:
+        print(f"\n已上岗员工:")
+        for n, info in agents.items():
+            atype = info.get("agent_type", "hermes")
+            print(f"  - {n} ({info.get('role', '?')}) [{atype}]")
+        name = ask("要删除的员工名字")
+
+    if name not in agents:
+        log(f"找不到: {name}", "ERROR")
+        return 1
+
+    print(f"\n将要删除: {name}")
+    print(f"  角色: {agents[name].get('role', '?')}")
+    print(f"  GitHub: {agents[name].get('github_username', '?')}")
+    print(f"  Agent类型: {agents[name].get('agent_type', 'hermes')}")
+
+    if not ask_bool("确认删除？"):
+        log("已取消")
+        return 0
+
+    del handoff["agents"][name]
+    handoff["metadata"]["updated_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
+    save_handoff(handoff_path, handoff)
+    log(f"已从 handoff.yaml 移除: {name}", "OK")
+
+    if ask_bool(f"是否停用 {name} 的 Gateway？"):
+        log(f"执行: hermes profile use {name} && hermes gateway stop")
+
+    if ask_bool("同步更新 README？"):
+        sync_readme(handoff_path)
+
+    return 0
+
+
+# ============ status / list ============
+
+def cmd_status(args):
+    work_dir = Path(args.work_dir)
+    handoff_path = get_handoff_path(str(work_dir))
+    handoff = load_handoff(handoff_path)
+    agents = handoff.get("agents", {})
+    org = handoff.get("organization", {})
+
+    print(f"\n{'='*60}")
+    print(f"团队: {org.get('name', 'Unknown')}  |  工作目录: {work_dir}/")
+    print(f"{'='*60}")
+
+    if not agents:
+        print("  暂无数字员工")
+        return 0
+
+    print(f"\n  {'名字':<18} {'角色':<20} {'Agent类型':<14} {'端口':<8} {'状态':<10}")
+    print(f"  {'-'*18} {'-'*20} {'-'*14} {'-'*8} {'-'*10}")
+    for name, info in agents.items():
+        role = info.get("role", "?")
+        atype = info.get("agent_type", "hermes")
+        port = str(info.get("gateway_port", "?"))
+        status = info.get("status", "active")
+        onboarded = info.get("onboarded_at", "?")[:10]
+        print(f"  {name:<18} {role:<20} {atype:<14} {port:<8} {status:<10}")
+
+    print(f"\n  总计: {len(agents)} 个数字员工")
+    print(f"  最后更新: {handoff.get('metadata', {}).get('updated_at', 'N/A')}")
+    print(f"{'='*60}")
+    return 0
+
+
+def cmd_list(args):
+    return cmd_status(args)
+
+
+# ============ upgrade ============
+
+def cmd_upgrade(args):
+    work_dir = Path(args.work_dir)
+    handoff_path = get_handoff_path(str(work_dir))
+    extra = []
+    if args.name: extra += ["--name", args.name]
+    if args.all: extra += ["--all"]
+    if args.modules: extra += ["--modules", args.modules]
+    if args.interactive: extra += ["--interactive"]
+
+    return run_script("upgrade_agent.py", ["--handoff", handoff_path] + extra)
+
+
+# ============ sync ============
+
+def cmd_sync(args):
+    work_dir = Path(args.work_dir)
+    handoff_path = get_handoff_path(str(work_dir))
+    return sync_readme(handoff_path)
+
+
+def sync_readme(handoff_path: str) -> int:
+    """同步 handoff → README。"""
+    handoff = load_handoff(handoff_path)
+    agents = handoff.get("agents", {})
+    org = handoff.get("organization", {})
+    repo = handoff.get("repository", {})
+    boss = handoff.get("boss", {})
+
+    org_name = org.get("name", "")
+    repo_name = repo.get("name", "")
+    boss_username = boss.get("github_username", "")
+
+    # 生成 README
+    agent_rows = ""
+    for name, info in agents.items():
+        role = info.get("role", "?")
+        gh = info.get("github_username", "")
+        email = info.get("github_email", "")
+        atype = info.get("agent_type", "hermes")
+        agent_rows += f"| {name} | {gh} | {email} | {role} | {atype} |\n"
+
+    readme_content = f"""# {org_name} — 协作协议
+
+> Assignee = 轮到谁。Comment = 沟通。Close = 完成。
+
+## 协作全景
+
+```mermaid
+flowchart TB
+    BOSS[老板 {boss_username}<br/>创建 Issue]
+    TRIAGE{{有 assignee?}}
+    PM[项目经理<br/>分析 → 设置 assignee]
+    DEV[开发工程师<br/>开发/实施]
+    REV[审查员<br/>审查/验证]
+    REVIEW{{审查通过?}}
+    WAIT[assignee → 老板<br/>等待终审]
+    FIX[assignee → 开发<br/>修复]
+    CLOSE[审查员关闭 + 通知]
+
+    BOSS --> TRIAGE
+    TRIAGE -->|无| PM
+    TRIAGE -->|有| DEV
+    PM --> DEV
+    PM --> REV
+    DEV -->|完成| REV
+    REV --> REVIEW
+    REVIEW -->|通过| WAIT
+    REVIEW -->|打回| FIX
+    FIX --> DEV
+    WAIT -->|老板审批| CLOSE
+
+    style BOSS fill:#ff6b6b,color:#fff
+    style DEV fill:#4ecdc4,color:#fff
+    style REV fill:#45b7d1,color:#fff
+    style CLOSE fill:#51cf66,color:#fff
+```
+
+## 团队
+
+| 名字 | GitHub | 邮箱 | 角色 | Agent类型 |
+|------|--------|------|------|----------|
+{agent_rows}
+
+## 核心规则
+
+1. **Assignee = 现在轮到谁**。干完 → 换 assignee 交给下一个人
+2. **Comment = 沟通渠道**。有问题写 comment，换人让对方看
+3. **开发 → 审查 → 老板 → 审查关闭**
+4. **所有 Issue Comment 用中文**
+5. **领任务时做意图识别 + 规模评估 + 拆解决策**
+
+## 标签
+
+| 标签 | 含义 |
+|------|------|
+| `type:feature` | 功能开发 |
+| `type:bug` | Bug 修复 |
+| `type:verification` | 验证审查 |
+| `type:research` | 调研分析 |
+| `priority:critical` | 紧急 |
+| `priority:high` | 重要 |
+| `priority:normal` | 常规 |
+
+## Cronjob
+
+每 30 分钟轮询：
+```bash
+gh issue list --repo {org_name}/{repo_name} --assignee @me --state open
+```
+
+---
+
+*组织: {org_name} | 仓库: {repo_name} | 更新于: {time.strftime("%Y-%m-%d")}*
+"""
+
+    # 保存到工作目录
+    work_dir = Path(handoff_path).parent
+    readme_path = work_dir / "README.md"
+    with open(readme_path, 'w') as f:
+        f.write(readme_content)
+
+    log(f"README 已生成: {readme_path}", "OK")
+
+    if ask_bool("提交到 GitHub 仓库？"):
+        log(f"提交到 {org_name}/{repo_name}...")
+        # cd 到工作目录执行 git 操作
+        os.chdir(str(work_dir))
+        subprocess.run(["git", "add", "README.md"], capture_output=True)
+        subprocess.run(["git", "commit", "-m", f"更新团队 README ({time.strftime('%Y-%m-%d')})"], capture_output=True)
+        subprocess.run(["git", "push"], capture_output=True)
+        log("README 已提交到 GitHub", "OK")
+
+    return 0
+
+
+# ============ edit ============
+
+def cmd_edit(args):
+    work_dir = Path(args.work_dir)
+    handoff_path = get_handoff_path(str(work_dir))
+    handoff = load_handoff(handoff_path)
+    agents = handoff.get("agents", {})
+
+    name = args.name
+    if not name or name not in agents:
+        print(f"\n已上岗员工:")
+        for n, info in agents.items():
+            print(f"  - {n} ({info.get('role', '?')}) [{info.get('agent_type', 'hermes')}]")
+        name = ask("要编辑的员工名字")
+
+    if name not in agents:
+        log(f"找不到: {name}", "ERROR")
+        return 1
+
+    info = agents[name]
+    print(f"\n当前配置:")
+    for k, v in info.items():
+        print(f"  {k}: {v}")
+
+    field = ask("修改字段（role/github_username/gateway_port/status/agent_type）")
+    if field in info:
+        new_val = ask(f"新的 {field}", str(info[field]))
+        info[field] = new_val
+        handoff["metadata"]["updated_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        save_handoff(handoff_path, handoff)
+        log(f"已更新: {name}.{field} = {new_val}", "OK")
+
+        if ask_bool("同步更新 README？"):
+            sync_readme(handoff_path)
+    else:
+        log(f"无效字段: {field}", "ERROR")
+
+    return 0
+
+
+# ============ 主入口 ============
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="/oneplusn — 1+N 数字员工团队管理",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+所有文件生成在子公司工作目录中（以 Organization 名称命名）。
+
+命令:
+  init      初始化（创建子公司 + 批量创建员工 + 可选升级）
+  add       添加单个数字员工
+  delete    删除/停用数字员工
+  status    查看所有数字员工状态
+  list      列出所有数字员工
+  upgrade   升级数字员工
+  sync      同步 README
+  edit      编辑员工配置
+
+示例:
+  # 初始化（创建 oneplusn-team/ 目录）
+  ./oneplusn init
+
+  # 后续操作指定工作目录
+  ./oneplusn add --work-dir oneplusn-team/
+  ./oneplusn status --work-dir oneplusn-team/
+  ./oneplusn upgrade --work-dir oneplusn-team/ --all
+  ./oneplusn delete --work-dir oneplusn-team/ --name dev-01
+  ./oneplusn sync --work-dir oneplusn-team/
+        """
+    )
+
+    subparsers = parser.add_subparsers(dest="command", help="子命令")
+
+    # init
+    subparsers.add_parser("init", help="初始化")
+
+    # add
+    p_add = subparsers.add_parser("add", help="添加数字员工")
+    p_add.add_argument("--work-dir", required=True, help="工作目录路径（如 oneplusn-team/）")
+
+    # delete
+    p_del = subparsers.add_parser("delete", help="删除数字员工")
+    p_del.add_argument("--work-dir", required=True, help="工作目录路径")
+    p_del.add_argument("--name", help="员工名字")
+
+    # status / list
+    p_status = subparsers.add_parser("status", help="查看状态")
+    p_status.add_argument("--work-dir", required=True, help="工作目录路径")
+
+    p_list = subparsers.add_parser("list", help="列出员工")
+    p_list.add_argument("--work-dir", required=True, help="工作目录路径")
+
+    # upgrade
+    p_up = subparsers.add_parser("upgrade", help="升级数字员工")
+    p_up.add_argument("--work-dir", required=True, help="工作目录路径")
+    p_up.add_argument("--name", help="指定员工")
+    p_up.add_argument("--all", action="store_true", help="全部升级")
+    p_up.add_argument("--modules", help="模块列表")
+    p_up.add_argument("--interactive", "-i", action="store_true", help="交互式")
+
+    # sync
+    p_sync = subparsers.add_parser("sync", help="同步 README")
+    p_sync.add_argument("--work-dir", required=True, help="工作目录路径")
+
+    # edit
+    p_edit = subparsers.add_parser("edit", help="编辑员工配置")
+    p_edit.add_argument("--work-dir", required=True, help="工作目录路径")
+    p_edit.add_argument("--name", help="员工名字")
+
+    args = parser.parse_args()
+
+    if not args.command:
+        parser.print_help()
+        return 1
+
+    commands = {
+        "init": cmd_init,
+        "add": cmd_add,
+        "delete": cmd_delete,
+        "status": cmd_status,
+        "list": cmd_list,
+        "upgrade": cmd_upgrade,
+        "sync": cmd_sync,
+        "edit": cmd_edit,
+    }
+
+    return commands[args.command](args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

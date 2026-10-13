@@ -1,0 +1,66 @@
+{
+  "issue": "#16 长按弹出选择菜单",
+  "test_run": "2026-06-16 20:48:27",
+  "target": "127.0.0.1:5555",
+  "bundle": "com.darkempire78.opencalculator",
+  "total": 6,
+  "pass": 6,
+  "fail": 0,
+  "skip": 0,
+  "results": [
+    {
+      "ac_id": "AC-1",
+      "name": "长按 sin 弹出 3 个候选",
+      "expected": "arcsin + arccos + arctan (menu open)",
+      "actual": "menu_open=True",
+      "status": "PASS",
+      "note": "look at 01_long_press_sin_menu_opened.png",
+      "time": "20:48:01"
+    },
+    {
+      "ac_id": "AC-2",
+      "name": "点击 arcsin 插入表达式",
+      "expected": "ends with 'arcsin('",
+      "actual": "expr='arcsin('",
+      "status": "PASS",
+      "note": "arcsin 坐标=(660, 1293)",
+      "time": "20:48:05"
+    },
+    {
+      "ac_id": "AC-4",
+      "name": "点遮罩关闭菜单,表达式不变",
+      "expected": "menu=closed, expr='arcsin('",
+      "actual": "menu_gone=True, expr='arcsin('",
+      "status": "PASS",
+      "note": "AC-4 遮罩点击关闭 + 表达式保持",
+      "time": "20:48:12"
+    },
+    {
+      "ac_id": "AC-3",
+      "name": "短按 sin 插入 sin(",
+      "expected": "expr ends with 'sin(', no menu",
+      "actual": "expr='sin(', menu_open=False",
+      "status": "PASS",
+      "note": "短按只插入 sin(, 不弹菜单",
+      "time": "20:48:16"
+    },
+    {
+      "ac_id": "AC-5",
+      "name": "长按数字无菜单",
+      "expected": "no menu opened",
+      "actual": "menu_open=False",
+      "status": "PASS",
+      "note": "FMEA C4 验证 (hasCandidates('7') === false)",
+      "time": "20:48:21"
+    },
+    {
+      "ac_id": "AC-6",
+      "name": "长按 cos 弹出 3 个候选",
+      "expected": "arcsin+arccos+arctan (menu open)",
+      "actual": "menu_open=True",
+      "status": "PASS",
+      "note": "扩展验证 cos 同样工作",
+      "time": "20:48:27"
+    }
+  ]
+}

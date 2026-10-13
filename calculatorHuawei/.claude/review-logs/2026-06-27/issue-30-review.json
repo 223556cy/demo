@@ -1,0 +1,29 @@
+{
+  "verdict": "REQUEST_CHANGES",
+  "summary": "代码未入仓且 commit 未 signoff",
+  "blocking": [
+    {
+      "item": "commit 全部 signed-off",
+      "evidence": "a3b0da8: git verify-commit 返回空, signed=False"
+    },
+    {
+      "item": "真实跑了 harmonyos-ui-test",
+      "evidence": "specs/changes/20260626-bugfix-cron-poll-issues-retry/ 下无 ui-tests/ 目录, 无 screenshot, 无 uiautomator dump; commit a3b0da8 未修改任何 HarmonyOS 代码"
+    },
+    {
+      "item": "实际代码变更未纳入 git",
+      "evidence": "a3b0da8 仅提交 AID 产物(specs/*), commit message 明确声明 '实改位置: ~/.hermes/profiles/pm-01/scripts/poll_issues.py (git 跟踪外)', repo 内 poll_issues.py 不存在, 无法审查实际实现"
+    }
+  ],
+  "suggestions": [
+    "a3b0da8: 将 poll_issues.py 与 test_poll_issues.py 移入仓库 agents/ 或 scripts/ 目录并纳入 git 跟踪, 否则 rev-01 无法审查实际代码逻辑",
+    "a3b0da8: commit 追加 signed-off-by (`git commit --amend --signoff`)",
+    "a3b0da8: 若 pm-01 profile 脚本因部署原因必须放在 hermes 目录, 建议在仓库建立 symlink 或复制脚本到 agents/pm-01/ 并保持双向同步"
+  ],
+  "highlights": [
+    "a3b0da8: AID 三阶段产出完整, proposal/delta-spec/delta-design/tasks/apply-report 齐全, FMEA 分析覆盖 8 项故障模式",
+    "a3b0da8: TDD 节奏清晰, 17 个 Python unittest 覆盖 200/10061/401/404/422/429/5xx/SSL/Timeout 9 种场景",
+    "a3b0da8: 设计考虑周全, 指数退避+jitter、Retry-After 自适应、白名单分类、.env 配置化、向后兼容"
+  ],
+  "comment": "[rev-01] REQUEST CHANGES — 代码未入仓且 commit 未 signoff\n\n## 审查结果\n| 检查项 | 状态 | 备注 |\n|--------|------|------|\n| AID 三阶段 | OK | proposal/delta-spec/info/delta-design/tasks/apply-report 齐全 |\n| harmonyos-ui-test | FAIL | Issue #30 为 Python 基础设施脚本, 但 checklist 要求 UI 测试; 无 screenshot/dump |\n| commit signoff | FAIL | a3b0da8 未 signed-off |\n| 分支规范 | OK | feat/issue-30-cron-数据采集脚本连接失败-win |\n| 铁律 7 不伪造 | OK | 无 HarmonyOS 测试日志; Python 测试在仓外, 无伪造证据 |\n| AID 产物 | OK | specs/changes/20260626-bugfix-cron-poll-issues-retry/ 下产物完整 |\n\n## 阻塞项 (必须修复)\n- `a3b0da8` — commit 未 signed-off\n  修复建议: `git commit --amend --signoff` 后 force-push\n- `specs/changes/20260626-bugfix-cron-poll-issues-retry/` — 无 harmonyos-ui-test 截图与 dump\n  修复建议: 本 issue 虽为 Python 脚本, 但 checklist 强制要求; 若确认豁免请更新 review_issues.py 模板, 否则补充运行记录\n- `a3b0da8` — 实际代码变更(poll_issues.py / test_poll_issues.py)完全在 git 跟踪外\n  修复建议: 将脚本移入仓库 agents/pm-01/ 或 scripts/ 目录, 确保 rev-01 能审查实际 diff; 若 hermes 部署路径固定, 可用 CI/CD 同步或 symlink\n\n## 建议项 (建议修复)\n- a3b0da8: 将 poll_issues.py 与 test_poll_issues.py 移入仓库并纳入 git 跟踪, 否则 rev-01 无法审查实际代码逻辑\n- a3b0da8: commit 追加 signed-off-by\n- a3b0da8: 若 pm-01 profile 脚本因部署原因必须放在 hermes 目录, 建议在仓库建立 symlink 或复制脚本到 agents/pm-01/ 并保持双向同步\n\n## 接下来\n@littleleafccccc 请修复阻塞项后再 assign rev-01.\nissue 保持 open, 不要关闭."
+}

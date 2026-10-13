@@ -1,0 +1,13 @@
+{
+  "issue": 21,
+  "title": "测试噪声-aid-planning",
+  "verdict": "REQUEST_CHANGES",
+  "summary": "commit 缺少 Signed-off-by 阻塞合并",
+  "branch": "feat/issue-21-测试噪声-aid-planning",
+  "wt_path": "D:\\huawei\\Demo\\worktrees\\issue-21",
+  "comment_ok": true,
+  "action": "assign-littleleafccccc(ok=True)",
+  "action_ok": true,
+  "reviewed_at": "2026-06-18T09:30:02.033728",
+  "log": "D:\\huawei\\Demo\\calculatorHuawei\\.claude\\review-logs\\2026-06-18\\issue-21.md"
+}
